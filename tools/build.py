@@ -136,7 +136,7 @@ def footer(r):
     <li><a href="{r}{PRIVACY}">Privacy Policy (draft)</a></li>
     <li><a href="{r}{TERMS}">Terms of Use (draft)</a></li>
     <li><a href="{r}support.html#website">About this website</a></li>
-    <li><a href="mailto:lendrody28@gmail.com">Contact</a></li>
+    <li><a href="mailto:support@homecircle.au">Contact</a></li>
     <li><a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line)</li>
   </ul><p class="small">{E(BROWSER_ONLY)}</p></div>
 </div></footer>
