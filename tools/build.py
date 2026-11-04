@@ -129,7 +129,6 @@ def footer(r):
     <p>Support for your recovery journey. Free, with no accounts, no sign-in, no cookies, no ads, no trackers and no analytics.</p>
     <p>{E(L["gpLine"])} {E(L["notMedicalDevice"])} In an emergency call <a href="tel:911">911</a>. Call or text <a href="tel:988">988</a> for the Suicide &amp; Crisis Lifeline.</p>
     <p>{E(L["notAffiliated"])}</p>
-    <p>© 2026 {E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897.</p>
   </div>
   <div><h2>Explore</h2><ul>{"".join(f'<li><a href="{r}{h}">{E(t)}</a></li>' for h, t in PAGES)}</ul></div>
   <div><h2>About</h2><ul>
@@ -139,7 +138,7 @@ def footer(r):
     <li><a href="mailto:support@homecircle.au">Contact</a></li>
     <li><a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line)</li>
   </ul><p class="small">{E(BROWSER_ONLY)}</p></div>
-</div></footer>
+</div><div class="wrap"><p class="fine-print">© 2026 {E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897.</p></div></footer>
 <dialog class="help" id="help-dialog" aria-labelledby="help-title">
   <div class="help-in">
     <button class="close-x" type="button" data-close aria-label="Close">×</button>
@@ -458,7 +457,7 @@ def build_support():
 <h3>What does the website save, and where?</h3><p>Only what you choose to save: health safety answers, the breath-hold setting, Kai's chat and where you put Kai on the screen. These stay in this browser's local storage, on this device. Private browsing or clearing your browser data removes them.</p>
 <h3>Is Kai on the website?</h3><p>Yes. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Replies are put together in your browser from saved rules. Kai makes no network calls. Kai looks for some words that may mean you're in danger and then shows 911 and 988, but it can miss things. If you're unsafe, call 911 or call or text 988 yourself. You can minimize Kai, drag it to the other side, or clear the chat.</p>
 <h2>Privacy and terms</h2><p>Read the <a href="{PRIVACY}">Privacy Policy</a> and <a href="{TERMS}">Terms of Use</a>. {E(BROWSER_ONLY)}</p>
-<h2>Who runs HomeCircle</h2><p>{E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897. Email: <a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line).</p>"""
+<h2>Contact us</h2><p>Email: <a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line).</p>"""
     page("support.html", "support.html", "Support – HomeCircle", "Get help with the HomeCircle website: contact, FAQs and crisis support.", body)
 
 def build_legal():
