@@ -1,0 +1,1196 @@
+{
+ "legal": {
+  "supportEmail": "lendrody28@gmail.com",
+  "privacyURL": "privacy.html",
+  "termsURL": "terms.html",
+  "notMedicalDevice": "HomeCircle is not a medical device and doesn't give medical advice.",
+  "gpLine": "For any health concern, talk to your doctor. HomeCircle is support, not medical care.",
+  "beforeYouStart": "If you have a health condition, are pregnant, or take medication, check with your doctor before trying this. Stop if you feel dizzy, short of breath, unwell, or distressed, and breathe normally.",
+  "breathHold": "Skip breath holds if you have heart, lung or blood pressure conditions, or are pregnant.",
+  "trauma": "If focusing inward brings up distressing memories, open your eyes, ground yourself, and talk to your doctor or counselor.",
+  "dataStays": "Your journal, sober date, reminders and Kai chats stay on this phone. They are not included in iCloud or Finder backup. Export my data keeps a copy wherever you choose to save it.",
+  "deleteTitle": "Delete data on this phone",
+  "deleteConfirm": "Delete data on this phone? This removes the journal, Kai chats, reminders, sober date, health answers and other HomeCircle data stored on this iPhone. It cannot be undone.",
+  "locationUse": "HomeCircle uses your location on this iPhone to show nearby meetings. It isn’t sent anywhere.",
+  "kaiOnDevice": "Replies are written on this iPhone from saved rules. No network and no AI service.",
+  "mailMissing": "Mail isn't set up on this iPhone. Copy the address and send it yourself when you can.",
+  "privateDetails": "Don't share your full name, address, phone, bank details or passwords with anyone in HomeCircle or at meetings. Real friends and sponsors won't ask for money or private details. If someone does, tell your sponsor or a trusted person.",
+  "noServer": "Notes stay on this phone. HomeCircle has no community server, so other people's posts are never downloaded or shown.",
+  "age": "18+",
+  "owner": "Luke Endrody",
+  "ownerPlace": "Queensland, Australia",
+  "operatorLine": "HomeCircle is made by Luke Endrody, a sole trader in Queensland, Australia.",
+  "notAffiliated": "HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous.",
+  "notSubstitute": "Not a substitute for professional care.",
+  "rulesBody": "Be kind. At meetings you find through HomeCircle, please respect that group's own guidelines, and don't record or share what people say. Questions or concerns? Email us, and we aim to reply within 24 hours. HomeCircle is support, not medical care."
+ },
+ "helplines": {},
+ "reminder": {
+  "savedNote": "Reminder saved on this phone. We'll remind you 2 hours before.",
+  "savedNoteShort": "Saved on this phone. We'll remind you 2 hours before.",
+  "circleHint": "Set Just this one or Every week from a meeting. Alerts come 2 hours before it starts."
+ },
+ "helpButton": {
+  "title": "Help",
+  "fillHex": "#F2A08B",
+  "foregroundHex": "#6B2416"
+ },
+ "items": [
+  {
+   "id": "breath-box",
+   "title": "Box breathing",
+   "summary": "A steady 4-4-4-4 count. In, hold, out, hold. Stop whenever you want.",
+   "category": "breathing",
+   "tag": "Breathing",
+   "minutes": 3,
+   "symbol": "square",
+   "breathHold": true,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "breathing",
+   "paragraphs": [
+    "Box breathing is a counted square: breathe in, hold, breathe out, hold, each for about four seconds.",
+    "It is a focus tool, not a treatment. If a hold feels wrong, switch to the slow out-breath."
+   ],
+   "steps": [
+    {
+     "id": "box-in",
+     "title": "Breathe in",
+     "cue": "In through the nose for 4. Soft shoulders.",
+     "seconds": 4,
+     "drawing": "box-in"
+    },
+    {
+     "id": "box-hold",
+     "title": "Hold",
+     "cue": "Rest at the top for 4. No forcing.",
+     "seconds": 4,
+     "drawing": "box-hold"
+    },
+    {
+     "id": "box-out",
+     "title": "Breathe out",
+     "cue": "Out for 4, like fogging a window slowly.",
+     "seconds": 4,
+     "drawing": "box-out"
+    },
+    {
+     "id": "box-hold-out",
+     "title": "Hold empty",
+     "cue": "A short pause for 4, then begin again.",
+     "seconds": 4,
+     "drawing": "box-rest"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "breath-478",
+   "title": "4-7-8 breathing",
+   "summary": "In for 4, hold for 7, out for 8. A longer out-breath.",
+   "category": "breathing",
+   "tag": "Breathing",
+   "minutes": 3,
+   "symbol": "waveform.path",
+   "breathHold": true,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "breathing",
+   "paragraphs": [
+    "The out-breath is the long part. The hold is optional in spirit: skip this practice if holds are off in Health safety."
+   ],
+   "steps": [
+    {
+     "id": "b478-in",
+     "title": "In for 4",
+     "cue": "A quiet inhale. Jaw loose.",
+     "seconds": 4,
+     "drawing": "wave-in"
+    },
+    {
+     "id": "b478-hold",
+     "title": "Hold for 7",
+     "cue": "Stillness. If this is too long, stop and breathe normally.",
+     "seconds": 7,
+     "drawing": "wave-hold"
+    },
+    {
+     "id": "b478-out",
+     "title": "Out for 8",
+     "cue": "A slow out-breath, longer than the in-breath.",
+     "seconds": 8,
+     "drawing": "wave-out"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "breath-46",
+   "title": "Slow out-breath",
+   "summary": "In for 4, out for 6. No hold. The gentlest of the three.",
+   "category": "breathing",
+   "tag": "Breathing",
+   "minutes": 3,
+   "symbol": "wind",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "breathing",
+   "paragraphs": [
+    "This one never asks you to hold. Breathe in for about four, and out for about six.",
+    "Use it when the other counts are hidden by your health notes, or whenever you prefer it."
+   ],
+   "steps": [
+    {
+     "id": "slow-in",
+     "title": "In for 4",
+     "cue": "Nose or mouth, whichever is easier.",
+     "seconds": 4,
+     "drawing": "slow-in"
+    },
+    {
+     "id": "slow-out",
+     "title": "Out for 6",
+     "cue": "Let the out-breath take its time.",
+     "seconds": 6,
+     "drawing": "slow-out"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "guide-urge",
+   "title": "Urge surfing",
+   "summary": "Watch an urge crest and fall without obeying it.",
+   "category": "guide",
+   "tag": "Guide",
+   "minutes": 8,
+   "symbol": "water.waves",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "reading",
+   "paragraphs": [
+    "An urge is a wave. It gets stronger, peaks, and eases. You do not have to decide your whole life while it is loud.",
+    "Name it in one sentence. Notice where it sits in the body. Set a ten-minute wait: change rooms, drink water, or open a meeting.",
+    "When it eases, jot what helped. That note stays on this phone."
+   ],
+   "steps": [
+    {
+     "id": "urge-1",
+     "title": "Name it",
+     "cue": "One sentence is enough. You don't have to obey it.",
+     "seconds": 0,
+     "drawing": "wave"
+    },
+    {
+     "id": "urge-2",
+     "title": "Locate it",
+     "cue": "Warm, tight, restless? You are noticing, not fixing.",
+     "seconds": 0,
+     "drawing": "body"
+    },
+    {
+     "id": "urge-3",
+     "title": "Wait ten minutes",
+     "cue": "Move, water, a person, or a meeting.",
+     "seconds": 0,
+     "drawing": "leaf"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "guide-halt",
+   "title": "HALT",
+   "summary": "Hungry, Angry, Lonely, Tired. A pause, not a medical check.",
+   "category": "guide",
+   "tag": "Guide",
+   "minutes": 4,
+   "symbol": "pause.circle",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "reading",
+   "paragraphs": [
+    "HALT asks four ordinary questions. It does not diagnose you.",
+    "Hungry: when did you last eat? A simple meal can turn the volume down.",
+    "Angry: is something unnamed? You can tell a sponsor or write it here, on this phone.",
+    "Lonely: who is one safe person, or one meeting, in the next day?",
+    "Tired: is this a sleep problem wearing a craving's coat? Rest counts."
+   ],
+   "steps": [],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "guide-24h",
+   "title": "24-hour plan",
+   "summary": "Plan the next day, not the whole year.",
+   "category": "guide",
+   "tag": "Guide",
+   "minutes": 6,
+   "symbol": "sun.max",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "reading",
+   "paragraphs": [
+    "Write one day only. Sleep, food, one meeting if you want one, one person you can contact, and one thing you will do if an urge hits.",
+    "If the day includes danger, the plan is call 911.",
+    "Tomorrow can have its own plan. This one expires."
+   ],
+   "steps": [],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "guide-54321",
+   "title": "5-4-3-2-1 grounding",
+   "summary": "Eyes open. Five things you see, then feel, hear, smell, taste.",
+   "category": "guide",
+   "tag": "Guide",
+   "minutes": 5,
+   "symbol": "eye",
+   "breathHold": false,
+   "traumaSensitive": true,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "reading",
+   "paragraphs": [
+    "Keep your eyes open. Name five things you can see, four you can feel, three you can hear, two you can smell, and one you can taste.",
+    "Stay with the room. If this stirs distress, stop, look at something ordinary, and talk to your doctor or counselor."
+   ],
+   "steps": [
+    {
+     "id": "g5",
+     "title": "See 5",
+     "cue": "Name five things in sight.",
+     "seconds": 0,
+     "drawing": "ground-see"
+    },
+    {
+     "id": "g4",
+     "title": "Feel 4",
+     "cue": "Four things touching you: chair, floor, clothes, air.",
+     "seconds": 0,
+     "drawing": "ground-feel"
+    },
+    {
+     "id": "g3",
+     "title": "Hear 3",
+     "cue": "Three sounds, near or far.",
+     "seconds": 0,
+     "drawing": "ground-hear"
+    },
+    {
+     "id": "g2",
+     "title": "Smell 2",
+     "cue": "Two scents, even faint ones.",
+     "seconds": 0,
+     "drawing": "ground-smell"
+    },
+    {
+     "id": "g1",
+     "title": "Taste 1",
+     "cue": "One taste, or just notice your mouth.",
+     "seconds": 0,
+     "drawing": "ground-taste"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "guide-one",
+   "title": "One-thing focus",
+   "summary": "Ten minutes on one ordinary task.",
+   "category": "guide",
+   "tag": "Guide",
+   "minutes": 10,
+   "symbol": "scope",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "reading",
+   "paragraphs": [
+    "Pick one small task. Dishes, a shower, a walk to the end of the street.",
+    "When your mind leaves, come back to the task. You are practising returning, not performing."
+   ],
+   "steps": [],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "guide-stress",
+   "title": "Stress and anxiety",
+   "summary": "What stress does in the body, and three small things to try when it builds.",
+   "category": "guide",
+   "tag": "Guide",
+   "minutes": 5,
+   "symbol": "heart.text.square",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "reading",
+   "paragraphs": [
+    "Stress is the body getting ready to deal with a threat. A racing heart, tight shoulders, a churning stomach and racing thoughts are common. In early recovery, stress and cravings often show up together.",
+    "Try one small thing: a longer out-breath, feet on the floor, or a quick HALT check. Moving your body, eating something and talking to someone can all help too.",
+    "If worry or panic is getting in the way of daily life, a doctor can help. You can call or text 988 any time. In an emergency call 911."
+   ],
+   "steps": [
+    {
+     "id": "st1",
+     "title": "Slow the out-breath",
+     "cue": "Breathe out a little longer than you breathe in, a few times.",
+     "seconds": 0,
+     "drawing": "slow-out"
+    },
+    {
+     "id": "st2",
+     "title": "Feet on the floor",
+     "cue": "Press your feet down and name three things you can see.",
+     "seconds": 0,
+     "drawing": "ground"
+    },
+    {
+     "id": "st3",
+     "title": "Check in",
+     "cue": "Hungry, angry, lonely or tired? Meet one need first.",
+     "seconds": 0,
+     "drawing": "body"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": "988",
+   "phoneDial": "988"
+  },
+  {
+   "id": "med-urge",
+   "title": "Urge surfing",
+   "summary": "Kai leads a short sit with the wave of an urge.",
+   "category": "meditation",
+   "tag": "Meditation",
+   "minutes": 5,
+   "symbol": "moon.stars",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "meditation",
+   "paragraphs": [
+    "A five-minute practice. Eyes can stay open. Stop if you feel unwell."
+   ],
+   "steps": [
+    {
+     "id": "mu1",
+     "title": "Arrive",
+     "cue": "Kai: feet on the floor. You can keep your eyes open.",
+     "seconds": 40,
+     "drawing": "ground"
+    },
+    {
+     "id": "mu2",
+     "title": "Name the urge",
+     "cue": "Kai: give it one plain name. You don't have to act.",
+     "seconds": 45,
+     "drawing": "wave"
+    },
+    {
+     "id": "mu3",
+     "title": "Watch the crest",
+     "cue": "Kai: notice if it rises. Breathe out a little longer, if that feels okay.",
+     "seconds": 70,
+     "drawing": "slow-out"
+    },
+    {
+     "id": "mu4",
+     "title": "Let it move",
+     "cue": "Kai: waves change. Stay with the room.",
+     "seconds": 50,
+     "drawing": "leaf"
+    },
+    {
+     "id": "mu5",
+     "title": "Close",
+     "cue": "Kai: one thing you'll do in the next ten minutes.",
+     "seconds": 40,
+     "drawing": "leaf"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "med-scan",
+   "title": "Body scan",
+   "summary": "Opt-in. A short attention walk from feet upward.",
+   "category": "meditation",
+   "tag": "Meditation",
+   "minutes": 5,
+   "symbol": "figure.mind.and.body",
+   "breathHold": false,
+   "traumaSensitive": true,
+   "comingSoon": false,
+   "optInBodyScan": true,
+   "kind": "meditation",
+   "paragraphs": [
+    "This practice is off until you turn it on in Profile. If focusing inward brings up distress, stop."
+   ],
+   "steps": [
+    {
+     "id": "bs1",
+     "title": "Feet",
+     "cue": "Kai: notice both feet. You can wiggle them.",
+     "seconds": 45,
+     "drawing": "scan-feet"
+    },
+    {
+     "id": "bs2",
+     "title": "Legs",
+     "cue": "Kai: the weight of your legs on the chair.",
+     "seconds": 45,
+     "drawing": "scan-legs"
+    },
+    {
+     "id": "bs3",
+     "title": "Belly",
+     "cue": "Kai: no need to change the breath. Just notice.",
+     "seconds": 45,
+     "drawing": "scan-belly"
+    },
+    {
+     "id": "bs4",
+     "title": "Hands",
+     "cue": "Kai: warmth or coolness in the hands.",
+     "seconds": 45,
+     "drawing": "scan-hands"
+    },
+    {
+     "id": "bs5",
+     "title": "Shoulders",
+     "cue": "Kai: let the shoulders drop if they want to. Then open your eyes wide.",
+     "seconds": 45,
+     "drawing": "scan-shoulders"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "med-breath",
+   "title": "Breathing anchor",
+   "summary": "Five easy out-breaths with the room still in view.",
+   "category": "meditation",
+   "tag": "Meditation",
+   "minutes": 4,
+   "symbol": "wind",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "meditation",
+   "paragraphs": [
+    "No breath holds. A small anchor when you want company for a few minutes."
+   ],
+   "steps": [
+    {
+     "id": "ba1",
+     "title": "Look around",
+     "cue": "Kai: name one ordinary object you can see.",
+     "seconds": 30,
+     "drawing": "ground-see"
+    },
+    {
+     "id": "ba2",
+     "title": "Out-breath",
+     "cue": "Kai: five easy out-breaths. In is whatever length feels natural.",
+     "seconds": 70,
+     "drawing": "slow-out"
+    },
+    {
+     "id": "ba3",
+     "title": "Feet",
+     "cue": "Kai: press your feet down. The practice can end here.",
+     "seconds": 40,
+     "drawing": "ground"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "med-walk",
+   "title": "Mindful walking",
+   "summary": "A slow walk where you notice your feet, breath and surroundings.",
+   "category": "meditation",
+   "tag": "Meditation",
+   "minutes": 5,
+   "symbol": "figure.walk",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "meditation",
+   "paragraphs": [
+    "Eyes open the whole time. Walk somewhere safe: a hallway, a backyard or a quiet footpath. Stop any time."
+   ],
+   "steps": [
+    {
+     "id": "mw1",
+     "title": "Stand",
+     "cue": "Kai: stand still for a moment. Feel your weight in both feet.",
+     "seconds": 30,
+     "drawing": "ground"
+    },
+    {
+     "id": "mw2",
+     "title": "Slow steps",
+     "cue": "Kai: walk a little slower than usual. Notice each foot touch the ground.",
+     "seconds": 60,
+     "drawing": "scan-feet"
+    },
+    {
+     "id": "mw3",
+     "title": "Breath and steps",
+     "cue": "Kai: let your steps and breathing find a rhythm. No counting needed.",
+     "seconds": 60,
+     "drawing": "slow-out"
+    },
+    {
+     "id": "mw4",
+     "title": "Look around",
+     "cue": "Kai: lift your eyes. Name a few things you can see.",
+     "seconds": 45,
+     "drawing": "ground-see"
+    },
+    {
+     "id": "mw5",
+     "title": "Listen",
+     "cue": "Kai: notice the sounds, near and far. Then stop and stand for a breath.",
+     "seconds": 45,
+     "drawing": "ground-hear"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "med-eat",
+   "title": "Mindful eating",
+   "summary": "Slow down one snack or meal and notice it with your senses.",
+   "category": "meditation",
+   "tag": "Meditation",
+   "minutes": 5,
+   "symbol": "fork.knife",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "meditation",
+   "paragraphs": [
+    "Use any food you have, like a piece of fruit or toast. This is about noticing, not dieting or rules. If food is a hard topic for you, skip this one and talk to your doctor."
+   ],
+   "steps": [
+    {
+     "id": "me1",
+     "title": "Look",
+     "cue": "Kai: look at the food for a moment. Colour, shape, texture.",
+     "seconds": 30,
+     "drawing": "ground-see"
+    },
+    {
+     "id": "me2",
+     "title": "Smell",
+     "cue": "Kai: bring it close and notice the smell.",
+     "seconds": 30,
+     "drawing": "ground-smell"
+    },
+    {
+     "id": "me3",
+     "title": "Small bite",
+     "cue": "Kai: take a small bite and chew slowly. Notice the taste change.",
+     "seconds": 60,
+     "drawing": "ground-taste"
+    },
+    {
+     "id": "me4",
+     "title": "Check in",
+     "cue": "Kai: pause between bites. How does your belly feel?",
+     "seconds": 45,
+     "drawing": "scan-belly"
+    }
+   ],
+   "links": [],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "fell-aa",
+   "title": "Alcoholics Anonymous",
+   "summary": "AA's own US pages are on aa.org. HomeCircle does not host the literature.",
+   "category": "fellowship",
+   "tag": "Fellowship",
+   "minutes": 1,
+   "symbol": "person.3",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "fellowship",
+   "paragraphs": [
+    "Alcoholics Anonymous publishes its own literature and local contacts on aa.org. HomeCircle does not copy that text.",
+    "aa.org doesn't list meetings itself. Its Find A.A. page points you to local A.A. offices and their meeting lists, and to online groups.",
+    "HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous.",
+    "Groups decide their own format."
+   ],
+   "steps": [],
+   "links": [
+    {
+     "id": "l0",
+     "inAppMeetings": false,
+     "title": "A.A. website (aa.org)",
+     "url": "https://www.aa.org/"
+    },
+    {
+     "id": "l1",
+     "inAppMeetings": false,
+     "title": "Find A.A. near you",
+     "url": "https://www.aa.org/find-aa"
+    }
+   ],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "fell-na",
+   "title": "Narcotics Anonymous",
+   "summary": "NA World Services' own pages are on na.org. HomeCircle does not host the literature.",
+   "category": "fellowship",
+   "tag": "Fellowship",
+   "minutes": 1,
+   "symbol": "person.3",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "fellowship",
+   "paragraphs": [
+    "Narcotics Anonymous publishes its own literature on na.org. HomeCircle does not copy that text.",
+    "NA World Services doesn't keep a database of in-person meetings. Its Find NA page points you to local NA websites and phonelines, and has a virtual meeting finder.",
+    "HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous."
+   ],
+   "steps": [],
+   "links": [
+    {
+     "id": "l0",
+     "inAppMeetings": false,
+     "title": "NA World Services (na.org)",
+     "url": "https://na.org/"
+    },
+    {
+     "id": "l1",
+     "inAppMeetings": false,
+     "title": "Find NA near you",
+     "url": "https://na.org/meetingsearch/"
+    }
+   ],
+   "phoneDisplay": null,
+   "phoneDial": null
+  },
+  {
+   "id": "fell-ga",
+   "title": "Gamblers Anonymous",
+   "summary": "Gamblers Anonymous: meetings in person, online or by phone, and a national hotline.",
+   "category": "fellowship",
+   "tag": "Support",
+   "minutes": 1,
+   "symbol": "phone",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "fellowship",
+   "paragraphs": [
+    "Gamblers Anonymous is for people who think they might have a gambling problem. There are no dues or fees.",
+    "Meetings run in person, online and by phone. The national hotline listed on its site is 855-222-5542.",
+    "HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous."
+   ],
+   "steps": [],
+   "links": [
+    {
+     "id": "l0",
+     "inAppMeetings": false,
+     "title": "Gamblers Anonymous (gamblersanonymous.org)",
+     "url": "https://gamblersanonymous.org/"
+    }
+   ],
+   "phoneDisplay": "855-222-5542",
+   "phoneDial": "8552225542"
+  },
+  {
+   "id": "fell-pa",
+   "title": "Pornography addiction support",
+   "summary": "The fellowship site is separate. If you need to talk today, call or text 988.",
+   "category": "fellowship",
+   "tag": "Support",
+   "minutes": 1,
+   "symbol": "phone",
+   "breathHold": false,
+   "traumaSensitive": false,
+   "comingSoon": false,
+   "optInBodyScan": false,
+   "kind": "fellowship",
+   "paragraphs": [
+    "If you need to talk today, call or text 988. The 988 Lifeline is not run by a fellowship.",
+    "Porn Addicts Anonymous has its own site. HomeCircle does not host program literature.",
+    "HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous."
+   ],
+   "steps": [],
+   "links": [
+    {
+     "id": "paa-site",
+     "title": "Porn Addicts Anonymous",
+     "url": "https://www.pornaddictsanonymous.org/",
+     "inAppMeetings": false
+    }
+   ],
+   "phoneDisplay": "988",
+   "phoneDial": "988"
+  }
+ ],
+ "backgrounds": {
+  "breath-box": {
+   "origin": "Box breathing is a counted take on an older yoga idea: breathing in equal parts. Cleveland Clinic links it to sama vritti pranayama. It was made popular more recently by the US military, including Navy SEALs, who use it to stay steady under stress. No single inventor is known.",
+   "why": "Counting gives a busy mind one simple job, and slow breathing can help the body ease out of fight-or-flight. In a 2023 Stanford study, people who did five minutes of box breathing a day for a month reported feeling less anxious after their sessions, as did people in the other groups. A pattern with longer out-breaths lifted mood the most. It is a way to steady yourself, not a treatment.",
+   "sources": [
+    {
+     "title": "Box breathing (Cleveland Clinic)",
+     "url": "https://health.clevelandclinic.org/box-breathing-benefits"
+    },
+    {
+     "title": "Balban and others, 2023 study (Cell Reports Medicine)",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9873947/"
+    }
+   ]
+  },
+  "breath-478": {
+   "origin": "The 4-7-8 count was made popular by Dr Andrew Weil, a US doctor known for integrative medicine. It is usually described as based on pranayama, the breathing practices of yoga, but the exact counts are modern.",
+   "why": "The long out-breath slows you down, and the counting holds your attention for a moment. Research is still small. One 2022 study of 43 young adults found heart rate and blood pressure dropped a little straight after. There is no good evidence that it puts you to sleep quickly. If the hold feels too long, use the slow out-breath instead.",
+   "sources": [
+    {
+     "title": "4-7-8 breath (Andrew Weil Center, University of Arizona)",
+     "url": "https://www.weilcenter.arizona.edu/health_hub/awcimagazine/just_breathe_using_breathwork_for_wellbeing.html"
+    },
+    {
+     "title": "Vierra and others, 2022 study (PMC)",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9277512/"
+    }
+   ]
+  },
+  "breath-46": {
+   "origin": "Breathing out for a little longer than you breathe in has no single inventor. It shows up in yoga, in relaxation training, and in everyday health advice.",
+   "why": "Slow breathing may help you feel calmer and less tense. A 2018 review of studies in healthy people linked slow breathing with feeling more relaxed and less anxious, while noting the studies were small and varied. There is no hold, so this is the gentlest of the three.",
+   "sources": [
+    {
+     "title": "Zaccaro and others, 2018 review (PMC)",
+     "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6137615/"
+    }
+   ]
+  },
+  "guide-urge": {
+   "origin": "Urge surfing comes from relapse-prevention research. US psychologist Alan Marlatt described it in the 1980s, and it later became part of Mindfulness-Based Relapse Prevention (MBRP), which he developed with colleagues including Sarah Bowen.",
+   "why": "Urges tend to rise, peak and ease, like a wave. Watching that happen, instead of fighting the urge or obeying it, can make it easier to wait one out. In a 2009 study of university students who smoked, a short urge-surfing instruction did not make urges weaker, but people smoked fewer cigarettes over the next week. In a 2014 trial, people in MBRP reported fewer days of drug use and less heavy drinking a year later than people in usual aftercare. Results differ from person to person.",
+   "sources": [
+    {
+     "title": "Bowen and Marlatt, 2009 study (PubMed)",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/20025372/"
+    },
+    {
+     "title": "Bowen and others, 2014 trial, JAMA Psychiatry (PubMed)",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/24647726/"
+    }
+   ]
+  },
+  "med-urge": {
+   "origin": "Urge surfing comes from relapse-prevention research. US psychologist Alan Marlatt described it in the 1980s, and it later became part of Mindfulness-Based Relapse Prevention (MBRP), which he developed with colleagues including Sarah Bowen.",
+   "why": "Urges tend to rise, peak and ease, like a wave. Watching that happen, instead of fighting the urge or obeying it, can make it easier to wait one out. In a 2009 study of university students who smoked, a short urge-surfing instruction did not make urges weaker, but people smoked fewer cigarettes over the next week. In a 2014 trial, people in MBRP reported fewer days of drug use and less heavy drinking a year later than people in usual aftercare. Results differ from person to person.",
+   "sources": [
+    {
+     "title": "Bowen and Marlatt, 2009 study (PubMed)",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/20025372/"
+    },
+    {
+     "title": "Bowen and others, 2014 trial, JAMA Psychiatry (PubMed)",
+     "url": "https://pubmed.ncbi.nlm.nih.gov/24647726/"
+    }
+   ]
+  },
+  "guide-halt": {
+   "origin": "HALT comes from the recovery community, especially twelve-step groups. Nobody is sure who first said it. A 2025 paper on its history could not trace its first use, and it is often described as recovery folk wisdom.",
+   "why": "Hunger, anger, loneliness and tiredness are ordinary states that make it harder to think clearly and easier to act on an urge. The check is quick, and the fixes are often simple: eat, name what is wrong, reach out, rest. A US counseling guide suggests it as a way to look after basic needs early. It is a self-check, not a diagnosis.",
+   "sources": [
+    {
+     "title": "HALT in a counseling guide (NCBI Bookshelf)",
+     "url": "https://www.ncbi.nlm.nih.gov/books/NBK601489/box/ch2.b11/"
+    },
+    {
+     "title": "HALT: relapse prevention to resilience, 2025 (Advances in Drug and Alcohol Research)",
+     "url": "https://www.frontierspartnerships.org/journals/advances-in-drug-and-alcohol-research/articles/10.3389/adar.2025.15477/full"
+    }
+   ]
+  },
+  "guide-24h": {
+   "origin": "Planning one day at a time comes from mutual-help groups. Alcoholics Anonymous describes a 24-hour plan in its booklet Living Sober: stay sober just for this day, and break the day into hours if you need to.",
+   "why": "A whole lifetime can feel too big. One day is a size most people can manage, and a small plan made ahead of time (sleep, food, one person, one thing to do if an urge hits) means fewer decisions in a hard moment. This is practical wisdom from people in recovery more than a tested treatment.",
+   "sources": [
+    {
+     "title": "Living Sober: Using the 24-hour plan (Alcoholics Anonymous)",
+     "url": "https://www.aa.org/living-sober-audio-Using-the-24-hour-plan"
+    }
+   ]
+  },
+  "guide-54321": {
+   "origin": "5-4-3-2-1 is a common grounding exercise used by counselors and mental health services. Its exact origin is not known, and versions put the senses in different orders.",
+   "why": "Naming what you can see, feel, hear, smell and taste moves attention out of racing thoughts and back into the room. It is quick, but it is not right for everyone. If it stirs up distress, stop.",
+   "sources": [
+    {
+     "title": "5-4-3-2-1 coping technique (University of Rochester Medical Center)",
+     "url": "https://www.urmc.rochester.edu/behavioral-health-partners/bhp-blog/april-2018/5-4-3-2-1-coping-technique-for-anxiety"
+    }
+   ]
+  },
+  "guide-one": {
+   "origin": "This is everyday mindfulness: giving full attention to one ordinary task. Mindfulness has its roots in Buddhist meditation, and practising it during daily jobs like washing up is widely taught today.",
+   "why": "Each time your mind wanders and you bring it back to the task, you are practising. It gives a restless mind something gentle to do and can ease stress.",
+   "sources": []
+  },
+  "med-scan": {
+   "origin": "The body scan as it is taught today comes from Mindfulness-Based Stress Reduction (MBSR), the program Jon Kabat-Zinn started at the University of Massachusetts Medical Center in 1979. It draws on older Buddhist meditation.",
+   "why": "Moving attention slowly through the body can help you notice tension and let some of it go, and many people find it calming. Turning attention inward is not comfortable for everyone, especially after trauma, so this stays off until you turn it on, and you can stop at any time.",
+   "sources": [
+    {
+     "title": "About the Center for Mindfulness (UMass Memorial Health)",
+     "url": "https://www.ummhealth.org/services-treatments/center-mindfulness/about-center-mindfulness"
+    }
+   ]
+  },
+  "med-breath": {
+   "origin": "Using the breath as an anchor for attention is one of the oldest meditation practices. It comes from traditions including Buddhism and Hinduism and is now part of modern mindfulness programs.",
+   "why": "Your breath is always with you, so it is an easy place to bring a busy mind back to. You do not need to change it, just notice it. This version keeps your eyes open and has no holds.",
+   "sources": []
+  },
+  "guide-stress": {
+   "origin": "The tips here are everyday ones that health services commonly share: slow breathing, grounding through the senses, looking after food, sleep and movement, and talking to someone. They aren't one named method.",
+   "why": "Small steps don't make stress vanish, but they can take the edge off so you can choose your next move. If anxiety keeps getting in the way, a doctor can help.",
+   "sources": []
+  },
+  "med-walk": {
+   "origin": "Walking meditation is an old Buddhist practice. The Zen teacher Thich Nhat Hanh and his Plum Village community made it widely known in the West: walking slowly, feeling each step on the ground, and letting the breath and steps move together.",
+   "why": "It gives restless energy somewhere to go while you practise noticing. It is a way to steady yourself, not a treatment.",
+   "sources": [
+    {
+     "title": "Walking meditation (Plum Village)",
+     "url": "https://plumvillage.org/practice/walking-meditation"
+    }
+   ]
+  },
+  "med-eat": {
+   "origin": "Mindful eating grew out of the wider practice of mindfulness, which is centuries old and found in many traditions. Thich Nhat Hanh and Lilian Cheung wrote about it in the book Savor, which Harvard's Nutrition Source draws on.",
+   "why": "Harvard's Nutrition Source says mindful eating means using your senses to notice your food, without judging yourself. Some studies link it with slower eating and less emotional eating, though the research is mixed. It isn't a diet or a treatment for an eating disorder.",
+   "sources": [
+    {
+     "title": "Mindful eating (The Nutrition Source, Harvard)",
+     "url": "https://nutritionsource.hsph.harvard.edu/mindful-eating/"
+    }
+   ]
+  }
+ },
+ "arts": {
+  "breatheIn": {
+   "asset": "ArtBreathIn",
+   "label": "A person sitting upright, breathing in slowly through the nose."
+  },
+  "breatheHold": {
+   "asset": "ArtBreathHold",
+   "label": "A person sitting still with eyes closed, resting between breaths."
+  },
+  "breatheOut": {
+   "asset": "ArtBreathOut",
+   "label": "A person sitting upright, breathing out slowly through softly parted lips."
+  },
+  "urgeWave": {
+   "asset": "ArtUrgeWave",
+   "label": "A person calmly riding a big, soft wave on a surfboard."
+  },
+  "handOnChest": {
+   "asset": "ArtHandOnChest",
+   "label": "A person with eyes closed and a hand resting on their chest, noticing how they feel."
+  },
+  "waitItOut": {
+   "asset": "ArtWaitItOut",
+   "label": "A person in a kitchen holding a glass of water, with an open window and shoes by the door."
+  },
+  "feetOnFloor": {
+   "asset": "ArtFeetOnFloor",
+   "label": "Two bare feet resting flat on a wooden floor."
+  },
+  "groundSee": {
+   "asset": "ArtGroundSee",
+   "label": "A person sitting in a room, looking around at a plant, a picture, a lamp and a cup."
+  },
+  "groundFeel": {
+   "asset": "ArtGroundFeel",
+   "label": "A person sitting with hands resting on their legs, feeling the chair and the rug."
+  },
+  "groundHear": {
+   "asset": "ArtGroundHear",
+   "label": "A person sitting quietly, listening to sounds from the window and the room."
+  },
+  "groundSmell": {
+   "asset": "ArtGroundSmell",
+   "label": "A person with eyes closed, gently smelling a warm mug."
+  },
+  "groundTaste": {
+   "asset": "ArtGroundTaste",
+   "label": "A person taking a sip of water, with a small bowl of fruit nearby."
+  },
+  "scanLegs": {
+   "asset": "ArtScanLegs",
+   "label": "A person sitting in a chair with a soft glow over their legs."
+  },
+  "scanBelly": {
+   "asset": "ArtScanBelly",
+   "label": "A person sitting with a hand on their belly and a soft glow there."
+  },
+  "scanHands": {
+   "asset": "ArtScanHands",
+   "label": "Two open hands resting palms up on the lap, glowing softly."
+  },
+  "scanShoulders": {
+   "asset": "ArtScanShoulders",
+   "label": "A person with eyes open, letting their shoulders drop."
+  },
+  "haltPause": {
+   "asset": "ArtHaltPause",
+   "label": "A person on a park bench with a hand on their chest, next to a sandwich, a glass of water, a cushion and a phone."
+  },
+  "dayPlan": {
+   "asset": "ArtDayPlan",
+   "label": "A person writing in a notebook at a small table, with a sun and moon above showing one day."
+  },
+  "oneThing": {
+   "asset": "ArtOneThing",
+   "label": "A person at a kitchen sink, slowly washing one mug."
+  }
+ },
+ "drawing": {
+  "box-in": "breatheIn",
+  "wave-in": "breatheIn",
+  "slow-in": "breatheIn",
+  "box-hold": "breatheHold",
+  "wave-hold": "breatheHold",
+  "box-rest": "breatheHold",
+  "box-out": "breatheOut",
+  "wave-out": "breatheOut",
+  "slow-out": "breatheOut",
+  "wave": "urgeWave",
+  "body": "handOnChest",
+  "leaf": "waitItOut",
+  "ground": "feetOnFloor",
+  "scan-feet": "feetOnFloor",
+  "ground-see": "groundSee",
+  "ground-feel": "groundFeel",
+  "ground-hear": "groundHear",
+  "ground-smell": "groundSmell",
+  "ground-taste": "groundTaste",
+  "scan-legs": "scanLegs",
+  "scan-belly": "scanBelly",
+  "scan-hands": "scanHands",
+  "scan-shoulders": "scanShoulders"
+ },
+ "hero": {
+  "breath-box": "breatheIn",
+  "breath-478": "breatheIn",
+  "breath-46": "breatheIn",
+  "guide-urge": "urgeWave",
+  "med-urge": "urgeWave",
+  "guide-halt": "haltPause",
+  "guide-24h": "dayPlan",
+  "guide-54321": "groundSee",
+  "guide-one": "oneThing",
+  "med-scan": "handOnChest",
+  "med-breath": "breatheOut",
+  "guide-stress": "handOnChest",
+  "med-walk": "feetOnFloor",
+  "med-eat": "groundTaste"
+ },
+ "stats": [],
+ "stages": [],
+ "stageCopy": {
+  "pageID": "page-body-stages",
+  "title": "Body & recovery stages",
+  "summary": "What many people notice in the first days, weeks and months. General notes, not a diagnosis.",
+  "safetyLine": "Stopping heavy drinking, benzodiazepines or some other drugs suddenly can be dangerous, so talk to a doctor first, or call 911 in an emergency.",
+  "intro": "Everyone's body is different. These are rough stages many people describe after stopping alcohol or other drugs. They are not a prediction for you, and HomeCircle can't tell what is happening in your body. A doctor can.",
+  "noDosing": "HomeCircle never gives doses or tapering plans. A doctor or a drug and alcohol service can plan that with you.",
+  "warningSigns": "Call 000 for a seizure, chest pain, trouble breathing, severe confusion, seeing or hearing things that aren't there, or if someone collapses."
+ },
+ "stageSources": [],
+ "twelveSteps": [
+  {
+   "number": 1,
+   "theme": "Honesty",
+   "note": "Getting honest that drinking or using has been calling the shots, and that willpower on its own hasn't fixed it. It's a starting point, not a judgement of your worth.",
+   "reflection": "Where could a little more honesty make today lighter?"
+  },
+  {
+   "number": 2,
+   "theme": "Hope",
+   "note": "Opening up to the idea that things can get better, with help from beyond yourself. That help can mean faith, the group, or simply people who've been there.",
+   "reflection": "What gives you even a small bit of hope today?"
+  },
+  {
+   "number": 3,
+   "theme": "Letting help in",
+   "note": "Choosing to stop carrying everything alone. People describe this in their own way: a faith, the fellowship, or the values they want to live by.",
+   "reflection": "What is one thing you could stop carrying alone today?"
+  },
+  {
+   "number": 4,
+   "theme": "Taking stock",
+   "note": "Writing an honest list of the patterns, fears and resentments that keep tripping you up, and your strengths as well. Many people do this with a sponsor so it stays fair and kind.",
+   "reflection": "What is one strength you can name about yourself today?"
+  },
+  {
+   "number": 5,
+   "theme": "Telling someone",
+   "note": "Sharing what you found with one person you trust. Saying it out loud often takes away some of its weight.",
+   "reflection": "Who is one safe person you could be real with this week?"
+  },
+  {
+   "number": 6,
+   "theme": "Willingness",
+   "note": "Becoming ready to let go of habits and reactions that hurt you or others. Willing is enough. Nobody expects perfect.",
+   "reflection": "Which old reaction would you most like to let go of?"
+  },
+  {
+   "number": 7,
+   "theme": "Humility",
+   "note": "Asking, in whatever way fits your beliefs, for help to change those patterns. It's a daily practice more than a one-off moment.",
+   "reflection": "Where could asking for help make today easier?"
+  },
+  {
+   "number": 8,
+   "theme": "Facing the past",
+   "note": "Writing down the people your drinking or using affected, and getting ready to put things right where you can.",
+   "reflection": "Is there someone you'd like to make peace with, when the time is right?"
+  },
+  {
+   "number": 9,
+   "theme": "Making things right",
+   "note": "Repairing harm directly where it's safe and won't cause new hurt. A sponsor or counsellor can help you think through when and how.",
+   "reflection": "What is one small way to be fair to someone today?"
+  },
+  {
+   "number": 10,
+   "theme": "Daily check-in",
+   "note": "A regular look back at the day: what went well, where old patterns crept in, and owning mistakes early instead of letting them pile up.",
+   "reflection": "What went well today, even if it was small?"
+  },
+  {
+   "number": 11,
+   "theme": "Quiet time",
+   "note": "Making room for reflection, prayer or meditation, whatever suits you, to stay grounded and clear about what matters.",
+   "reflection": "Could you find five quiet minutes for yourself today?"
+  },
+  {
+   "number": 12,
+   "theme": "Passing it on",
+   "note": "Living these ideas day to day and offering a hand to people who are where you once were.",
+   "reflection": "Who could you encourage today, even with a short message?"
+  }
+ ],
+ "twelveStepsCopy": {
+  "pageID": "page-twelve-steps",
+  "title": "The 12 Steps",
+  "summary": "Plain-language notes on what each step is about, with a link to AA's own wording on aa.org.",
+  "officialURL": "https://www.aa.org/the-twelve-steps",
+  "officialLinkTitle": "Read the 12 Steps on AA's website (opens aa.org)",
+  "independence": "HomeCircle is independent and not affiliated with or endorsed by Alcoholics Anonymous or Narcotics Anonymous.",
+  "intro": "Many AA and NA members work through the 12 Steps over time, often with a sponsor. These are HomeCircle's own plain-language reflections on the idea behind each Step, not the official wording of AA or NA. Every group and member finds their own way through them. You can read the official Steps on AA's website (aa.org)."
+ },
+ "books": [
+  {
+   "id": "aa-big-book",
+   "title": "Alcoholics Anonymous, known as the Big Book",
+   "detail": "Read it free online, chapter by chapter, or listen to the audio.",
+   "url": "https://www.aa.org/the-big-book",
+   "opens": "opens aa.org"
+  },
+  {
+   "id": "aa-twelve-steps",
+   "title": "The Twelve Steps",
+   "detail": "AA's own wording, on AA's website.",
+   "url": "https://www.aa.org/the-twelve-steps",
+   "opens": "opens aa.org"
+  },
+  {
+   "id": "na-free-literature",
+   "title": "NA booklets and pamphlets",
+   "detail": "Free informational pamphlets and booklets from NA World Services.",
+   "url": "https://na.org/literature/recovery-literature-in-english-usa/",
+   "opens": "opens na.org"
+  },
+  {
+   "id": "na-newcomer",
+   "title": "For the Newcomer",
+   "detail": "A short free NA pamphlet for people who are new.",
+   "url": "https://na.org/e-lit/ip-16-for-the-newcomer/",
+   "opens": "opens na.org"
+  },
+  {
+   "id": "na-audio",
+   "title": "NA Basic Text and Introductory Guide audio",
+   "detail": "Free streaming and downloadable audio from NA World Services.",
+   "url": "https://na.org/literature/basic-text-audio/",
+   "opens": "opens na.org"
+  }
+ ],
+ "booksCopy": {
+  "pageID": "page-recovery-books",
+  "title": "Recovery books (free to read)",
+  "summary": "Free reading and audio on the fellowships' own sites. Links only.",
+  "note": "HomeCircle doesn't copy or host this literature. Each link opens the fellowship's own free page in your browser."
+ },
+ "crisis": {
+  "accessibilityLabel": "Get help now",
+  "accessibilityHint": "Opens Call 911 and Call or text 988.",
+  "sheetTitle": "Get help now",
+  "sheetIntro": "If you or someone else is in danger, call 911. The 988 Suicide & Crisis Lifeline is there 24/7 by call, text or chat."
+ }
+}

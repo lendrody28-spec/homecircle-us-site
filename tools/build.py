@@ -1,0 +1,497 @@
+#!/usr/bin/env python3
+"""Builds the static HomeCircle website from tools/app-content.json (pulled from the
+iOS app source by extract_app_content.py) and events.json. Run from the repo root:
+  python3 tools/build.py
+"""
+import json, html, re, datetime, pathlib
+
+ROOT = pathlib.Path(__file__).resolve().parent.parent
+C = json.loads((ROOT / "tools" / "app-content.json").read_text())
+L = C["legal"]
+E = html.escape
+ITEMS = {i["id"]: i for i in C["items"]}
+ARTS, DRAW, HERO, BG = C["arts"], C["drawing"], C["hero"], C["backgrounds"]
+TODAY = datetime.date.today().isoformat()
+
+# Words that only make sense inside the iPhone app, changed for the web. Listed in the report.
+WEB_EDITS = {
+    "When it eases, jot what helped. That note stays on this phone.": "When it eases, jot down what helped.",
+    "Angry: is something unnamed? You can tell a sponsor or write it here, on this phone.": "Angry: is something unnamed? You can tell a sponsor or write it down.",
+    "This practice is off until you turn it on in Profile. If focusing inward brings up distress, stop.": "This practice stays hidden until you choose to show it. If focusing inward brings up distress, stop.",
+    "The out-breath is the long part. The hold is optional in spirit: skip this practice if holds are off in Health safety.": "The out-breath is the long part. Skip this practice if breath holds aren't right for you (see the safety note above).",
+    "Use it when the other counts are hidden by your health notes, or whenever you prefer it.": "Use it if breath holds aren't right for you, or whenever you prefer it.",
+    "Kai leads a short sit with the wave of an urge.": "A short guided sit with the wave of an urge.",
+    "Use the official site, or find a meeting in the app.": "Use the official site to find a meeting.",
+}
+def web(t):
+    t = WEB_EDITS.get(t, t)
+    return t[5:] if t.startswith("Kai: ") else t
+
+PAGES = [("index.html", "Home"), ("library.html", "Library"), ("twelve-steps.html", "12 Steps"),
+         ("meditations.html", "Breathing & practices"), ("help.html", "Help"), ("support.html", "Support")]
+PRIVACY = L["privacyURL"]
+TERMS = L["termsURL"]
+import hashlib as _h
+CSS_V = _h.sha1((ROOT / "assets" / "site.css").read_bytes()).hexdigest()[:8]
+BROWSER_ONLY = "Site features that save anything (health notes, the breath-hold setting and Kai chat) keep it only in this browser's local storage. Nothing is sent to HomeCircle."
+SLUG = {
+    "breath-box": "box-breathing", "breath-478": "4-7-8-breathing", "breath-46": "slow-out-breath",
+    "guide-urge": "urge-surfing", "guide-halt": "halt", "guide-24h": "24-hour-plan", "guide-54321": "grounding-5-4-3-2-1",
+    "guide-one": "one-thing-focus", "guide-stress": "stress-and-anxiety", "body-alcohol": "alcohol-and-the-body",
+    "body-stimulants": "stimulants-and-the-body", "body-opioids": "opioids-and-the-body", "body-cannabis": "cannabis-and-the-body",
+    "med-urge": "urge-surfing-meditation", "med-scan": "body-scan", "med-breath": "breathing-anchor", "med-walk": "mindful-walking",
+    "med-eat": "mindful-eating", "fell-aa": "alcoholics-anonymous", "fell-na": "narcotics-anonymous", "fell-ga": "gambling-support",
+    "fell-pa": "pornography-addiction-support",
+}
+SLUG["fell-ga"] = "gamblers-anonymous"
+def item_href(i, r=""):
+    return f"{r}library/{SLUG[i]}.html"
+BOOKS_HREF = "library/recovery-books.html"
+
+HEART = '<svg class="heart" aria-hidden="true" focusable="false" viewBox="0 0 24 24" width="20" height="20"><path fill="currentColor" d="M12 21.2l-1.4-1.3C5.4 15.3 2 12.2 2 8.4 2 5.3 4.4 3 7.4 3c1.7 0 3.4.8 4.6 2.1C13.2 3.8 14.9 3 16.6 3 19.6 3 22 5.3 22 8.4c0 3.8-3.4 6.9-8.6 11.5L12 21.2z"/></svg>'
+
+def tel(line, label=None):
+    """A call button for one HelpDirectory line, exactly as the app shows it."""
+    return f'<a class="btn ghost" href="tel:{line["dial"]}">{E(label or "Call " + line["displayNumber"])}</a>'
+
+def head(title, desc, r):
+    return f"""<!DOCTYPE html>
+<html lang="en-US" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>{E(title)}</title>
+<meta name="description" content="{E(desc)}">
+<link rel="icon" href="{r}favicon.png" type="image/png">
+<link rel="apple-touch-icon" href="{r}assets/logo-192.png">
+<link rel="stylesheet" href="{r}assets/site.css?v={CSS_V}">
+<script src="{r}assets/site.js" defer></script>
+<script src="{r}assets/kai-data.js" defer></script>
+<script src="{r}assets/kai-engine.js" defer></script>
+<script src="{r}assets/kai.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>"""
+
+def header(active, r):
+    lis = "".join(f'<li><a href="{r}{h}"{" aria-current=\"page\"" if h == active else ""}>{E(t)}</a></li>' for h, t in PAGES)
+    return f"""
+<header class="site-head"><div class="wrap">
+  <a class="brand" href="{r}index.html"><img src="{r}assets/logo-96.png" alt="" width="46" height="46"><span><b>HomeCircle</b><small>Support for your recovery journey</small></span></a>
+  <button class="btn ghost menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
+  <nav class="nav" id="site-nav" aria-label="Main"><ul>{lis}</ul></nav>
+</div></header>
+<a class="help-pill" id="help-pill" href="{r}help.html#now" aria-label="{E(C["crisis"]["accessibilityLabel"])}" aria-describedby="help-pill-hint" aria-controls="help-dialog">{HEART}<span aria-hidden="true">Help</span></a>
+<span class="sr-only" id="help-pill-hint">{E(C["crisis"]["accessibilityHint"])}</span>"""
+
+def kai_panel(r):
+    return f"""
+<div class="kai" id="kai" data-root="{r}" hidden>
+  <section class="kai-panel" id="kai-panel" role="dialog" aria-labelledby="kai-title" hidden>
+    <div class="kai-head">
+      <img src="{r}assets/kai.png" alt="" width="44" height="44">
+      <div><h2 id="kai-title">Kai</h2><p>Recovery Buddy</p></div>
+      <button class="btn ghost kai-small" type="button" id="kai-clear">Clear</button>
+      <button class="btn ghost kai-small" type="button" id="kai-min" aria-label="Minimize Kai">Minimize</button>
+    </div>
+    <div class="kai-confirm card" id="kai-confirm" role="alertdialog" aria-labelledby="kai-confirm-h" hidden>
+      <p id="kai-confirm-h"><strong>Clear this chat?</strong> This removes the messages in this browser. The Help button in the top corner still offers 911 and 988, and the Help page lists every line.</p>
+      <div class="btn-row"><button class="btn danger" type="button" data-yes>Clear chat</button><button class="btn ghost" type="button" data-no>Cancel</button></div>
+    </div>
+    <div class="kai-crisis" id="kai-crisis" hidden><a class="btn danger" href="tel:911">Call 911</a><a class="btn" href="tel:988">Call or text 988</a></div>
+    <div class="kai-scroll">
+      <p class="kai-note"><strong>Kai isn't AI, and isn't a person, counselor, doctor or sponsor.</strong> Replies are written in this browser from saved rules. No network and no AI service: nothing you type leaves your browser.</p>
+      <p class="kai-note">Kai is a recovery buddy, not a counselor. HomeCircle doesn't give medical advice. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</p>
+      <p class="kai-empty" id="kai-empty">Kai is here. Pick a chip, or write a line.</p>
+      <div class="kai-log" id="kai-log"></div>
+      <div class="kai-after" id="kai-after"></div>
+    </div>
+    <p class="sr-only" id="kai-live" aria-live="polite"></p>
+    <div class="kai-chips" id="kai-chips" role="group" aria-label="Quick replies"></div>
+    <form class="kai-form" id="kai-form" autocomplete="off">
+      <label class="sr-only" for="kai-input">Message Kai</label>
+      <textarea id="kai-input" rows="1" maxlength="500" placeholder="Write a line"></textarea>
+      <button class="btn" type="submit">Send</button>
+    </form>
+    <p class="kai-foot">The chat is kept only in this browser until you clear it. <button class="linkish" type="button" id="kai-move">Move Kai to the left</button></p>
+  </section>
+  <button class="kai-bubble" id="kai-bubble" type="button" aria-expanded="false" aria-controls="kai-panel" aria-label="Kai, Recovery Buddy. Not AI and not a person."><img src="{r}assets/kai.png" alt="" width="64" height="64" draggable="false"></button>
+</div>"""
+
+def footer(r):
+    s_ = C["crisis"]
+    return f"""
+<footer class="site-foot"><div class="wrap cols">
+  <div>
+    <h2>HomeCircle</h2>
+    <p>Support for your recovery journey. Free, with no accounts, no sign-in, no cookies, no ads, no trackers and no analytics.</p>
+    <p>{E(L["gpLine"])} {E(L["notMedicalDevice"])} In an emergency call <a href="tel:911">911</a>. Call or text <a href="tel:988">988</a> for the Suicide &amp; Crisis Lifeline.</p>
+    <p>{E(L["notAffiliated"])}</p>
+    <p>© 2026 {E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897.</p>
+  </div>
+  <div><h2>Explore</h2><ul>{"".join(f'<li><a href="{r}{h}">{E(t)}</a></li>' for h, t in PAGES)}</ul></div>
+  <div><h2>About</h2><ul>
+    <li><a href="{r}{PRIVACY}">Privacy Policy (draft)</a></li>
+    <li><a href="{r}{TERMS}">Terms of Use (draft)</a></li>
+    <li><a href="{r}support.html#website">About this website</a></li>
+    <li><a href="mailto:lendrody28@gmail.com">Contact</a></li>
+    <li><a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line)</li>
+  </ul><p class="small">{E(BROWSER_ONLY)}</p></div>
+</div></footer>
+<dialog class="help" id="help-dialog" aria-labelledby="help-title">
+  <div class="help-in">
+    <button class="close-x" type="button" data-close aria-label="Close">×</button>
+    <h2 id="help-title">{E(s_["sheetTitle"])}</h2>
+    <ul class="help-lines">
+      <li><a class="first" href="tel:911">Call 911<small>If a life is in danger. Police, fire or ambulance.</small></a></li>
+      <li><a class="second" href="tel:988">Call 988<small>Suicide &amp; Crisis Lifeline, 24/7. You can also text 988.</small></a></li>
+    </ul>
+    <p>{E(s_["sheetIntro"])}</p>
+    <a class="btn ghost wide" href="{r}help.html">More helplines on the Help page</a>
+    <button class="btn ghost wide plain" type="button" data-close>Close</button>
+  </div>
+</dialog>{kai_panel(r)}
+</body>
+</html>
+"""
+
+def page(path, active, title, desc, body):
+    r = "../" * path.count("/")
+    out = head(title, desc, r) + header(active, r) + f'\n<main id="main"><div class="wrap">\n{body}\n</div></main>' + footer(r)
+    (ROOT / path).parent.mkdir(parents=True, exist_ok=True)
+    (ROOT / path).write_text(out)
+
+def art_img(key, r, cls="", eager=False):
+    a = ARTS[key]
+    return f'<img src="{r}assets/art/{a["asset"]}.jpg" alt="{E(a["label"])}" width="1024" height="768"{"" if eager else " loading=\"lazy\""}{f" class=\"{cls}\"" if cls else ""}>'
+
+def tile(href, title, summary, tag, artkey, r, mins=None, hold=False):
+    pic = art_img(artkey, r) if artkey else f'<div class="icon-tile" aria-hidden="true">{E(title)}</div>'
+    m = f" · {mins} min" if mins and mins > 1 else ""
+    return f'<a class="card tile" href="{href}"{" data-breath-hold" if hold else ""}>{pic}<div class="tbody"><span class="tag">{E(tag)}{m}</span><h3>{E(title)}</h3><p>{E(summary)}</p></div></a>'
+
+def src_list(links, heading="Sources"):
+    if not links: return ""
+    lis = "".join(f'<li><a href="{E(l["url"])}" rel="noopener">{E(l["title"])}</a></li>' for l in links)
+    return f'<div class="sources"><h3>{heading}</h3><ul>{lis}</ul></div>'
+
+def stat_card(s):
+    return f'<div class="stat"><p>{E(s["text"])}</p><a href="{E(s["sourceURL"])}" rel="noopener">Source: {E(s["sourceTitle"])}</a></div>'
+
+def aside(r):
+    return f"""<aside><div class="card sage"><h3>Need help now?</h3><p>If you or someone else is in danger, call <a href="tel:911">911</a>. The 988 Suicide &amp; Crisis Lifeline is there 24/7: call or text <a href="tel:988">988</a>.</p><p class="small">{E(L["gpLine"])}</p><p><a href="{r}help.html">All helplines</a></p></div></aside>"""
+
+# ---------- home ----------
+def build_home():
+    r = ""
+    feats = [
+        ("meditations.html", "Breathe now", "An animated breathing guide: box, 4-7-8 or a slow out-breath.", "Breathing", "breatheIn"),
+        ("library.html", "Library", "Guides, breathing, meditation and links to US fellowships.", "Library", "oneThing"),
+        ("twelve-steps.html", "The 12 Steps", C["twelveStepsCopy"]["summary"], "12 Steps", "dayPlan"),
+        ("help.html", "Helplines", "911, 988 and US helplines for substance use, crisis and domestic violence.", "Help", "handOnChest"),
+    ]
+    tiles = "".join(tile(h, t, s, tg, a, r) for h, t, s, tg, a in feats)
+    body = f"""
+<section class="hero">
+  <div>
+    <p class="eyebrow">Free · United States · No sign-in</p>
+    <h1><span class="grad-text">Support for your recovery journey</span></h1>
+    <p class="lede">HomeCircle is a free recovery support website for people in the United States. Breathe along with a guide, read plain-language guides and the 12 Steps, find US fellowships, and chat with Kai.</p>
+    <div class="btn-row"><a class="btn" href="meditations.html">Breathe now</a><a class="btn ghost" href="library.html">Open the Library</a><a class="btn ghost" href="help.html">Get help</a></div>
+    <p class="small">Everything here is free. No accounts, no cookies, no ads, no trackers and no analytics. Anything you save stays in this browser.</p>
+  </div>
+  <div class="hero-art"><img src="assets/logo-192.png" alt="HomeCircle logo: three people with arms raised inside a circle" width="260" height="260"><p>You're not alone.</p></div>
+</section>
+<div class="notice"><strong>Need help right now?</strong> {E(L["notMedicalDevice"])} In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</div>
+<h2>What you can do here</h2>
+<div class="grid g4">{tiles}</div>
+<div class="card sage mt kai-intro"><img src="assets/kai.png" alt="" width="72" height="72"><div><h2 class="mt0">Meet Kai, your recovery buddy</h2><p>Kai is the round button in the corner of every page. Tell Kai how you're feeling and it can suggest a breathing practice, a short meditation or a walk, or point you to a helpline. Replies are written in this browser from saved rules. No network and no AI service. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Nothing you type leaves your browser.</p></div></div>
+<div class="card mt"><h2 class="mt0">Coming soon</h2><p>A US meeting finder, events and pages for families and partners are on the way. For now, find meetings through <a href="https://www.aa.org/find-aa" rel="noopener">aa.org</a> and <a href="https://na.org/meetingsearch/" rel="noopener">na.org</a>.</p></div>
+<div class="card sage mt"><h3>Support, not medical care</h3><p>{E(L["gpLine"])}</p><p>{E(L["notAffiliated"])}</p><p>HomeCircle never reproduces the Big Book or NA literature. We link to the free official pages instead.</p></div>"""
+    page("index.html", "index.html", "HomeCircle – Support for your recovery journey",
+         "HomeCircle is a free recovery support website for the US: breathing and meditation guides, the 12 Steps, US fellowships and helplines. No accounts.", body)
+
+# ---------- library hub ----------
+def build_library():
+    r = ""
+    sections = [
+        ("guide", "Guides", [i for i in C["items"] if i["category"] == "guide"]),
+        ("breathing", "Breathing", [i for i in C["items"] if i["category"] == "breathing"]),
+        ("meditation", "Meditation", [i for i in C["items"] if i["category"] == "meditation"]),
+        ("fellowship", "Fellowships", [i for i in C["items"] if i["category"] == "fellowship"]),
+    ]
+    chips = '<div class="filters" role="group" aria-label="Show category" hidden><button class="chip" type="button" data-filter="all" aria-pressed="true">All</button>' + "".join(f'<button class="chip" type="button" data-filter="{k}" aria-pressed="false">{t}</button>' for k, t, _ in sections) + "</div>"
+    out = []
+    for k, t, items in sections:
+        tiles = []
+        if k == "fellowship":
+            tiles.append(tile("twelve-steps.html", C["twelveStepsCopy"]["title"], C["twelveStepsCopy"]["summary"], "Fellowship", "dayPlan", r))
+            tiles.append(tile(BOOKS_HREF, C["booksCopy"]["title"], C["booksCopy"]["summary"], "Fellowship", None, r))
+        for i in items:
+            tiles.append(tile(item_href(i["id"]), i["title"], web(i["summary"]), i["tag"], HERO.get(i["id"]), r, i["minutes"], i.get("breathHold")))
+        out.append(f'<section data-cat="{k}" aria-labelledby="h-{k}"><h2 id="h-{k}">{t}</h2><div class="grid g4">{"".join(tiles)}</div></section>')
+    body = f"""<h1>Library</h1>
+<p class="lede">Resources and tools to support your growth: guides, breathing, meditation and fellowships, with links to the official US pages of AA, NA, Gamblers Anonymous, Al-Anon and Nar-Anon. Free to use here.</p>
+{chips}
+{HOLDS_NOTE}
+{"".join(out)}
+<p class="note small">{E(L["gpLine"])} {E(L["notAffiliated"])}</p>"""
+    page("library.html", "library.html", "Library – HomeCircle", "Free recovery guides, breathing, meditation and links to US fellowships.", body)
+
+HOLDS_NOTE = '<p class="note small" data-holds-hidden-note hidden>Breath holds are hidden in this browser, so box breathing and 4-7-8 breathing are left out. Use the setting on the breathing page to change this.</p>'
+
+def holds_toggle(r):
+    return f"""<div class="card sage holds" id="holds"><h2 class="mt0">Breath holds</h2>
+<p>{E(L["breathHold"])}</p>
+<label class="check"><input type="checkbox" data-health="hideHolds"> Hide breath holds in this browser</label>
+<p class="small" data-holds-status aria-live="polite"></p>
+<p class="small">This choice is kept only in this browser (local storage). </p></div>"""
+
+# ---------- breathing widget ----------
+def breath_widget(ids, r, default):
+    opts = "".join(f'<option value="{i}"{" selected" if i == default else ""}>{E(ITEMS[i]["title"])}</option>' for i in ids)
+    cues = "".join(f'<div data-cue-for="{i}"><p><strong>{E(ITEMS[i]["title"])}:</strong> {E(ITEMS[i]["summary"])}</p><ul>' + "".join(f'<li><strong>{E(s["title"])}</strong>: {E(s["cue"])}</li>' for s in ITEMS[i]["steps"]) + "</ul></div>" for i in ids)
+    choose = f'<div><label for="b-pattern">Pattern</label><select id="b-pattern" data-pattern>{opts}</select></div>' if len(ids) > 1 else ""
+    return f"""<div class="breath player" data-breath="{default}">
+  <div class="breath-stage" aria-hidden="true"><div class="breath-ring"></div><div class="breath-ball"></div><div class="breath-label dark"><b data-phase>Ready</b><span data-count></span></div></div>
+  <div>
+    <div class="grid g2">{choose}<div><label for="b-min">Length</label><select id="b-min" data-minutes><option value="1">1 min</option><option value="3" selected>3 min</option><option value="5">5 min</option></select></div></div>
+    <div class="btn-row"><button class="btn" type="button" data-start aria-pressed="false">Start</button><span class="status" data-left aria-hidden="true"></span></div>
+    <p class="sr-only small" data-live aria-live="polite"></p>
+    {cues}
+    <p class="small">Stop whenever you want. Press Stop or Esc to end.</p>
+  </div>
+</div>"""
+
+def safety_notes(i):
+    out = []
+    if i["kind"] in ("breathing", "meditation"):
+        out.append(f'<div class="note"><strong>Before you start.</strong> {E(L["beforeYouStart"])}</div>')
+    if i.get("breathHold"):
+        out.append(f'<div class="notice"><strong>Breath holds.</strong> {E(L["breathHold"])} The <a href="{item_href("breath-46", "../")}">slow out-breath</a> has no hold.</div>')
+    if i.get("traumaSensitive"):
+        out.append(f'<div class="note">{E(L["trauma"])}</div>')
+    return "".join(out)
+
+def player(i, r):
+    lis = []
+    for s in i["steps"]:
+        a = DRAW.get(s["drawing"])
+        img = art_img(a, r) if a else ""
+        secs = f' <span class="small">({s["seconds"]} seconds)</span>' if s["seconds"] else ""
+        lis.append(f'<li class="pstep" data-seconds="{s["seconds"]}"><div class="grid g2">{img}<div><h3>{E(s["title"])}{secs}</h3><p>{E(web(s["cue"]))}</p></div></div></li>')
+    return f"""<section class="player" data-player aria-labelledby="pl-h"><h2 id="pl-h" class="mt0">Step by step</h2>
+<div class="pcontrols" hidden><div class="progress" aria-hidden="true"><i></i></div><p class="status" data-pos aria-live="polite"></p></div>
+<ol class="steps-list">{"".join(lis)}</ol>
+<div class="pcontrols btn-row" hidden><button class="btn ghost" type="button" data-prev>Back</button><button class="btn" type="button" data-play>Start</button><button class="btn ghost" type="button" data-next>Next</button><span class="count" data-pcount aria-hidden="true"></span></div>
+</section>"""
+
+def build_item(i):
+    path = item_href(i["id"])
+    r = "../"
+    hero = HERO.get(i["id"])
+    parts = [f'<p class="crumbs"><a href="../library.html">Library</a> › {E(i["category"].title() if i["category"] != "guide" else "Guides")}</p>',
+             f'<h1>{E(i["title"])}</h1><p class="lede">{E(web(i["summary"]))}</p>']
+    main = []
+    if hero:
+        main.append(f'<figure class="figure">{art_img(hero, r, eager=True)}</figure>')
+    main.append(safety_notes(i))
+    paras = "".join(f"<p>{E(web(p))}</p>" for p in i["paragraphs"])
+    if i["id"] == "med-scan":
+        main.append(f'<div class="card sage" id="bodyscan-optin" hidden><h2 class="mt0">Body scan is off until you choose it</h2><p>It walks attention through the body. Skip it if that doesn\'t feel right. Nothing is saved.</p><button class="btn" type="button">Show the body scan</button></div><div id="bodyscan-content"><h2 tabindex="-1">About this practice</h2>{paras}')
+    else:
+        main.append(f'<div>{paras}</div>')
+    if i["kind"] == "breathing" and i.get("breathHold"):
+        main.append(f'<div class="card sage" data-holds-hidden-note hidden><h2 class="mt0">Breath holds are hidden in this browser</h2><p>You chose to hide breath holds, or saved a health note that rules them out. Try the <a href="{item_href("breath-46", r)}">slow out-breath</a> instead, which has no hold.</p><div class="btn-row"><button class="btn ghost" type="button" data-show-holds>Show this practice anyway</button></div></div>')
+        main.append(f'<div data-breath-hold><h2>Breathe along</h2>{breath_widget([i["id"]], r, i["id"])}</div>')
+        main.append(holds_toggle(r))
+    elif i["kind"] == "breathing":
+        main.append(f'<h2>Breathe along</h2>{breath_widget([i["id"]], r, i["id"])}')
+    elif i["steps"]:
+        main.append(player(i, r))
+    if i["id"] == "med-scan":
+        main.append("</div>")
+    bg = BG.get(i["id"])
+    if bg:
+        main.append(f'<div class="card"><h2 class="mt0">Where this comes from</h2><p>{E(bg["origin"])}</p><h2>Why it can help</h2><p>{E(bg["why"])}</p>{src_list(bg["sources"])}</div>')
+    links = [l for l in i["links"] if not l.get("inAppMeetings")]
+    if links:
+        main.append(src_list(links, "Official pages" if i["category"] == "fellowship" else "Read more"))
+    if i.get("phoneDial"):
+        main.append(f'<p><a class="btn ghost" href="tel:{i["phoneDial"]}">Call {E(i["phoneDisplay"])}</a></p>')
+    main.append(f'<p class="small">{E(L["gpLine"])}</p>')
+    body = "".join(parts) + f'<div class="layout"><div>{"".join(main)}</div>{aside(r)}</div>'
+    page(path, "library.html", f'{i["title"]} – HomeCircle Library', web(i["summary"]), body)
+
+def build_books():
+    r = "../"; B = C["booksCopy"]
+    cards = "".join(f'<a class="card tile" href="{E(b["url"])}" rel="noopener"><div class="tbody"><span class="tag">{E(b["opens"])}</span><h3>{E(b["title"])}</h3><p>{E(b["detail"])}</p></div></a>' for b in C["books"])
+    body = f"""<p class="crumbs"><a href="../library.html">Library</a> › Fellowships</p>
+<h1>{E(B["title"])}</h1><p class="lede">{E(B["note"])}</p>
+<div class="grid g3">{cards}</div>
+<div class="card mt"><h2 class="mt0">Where this comes from</h2><p>Every link goes to a free page that Alcoholics Anonymous World Services or Narcotics Anonymous World Services hosts on its own site.</p></div>
+<p class="small">{E(C["twelveStepsCopy"]["independence"])}</p>"""
+    page(BOOKS_HREF, "library.html", "Recovery books (free to read) – HomeCircle", B["summary"], body)
+
+def build_steps():
+    r = ""; T = C["twelveStepsCopy"]
+    cards = "".join(f'<div class="card"><p class="num">Step {s["number"]}</p><h3>{E(s["theme"])}</h3><p>{E(s["note"])}</p><p class="reflect">{E(s["reflection"])}</p></div>' for s in C["twelveSteps"])
+    body = f"""<div class="layout"><div>
+<h1>{E(T["title"])}</h1><p class="lede">{E(T["intro"])}</p>
+<div class="note"><strong>In HomeCircle's own plain-language words.</strong> These notes are HomeCircle's own summaries, not the official wording of AA or NA. For AA's own wording of the Twelve Steps, see <a href="{E(T["officialURL"])}" rel="noopener">aa.org</a>.</div>
+<div class="btn-row"><a class="btn" href="{E(T["officialURL"])}" rel="noopener">{E(T["officialLinkTitle"])}</a><a class="btn ghost" href="{BOOKS_HREF}">Free recovery books</a></div>
+<div class="twelve">{cards}</div>
+<div class="card mt"><h2 class="mt0">Where this comes from</h2><p>The 12 Steps were first written down by Alcoholics Anonymous in the 1930s. Narcotics Anonymous and other fellowships adapted them. The notes on this page are HomeCircle's own plain-language summaries, not the official wording of AA or NA.</p>{src_list([{"title": "The Twelve Steps (opens aa.org)", "url": T["officialURL"]}])}</div>
+<p class="small">{E(T["independence"])}</p>
+</div><aside><figure class="figure">{art_img("dayPlan", r, eager=True)}</figure><div class="card sage"><h3>Find a meeting</h3><p>Many people work the Steps with a sponsor they meet at meetings.</p><p>Find local meetings through <a href="https://www.aa.org/find-aa" rel="noopener">aa.org</a> or <a href="https://na.org/meetingsearch/" rel="noopener">na.org</a>. A HomeCircle US meeting finder is coming soon.</p></div></aside></div>"""
+    page("twelve-steps.html", "twelve-steps.html", "The 12 Steps – HomeCircle", T["summary"], body)
+
+def build_meditations():
+    r = ""
+    br = ["breath-46", "breath-box", "breath-478"]
+    meds = [i for i in C["items"] if i["category"] == "meditation"]
+    tiles_b = "".join(tile(item_href(i), ITEMS[i]["title"], ITEMS[i]["summary"], "Breathing", HERO.get(i), r, ITEMS[i]["minutes"], ITEMS[i]["breathHold"]) for i in br)
+    tiles_m = "".join(tile(item_href(i["id"]), i["title"], web(i["summary"]), "Meditation", HERO.get(i["id"]), r, i["minutes"]) for i in meds)
+    body = f"""<h1>Meditations and breathing</h1>
+<p class="lede">Breathe along with the circle: it grows as you breathe in and shrinks as you breathe out. Then try a short guided meditation.</p>
+<div class="note"><strong>Before you start.</strong> {E(L["beforeYouStart"])}</div>
+<div class="notice"><strong>Breath holds.</strong> {E(L["breathHold"])} The slow out-breath has no hold.</div>
+<h2>Breathing guide</h2>
+{breath_widget(br, r, "breath-46")}
+{holds_toggle(r)}
+<h2>Breathing practices</h2>{HOLDS_NOTE}<div class="grid g3">{tiles_b}</div>
+<h2>Meditations</h2><p>Each meditation is a few short steps. Eyes can stay open. Stop if you feel unwell.</p><div class="grid g3">{tiles_m}</div>
+<p class="note small">{E(L["trauma"])} {E(L["gpLine"])}</p>"""
+    page("meditations.html", "meditations.html", "Meditations and breathing – HomeCircle", "A free animated breathing guide (box, 4-7-8, slow out-breath) and short guided meditations.", body)
+
+# US helplines. Each checked against the service's own website on 4 Nov 2026; sources in SOURCES.md.
+# Keep to what the official page says. If something can't be verified, leave it out.
+# (name, one-liner, buttons [(href, label)], more-info lines, url)
+US_LINES = [
+    ("988 Suicide & Crisis Lifeline", "For anyone in emotional distress, a suicidal crisis, or a substance use crisis. You don't have to be suicidal to reach out.",
+     [("tel:988", "Call 988"), ("sms:988", "Text 988"), ("https://988lifeline.org/chat/", "Chat online")],
+     ["Free, confidential support from trained counselors across the US and its territories, 24/7.",
+      "Reasons to reach out include substance use, money worries, relationships, loneliness, and mental or physical illness.",
+      "Spanish: press 2, or text AYUDA to 988. Veterans: press 1, or text 838255. TTY: use your relay service or dial 711 then 988."],
+     "https://988lifeline.org/get-help/"),
+    ("Crisis Text Line", "For anyone who'd rather text: stress, anxiety, loneliness, self-harm or suicidal thoughts.",
+     [("sms:741741&body=HOME", "Text HOME to 741741")],
+     ["Free, confidential support from a trained volunteer Crisis Counselor, 24/7, by text.",
+      "Your first message can say anything. A counselor usually joins within five minutes, sometimes longer when busy.",
+      "Volunteers aren't medical professionals and can't give medical advice."],
+     "https://www.crisistextline.org/text-us/"),
+    ("SAMHSA's National Helpline", "For people and families facing substance use or mental health issues who want treatment and support options.",
+     [("tel:18006624357", "Call 1-800-662-4357")],
+     ["Free, confidential treatment referral and information, 24/7, 365 days a year, in English and Spanish.",
+      "Refers you to local treatment, support groups and community organizations. It doesn't provide counseling.",
+      "TTY: 1-800-487-4889. You can also text your 5-digit ZIP code to 435748 (HELP4U) for help near you (English only).",
+      "No insurance needed. They can refer you to state-funded or sliding-fee programs."],
+     "https://www.samhsa.gov/find-help/helplines/national-helpline"),
+    ("National Domestic Violence Hotline", "For anyone experiencing abuse in a relationship, or worried about someone who is.",
+     [("tel:18007997233", "Call 1-800-799-7233"), ("sms:88788&body=START", "Text START to 88788")],
+     ["Free, confidential, 24/7. Advocates offer support, crisis intervention, safety planning and local referrals.",
+      "Live chat is on their website. If you're in immediate danger, call 911.",
+      "If someone may check your phone or browser, their site has its own quick-exit button."],
+     "https://www.thehotline.org/"),
+    ("Gamblers Anonymous national hotline", "For people who think they might have a gambling problem.",
+     [("tel:8552225542", "Call 855-222-5542")],
+     ["A fellowship, not a professional service. Meetings are in person, online or by phone, with no dues or fees.",
+      "Hours for the hotline aren't published on the site."],
+     "https://gamblersanonymous.org/"),
+]
+
+def domain_of(url):
+    from urllib.parse import urlparse
+    d = urlparse(url).netloc
+    return d[4:] if d.startswith("www.") else d
+
+def more_info(lines, url, label=None):
+    items = "".join(f"<li>{E(x)}</li>" for x in lines)
+    return f'<details class="more"><summary>More info</summary><ul>{items}</ul><p><a href="{E(url)}" rel="noopener">{E(label or domain_of(url))}</a></p></details>'
+
+def more_card(name, one, btns, info, url):
+    b = "".join(f'<a class="btn ghost" href="{E(h)}"{" rel=\"noopener\"" if h.startswith("http") else ""}>{E(t)}</a>' for h, t in btns)
+    return f'<div class="card"><h3>{E(name)}</h3><p class="one">{E(one)}</p><div class="btn-row">{b}</div>{more_info(info, url)}</div>'
+
+def build_help():
+    lines = "".join(more_card(*l) for l in US_LINES)
+    fam = [
+        ("Al-Anon Family Groups", "For people worried about someone with a drinking problem. Alateen is for teens.", [("https://al-anon.org/", "Open al-anon.org")],
+         ["Al-Anon members are family and friends who learn from others who have faced similar problems.", "The site has self-assessment quizzes and meeting information."], "https://al-anon.org/"),
+        ("Nar-Anon Family Groups", "For family and friends affected by someone else's drug addiction. Narateen is for teens.", [("https://nar-anon.org/", "Open nar-anon.org")],
+         ["A Twelve-Step fellowship. The only requirement is a problem of addiction in a relative or friend. No dues or fees.", "World Service Office: (800) 477-6291, Monday to Friday 8am to 2pm Pacific. This is an office line, not a crisis line."], "https://nar-anon.org/contact/"),
+    ]
+    body = f"""<div id="now" class="btn-row"><a class="btn danger" href="tel:911">Call 911</a><a class="btn" href="tel:988">Call 988</a><a class="btn ghost" href="sms:988">Text 988</a></div>
+<h1>Get help</h1>
+<p class="lede">We're here to support you. Help is always available. You're not alone.</p>
+<p><strong>{E(L["notMedicalDevice"])}</strong></p>
+<div class="notice"><strong>Call 911 immediately</strong> if a life is in danger. <strong>Call or text 988</strong> any time, 24/7, for the Suicide &amp; Crisis Lifeline, including for a substance use crisis.</div>
+<h2>Helplines</h2>
+<div class="grid g3">{lines}</div>
+<p class="small">These are independent services. HomeCircle is not affiliated with them.</p>
+<h2 id="family">Family &amp; friends</h2>
+<div class="note">This is not medical advice. For any major concern, see a doctor. If a life is in danger, call 911.</div>
+<div class="grid g2">{"".join(more_card(*f) for f in fam)}</div>
+<h2>Self-help kit</h2>
+<p>Tools to support you in the moment.</p>
+<div class="grid g4">{tile(item_href("guide-urge"), "Urge plan", ITEMS["guide-urge"]["summary"], "Guide", "urgeWave", "")}{tile(item_href("guide-halt"), "HALT", ITEMS["guide-halt"]["summary"], "Guide", "haltPause", "")}{tile(item_href("guide-24h"), "24-hour plan", ITEMS["guide-24h"]["summary"], "Guide", "dayPlan", "")}{tile("meditations.html", "Breathe now", "An animated breathing guide.", "Breathing", "breatheOut", "")}</div>
+<div class="grid g2 mt">
+<div class="card"><h2 class="mt0">Keep your details private</h2><p>{E(L["privateDetails"])}</p></div>
+<div class="card"><h2 class="mt0">Code of conduct</h2><p>{E(L["rulesBody"])}</p></div>
+</div>
+<div class="emergency-card mt"><h2 class="mt0">Call 911 immediately</h2><p>If a life is in danger, call 911 or go to your nearest emergency room.</p><a class="btn" href="tel:911">Call 911</a></div>
+<p class="small">Hours and numbers can change, so check the service's own website. Checked 4 November 2026.</p>
+<p class="small">{E(L["gpLine"])}</p>"""
+    page("help.html", "help.html", "Get help – HomeCircle", "US helplines: 911, 988 Suicide & Crisis Lifeline, Crisis Text Line, SAMHSA's National Helpline, National Domestic Violence Hotline, and family support.", body)
+
+def build_support():
+    body = f"""<h1>HomeCircle Support</h1>
+<p class="lede">Help with the HomeCircle website, and how to contact us.</p>
+<div class="notice"><strong>In crisis or need help now?</strong> HomeCircle is not an emergency service. Call <a href="tel:911">911</a> in an emergency, or call or text <a href="tel:988">988</a>. <a href="help.html">More helplines</a>.</div>
+<h2>Contact us</h2>
+<div class="card"><p>Email: <a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a></p><p>Please include your device and a short description of the issue. This email is not a crisis line.</p></div>
+<h2 id="website">About this website</h2>
+<h3>Do I need an account?</h3><p>No. The website has no accounts and no sign-in, and everything on it is free.</p>
+<h3>Does the website collect my data?</h3><p>No. There are no cookies, no ads, no trackers, no analytics and no third-party scripts or fonts. Nothing you type or save is sent to HomeCircle.</p>
+<h3>What does the website save, and where?</h3><p>Only what you choose to save: health safety answers, the breath-hold setting, Kai's chat and where you put Kai on the screen. These stay in this browser's local storage, on this device. Private browsing or clearing your browser data removes them.</p>
+<h3>Is Kai on the website?</h3><p>Yes. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Replies are put together in your browser from saved rules. Kai makes no network calls. Kai looks for some words that may mean you're in danger and then shows 911 and 988, but it can miss things. If you're unsafe, call 911 or call or text 988 yourself. You can minimize Kai, drag it to the other side, or clear the chat.</p>
+<h2>Privacy and terms</h2><p>Read the <a href="{PRIVACY}">Privacy Policy</a> and <a href="{TERMS}">Terms of Use</a>. {E(BROWSER_ONLY)}</p>
+<h2>Who runs HomeCircle</h2><p>{E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897. Email: <a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line).</p>"""
+    page("support.html", "support.html", "Support – HomeCircle", "Get help with the HomeCircle website: contact, FAQs and crisis support.", body)
+
+def build_legal():
+    draft = '<div class="notice"><strong>DRAFT, pending legal review (Hale).</strong> This page is a placeholder and is not yet in effect.</div>'
+    page("privacy.html", "", "Privacy Policy (DRAFT) – HomeCircle", "HomeCircle US privacy policy, draft.", f"""<h1>Privacy Policy</h1>{draft}
+<p>HomeCircle's US website has no accounts, cookies, ads, trackers or analytics. {E(BROWSER_ONLY)}</p>
+<p>The site is hosted by a web host that, like any host, receives normal web requests.</p>
+<p>Operator: {E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897. Contact: <a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a>.</p>""")
+    page("terms.html", "", "Terms of Use (DRAFT) – HomeCircle", "HomeCircle US terms of use, draft.", f"""<h1>Terms of Use</h1>{draft}
+<p>{E(L["notMedicalDevice"])} {E(L["notSubstitute"])} {E(L["gpLine"])}</p>
+<p>HomeCircle is not an emergency service. In an emergency call 911. For crisis support call or text 988.</p>
+<p>{E(L["notAffiliated"])}</p>
+<p>Operator: {E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897.</p>""")
+
+# ---------- Kai data for the in-browser engine ----------
+def build_kai_data():
+    import json as _j
+    pages = {i["id"]: f"library/{SLUG[i['id']]}.html" for i in C["items"] if i["id"] in SLUG}
+    pages.update({"page-twelve-steps": "twelve-steps.html", "page-recovery-books": BOOKS_HREF})
+    data = {
+        "items": {i["id"]: {"title": i["title"], "kind": i["kind"]} for i in C["items"]},
+        "steps": {str(t["number"]): {"theme": t["theme"], "note": t["note"]} for t in C["twelveSteps"]},
+        "stages": [{"days": st["days"], "kaiLine": st["kaiLine"], "statID": st.get("statID")} for st in C["stages"]],
+        "stats": {st["id"]: {"text": st["text"], "sourceTitle": st["sourceTitle"], "sourceURL": st["sourceURL"]} for st in C["stats"]},
+        "safetyLine": "If you feel very unwell, have chest pain, trouble breathing, a seizure, confusion, heavy vomiting, or you collapse, call 911.",
+        "privateDetails": L["privateDetails"],
+        "pages": pages,
+    }
+    (ROOT / "assets" / "kai-data.js").write_text("/* Generated by tools/build.py from the app's content. Do not edit. */\nself.HCKaiData = " + _j.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n")
+
+build_kai_data()
+build_home(); build_library(); build_steps(); build_meditations(); build_help(); build_support(); build_legal()
+for i in C["items"]:
+    build_item(i)
+build_books()
+print("built")
