@@ -4,6 +4,7 @@ P = pathlib.Path(__file__).parent / "app-content.json"
 C = json.loads(P.read_text())
 keep_steps = (C["twelveSteps"], C["twelveStepsCopy"])  # 12 Steps wording stays exactly as AU
 SUBS = [(r"counsell", "counsel"), (r"Counsell", "Counsel"), (r"talk to your GP or a doctor", "talk to your doctor"),
+# 4 Nov 2026: further US spelling fixes (counselor, practicing, color, judgment, sidewalk) applied directly to app-content.json.
         (r"\byour GP\b", "your doctor"), (r"\ba GP\b", "a doctor"), (r"call 000", "call 911"), (r"[Mm]inimis", lambda m: m.group(0)[0] + "inimiz")]
 def fix(x):
     if isinstance(x, str):

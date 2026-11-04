@@ -333,7 +333,7 @@
    "kind": "reading",
    "paragraphs": [
     "Pick one small task. Dishes, a shower, a walk to the end of the street.",
-    "When your mind leaves, come back to the task. You are practising returning, not performing."
+    "When your mind leaves, come back to the task. You are practicing returning, not performing."
    ],
    "steps": [],
    "links": [],
@@ -556,7 +556,7 @@
    "optInBodyScan": false,
    "kind": "meditation",
    "paragraphs": [
-    "Eyes open the whole time. Walk somewhere safe: a hallway, a backyard or a quiet footpath. Stop any time."
+    "Eyes open the whole time. Walk somewhere safe: a hallway, a backyard or a quiet sidewalk. Stop any time."
    ],
    "steps": [
     {
@@ -619,7 +619,7 @@
     {
      "id": "me1",
      "title": "Look",
-     "cue": "Kai: look at the food for a moment. Colour, shape, texture.",
+     "cue": "Kai: look at the food for a moment. Color, shape, texture.",
      "seconds": 30,
      "drawing": "ground-see"
     },
@@ -885,8 +885,8 @@
    ]
   },
   "guide-one": {
-   "origin": "This is everyday mindfulness: giving full attention to one ordinary task. Mindfulness has its roots in Buddhist meditation, and practising it during daily jobs like washing up is widely taught today.",
-   "why": "Each time your mind wanders and you bring it back to the task, you are practising. It gives a restless mind something gentle to do and can ease stress.",
+   "origin": "This is everyday mindfulness: giving full attention to one ordinary task. Mindfulness has its roots in Buddhist meditation, and practicing it during daily jobs like washing up is widely taught today.",
+   "why": "Each time your mind wanders and you bring it back to the task, you are practicing. It gives a restless mind something gentle to do and can ease stress.",
    "sources": []
   },
   "med-scan": {
@@ -911,7 +911,7 @@
   },
   "med-walk": {
    "origin": "Walking meditation is an old Buddhist practice. The Zen teacher Thich Nhat Hanh and his Plum Village community made it widely known in the West: walking slowly, feeling each step on the ground, and letting the breath and steps move together.",
-   "why": "It gives restless energy somewhere to go while you practise noticing. It is a way to steady yourself, not a treatment.",
+   "why": "It gives restless energy somewhere to go while you practice noticing. It is a way to steady yourself, not a treatment.",
    "sources": [
     {
      "title": "Walking meditation (Plum Village)",
@@ -1065,7 +1065,7 @@
   {
    "number": 1,
    "theme": "Honesty",
-   "note": "Getting honest that drinking or using has been calling the shots, and that willpower on its own hasn't fixed it. It's a starting point, not a judgement of your worth.",
+   "note": "Getting honest that drinking or using has been calling the shots, and that willpower on its own hasn't fixed it. It's a starting point, not a judgment of your worth.",
    "reflection": "Where could a little more honesty make today lighter?"
   },
   {
@@ -1113,7 +1113,7 @@
   {
    "number": 9,
    "theme": "Making things right",
-   "note": "Repairing harm directly where it's safe and won't cause new hurt. A sponsor or counsellor can help you think through when and how.",
+   "note": "Repairing harm directly where it's safe and won't cause new hurt. A sponsor or counselor can help you think through when and how.",
    "reflection": "What is one small way to be fair to someone today?"
   },
   {
