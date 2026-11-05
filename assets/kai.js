@@ -20,6 +20,18 @@
     moveBtn = document.getElementById("kai-move"), confirmBox = document.getElementById("kai-confirm"),
     after = document.getElementById("kai-after");
   root.hidden = false;
+  (function () {   /* read aloud for the first-open line, and the voice choice under the start buttons (only if readaloud.js is on this site) */
+    var RA = window.HCReadAloud, fo = document.getElementById("kai-firstopen");
+    if (!RA || !RA.button) return;
+    /* below the start buttons, inside the scroll area, so the first-open line, start buttons and pinned bar keep their place */
+    var st = document.getElementById("kai-start");
+    if (fo && st) {
+      var row = document.createElement("div"); row.className = "kai-ra ra-skip";
+      row.appendChild(RA.button("Read Kai's intro line aloud", function () { return [RA.textOf(fo)]; }, true));
+      row.appendChild(RA.voicePicker());
+      st.parentNode.insertBefore(row, st.nextSibling);
+    }
+  })();
   var fallback = document.getElementById("kai-fallback"); if (fallback) fallback.hidden = true;
   /* Buttons-first. "I'm not safe" is wired first, with no phrase matching, delay or animation. */
   var notSafeBtn = document.getElementById("kai-notsafe");
@@ -60,6 +72,10 @@
     }
     if (latest && latest.extra) latest.extra.forEach(function (x) { var a = el("a", "kai-link", x.label); a.href = /^(tel|sms|https?):/.test(x.href) ? x.href : base + x.href; after.appendChild(a); });
     if (latest && latest.tels) latest.tels.forEach(function (x) { var a = el("a", "btn kai-tel" + (x.kind === "emergency" ? " danger" : ""), x.label); a.href = x.href; if (x.aria) a.setAttribute("aria-label", x.aria); after.appendChild(a); });
+    /* Read aloud (optional, assets/readaloud.js): goes AFTER the reply's call buttons, so it never comes first. */
+    var RA = window.HCReadAloud, lastKai = null;
+    state.messages.forEach(function (m) { if (m.kai) lastKai = m.text; });
+    if (RA && RA.button && lastKai) after.appendChild(RA.button("Read Kai's reply aloud", function () { return [lastKai]; }, true));
     if (latest && latest.stat && /^https:\/\//.test(latest.stat.sourceURL)) {
       var s = el("a", "kai-source", "Source: " + latest.stat.sourceTitle);
       s.href = latest.stat.sourceURL; s.rel = "noopener";
