@@ -80,7 +80,10 @@
       if (w === "not" && joined[joined.length - 1] === "can") joined[joined.length - 1] = "cant"; else joined.push(w);
     });
     // WEB: "triple zero", "triple-0", "triple 0", "triple oh" all read as 000.
-    return joined.join(" ").replace(/\btriple (zero|0|oh|o)\b/g, "000");
+    return joined.join(" ").replace(/\btriple (zero|0|oh|o)\b/g, "000")
+      // WEB (Finn signoff rows): Australian "my old man" / "my old lady" = dad / mum.
+      .replace(/\b(my|our|his|her|your|their|the) old (man|fella)\b/g, "$1 dad")
+      .replace(/\b(my|our|his|her|your|their|the) old (lady|woman|girl)\b/g, "$1 mum");
   }
 
   /* ---------- Masks (known everyday phrases) ---------- */
@@ -103,7 +106,7 @@
     /\b(drug|drugs|police|cocaine|meth|ice|heroin|cannabis|weed|record|border|customs|asset|cash|gun|guns|weapons|firearms) seizures?\b/g,
     /\bseizures? of (the |a |an |some |\w+ ){0,3}(drugs|cash|guns|weapons|firearms|money|assets|goods|property|shipment|shipments|cocaine|meth|ice|heroin|cannabis|weed|contraband|cars?|vehicles?|phones?|documents)\b/g,
     // WEB: beating someone at a game or sport ("beat his kids at chess", "beats me at Uno").
-    /\b(beat|beats|beating|beaten|thrashed|thrashes|smashed|smashes|hammered|whooped|whupped|destroyed|kicked|kicks|kicking) (\w+ ){1,4}(at|in) (a |the |his |her |their |our |my )?(chess|uno|cards|card games?|games?|matches|match|monopoly|scrabble|checkers|draughts|poker|tennis|footy|football|soccer|basketball|netball|cricket|golf|ping pong|table tennis|pool|darts|mario kart|fifa|fortnite|minecraft|video games?|board games?|trivia|quiz|race|races|arm wrestling|wrestling match|sudoku|wordle|mahjong|dominoes|bingo|connect four|jenga)\b/g,
+    /\b(beat|beats|beating|beaten|flogged|flogs|flogging|flog|belted|belts|belting|thrashed|thrashes|smashed|smashes|hammered|whooped|whupped|destroyed|kicked|kicks|kicking) (\w+ ){1,4}(at|in) (a |the |his |her |their |our |my )?(chess|uno|cards|card games?|games?|matches|match|monopoly|scrabble|checkers|draughts|poker|tennis|footy|football|soccer|basketball|netball|cricket|golf|ping pong|table tennis|pool|darts|mario kart|fifa|fortnite|minecraft|video games?|board games?|trivia|quiz|race|races|arm wrestling|wrestling match|sudoku|wordle|mahjong|dominoes|bingo|connect four|jenga)\b/g,
     // WEB (Finn adv rows): blue lips from something cold, or from food or drink colouring, is not a crisis.
     /\b(lips|lip|tongue|mouth|fingers|hands|nails|face) (is |are |were |was |went |turned |gone |going |have gone |have turned |all )*(blue|purple) (from|because of|after|cause of|coz of|thanks to) (the |an? |my |some |eating |drinking |that |this |swimming in )*(icy ?poles?|ice ?blocks?|ice blocks?|ice ?creams?|ice|popsicles?|slushies|slushie|slushy|slurpees?|snow ?cones?|lollies|lolly|lollipops?|candy|sweets|blueberries|berries|cordial|drink|drinks|gatorade|powerade|food colou?ring|dye|cold|freezing|the cold|snow|swimming|pool|water|ocean|beach|surf|frozen \w+)\b/g
   ];
@@ -127,10 +130,10 @@
   var fillers = "( (really|just|actually|fucking|seriously|probably|definitely))?";
   var family = "(partner|husband|wife|boyfriend|girlfriend|fiance|fiancee|ex|dad|mum|brother|sister|son|daughter|uncle|aunt|he|she|hes|shes)";
   var familyGap = "(?: (?:is|was|keeps|kept|keep|has|have|had|just|always|often|sometimes|still|again|really|been|will|would|wont stop|tried to|trying to|going to|threatened to|threatens to|threatening to|said|says|he|she|they|hes|shes|to|and|also|then|even)){0,6}";
-  var familyVerbs = "(hits|hit|hitting|beats|beat|beating|bashes|bashed|bashing|chokes|choked|choking|strangles|strangled|strangling|punches|punched|punching|kicks|kicked|kicking|slaps|slapped|slapping|attacks|attacked|abuses|abused|abusing|raped|rapes|hurts|hurt|hurting|kill|stabbed|stab|threatens|threatened|threatening|stalking|stalks)";
+  var familyVerbs = "(flogs|flogged|flogging|lays into|laid into|laying into|belts|belted|belting|hits|hit|hitting|beats|beat|beating|bashes|bashed|bashing|chokes|choked|choking|strangles|strangled|strangling|punches|punched|punching|kicks|kicked|kicking|slaps|slapped|slapping|attacks|attacked|abuses|abused|abusing|raped|rapes|hurts|hurt|hurting|kill|stabbed|stab|threatens|threatened|threatening|stalking|stalks)";
   var fvNouns = "(partner|husband|wife|boyfriend|girlfriend|fiance|fiancee|ex|dad|mum|stepdad|stepmum|brother|sister|son|daughter|uncle|aunt|auntie|aunty|grandad|grandpa|grandma|nan|nanna|pop|cousin|housemate|flatmate|carer|kids?|children|child|baby|babies|bub|bubs|toddler|family|parents?|stepkids?|stepson|stepdaughter|stepbrother|stepsister|siblings?|nephew|niece)";
   var fvSubject = "(he|she|hes|shes|they|theyre|((my|our|the|mums|dads|my mums|my dads|her|his) )?((little|big|older|younger|baby|new|old|step) )?" + fvNouns + ")";
-  var fvVerbs = "(hits|hit|hitting|beats|beat|beating|beaten|bashes|bashed|bashing|hurts|hurt|hurting|punches|punched|punching|kicks|kicked|kicking|chokes|choked|choking|strangles|strangled|strangling|slaps|slapped|slapping|attacks|attacked|attacking|abuses|abused|abusing|smacks|smacked|smacking|belts|belted|belting|throttles|throttled)";
+  var fvVerbs = "(flogs|flogged|flogging|lays into|laid into|laying into|hits|hit|hitting|beats|beat|beating|beaten|bashes|bashed|bashing|hurts|hurt|hurting|punches|punched|punching|kicks|kicked|kicking|chokes|choked|choking|strangles|strangled|strangling|slaps|slapped|slapping|attacks|attacked|attacking|abuses|abused|abusing|smacks|smacked|smacking|belts|belted|belting|throttles|throttled)";
   var fvObject = "(me|him|her|them|us|((my|his|her|their|our|the|your) )?((little|big|older|younger|baby|new|step) )?" + fvNouns + ")";
   var household = "\\b((my|our|mums|dads|her|his) (\\w+ )?" + fvNouns + "|stepdad|stepmum|husband|wife|partner|boyfriend|girlfriend|mum|dad)\\b";
   var assaultPatterns = [
@@ -174,6 +177,9 @@
   ];
 
   var medicalPatterns = [
+    // WEB (Finn signoff rows): overdose signs on a person: gone grey, pale, blue, floppy, limp.
+    /\b(hes|shes|he is|she is|theyre|they are|he has|she has|theyve|baby is|bub is|my \w+ is|my \w+s|mates|friends|someone is|body is|body has)( (gone|going|turned|turning|gone all|looking|looks|really|so|all|very|completely))* (grey|gray|pale|floppy|limp|blue|unresponsive)\b(?!.*\b(hair|hairs|beard|roots|shirt|jumper|car|eyes)\b)/,
+    /\b(floppy|limp) and (grey|gray|pale|blue|not|wont|unresponsive|cold)\b/,
     /\b(not|isnt|is not|stopped|aint|arent|wasnt) breathing\b/,
     /\bcant breathe\b/,
     /\b(unconscious|unresponsive)\b/,
@@ -210,6 +216,17 @@
   ];
 
   var selfHarmPatterns = [
+    // WEB (Finn signoff rows): methods. Intent words needed, so "stepped in front of the camera" and "catching the train" stay clean.
+    /\b(going to|want to|wanted to|will|might|gonna|about to|ready to|planning to|plan to|thinking about|thinking of|feel like|tempted to|urge to|could just|should just|i will just)( just)? (step|stepping|jump|jumping|throw myself|walk|walking|lie down|lying down|lay down|run|running) (out )?in front of (a |the |an |that |this |oncoming )?(next |\w+ )?(train|trains|bus|truck|tram|car|lorry|semi|traffic)\b/,
+    /\b(going to|want to|wanted to|will|might|gonna|about to|ready to|planning to|plan to|thinking about|thinking of|feel like|tempted to|urge to)( just)? (drive|driving|crash|crashing|wrap|wrapping|plough|ploughing|plow|steer|steering|run|running|put|putting|smash|smashing) ((my |the )?(car|ute|truck|van|bike|motorbike)( \w+){0,2} )?(into|off|over) (a |the |that |this )?(tree|wall|pole|power pole|pylon|bridge|cliff|pier|river|dam|truck|oncoming traffic|barrier|edge)\b/,
+    /\b(on|up on|at|onto) (the |a |this |my |that )?(roof|rooftop|ledge|balcony|bridge|cliff|top floor|railing)\b.*\b(going to|want to|about to|gonna|will|ready to|might|plan to|planning to) jump\b/,
+    /\b(stockpiled|stockpiling|stockpile|saving up|saved up|hoarding|hoarded|hoard|stashing|stashed|been saving|been collecting|collecting) (all |up )?(my |the |some |a lot of |heaps of )?(meds|medication|medications|pills|tablets|painkillers|sleeping pills|benzos|oxys?|endone|panadol|scripts)\b/,
+    /\b(take|taking|took|swallow|swallowing|swallowed|down|neck|necking) (them|all of them|the lot|everything|all my \w+( \w+)?|my \w+( \w+)?)( all)? at once\b/,
+    // WEB (Finn signoff rows): a note left for family; errands ("to buy milk", "for the plumber") stay clean.
+    /\b(left|leave|leaving|wrote|written|writing|write) (a |my |some )?(note|notes|letter|letters)( \w+){0,2} (for|to) (my |the )?(family|kids|children|partner|wife|husband|mum|dad|parents|son|daughter|girlfriend|boyfriend|loved ones|everyone)\b(?! (to (buy|get|pick|grab|call|feed|take|put|do|remember|say|let)|about|saying (i|where|when)|on the))/,
+    // WEB (Finn signoff rows): better off if I wasn't here / they'd all be better off.
+    /\bbetter off (if|when|once|after) i ((wasnt|werent|was not|were not|wont be|will not be)( here| around| alive| born| in the picture)?|(was|were|am) (gone|dead|not here|not around|not alive|never born|out of the picture)|(died|die|disappeared|didnt exist|did not exist|never existed|killed myself|left this world|ended it))\b/,
+    /\b(theyd|they would|everyone would|everyone d|they will|everyone will|my family would|my kids would|the world would)( all)? be better off\b(?! (with|taking|using|going|buying|staying|waiting|asking|at|in|on|if they|getting|having))/,
     /\b(kill|killing|killed) (myself|my self)\b/,
     /\bkms\b/,
     /\b(end|ending|take|taking) my (own )?life\b(?! back)/,
