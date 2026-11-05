@@ -91,12 +91,13 @@ def kai_copy():
     """Buttons-first panel strings live in one block in assets/kai-engine.js (HALE-REVIEW-START/END)."""
     import json as _json
     js = (ROOT / "assets/kai-engine.js").read_text()
-    m = re.search(r"HALE-REVIEW-START.*?\*/\s*var BUTTON_COPY = (\{.*?\});\s*/\* ===== HALE-REVIEW-END", js, re.S)
+    m = re.search(r"HALE-REVIEW-START.*?\*/\s*var BUTTON_COPY = (\{.*?\});\s*(?:/\* footLine:.*?\*/\s*)?/\* ===== HALE-REVIEW-END", js, re.S)
     return _json.loads(m.group(1))
 
 def kai_tels(c):
-    return "".join(f'<a class="btn{" danger" if t["kind"] == "emergency" else ""}" href="{t["href"]}">{E(t["label"])}</a>' for t in c["tels"])
+    return "".join(f'<a class="btn{" danger" if t["kind"] == "emergency" else ""}" href="{t["href"]}"{(' aria-label="' + E(t["aria"]) + '"') if t.get("aria") else ""}>{E(t["label"])}</a>' for t in c["tels"])
 
+# kai-foot uses BUTTON_COPY.footLine. Its "isn't AI" claim is only valid while web Kai is rule-based and runs in the browser.
 def kai_panel(r):
     c = kai_copy()
     return f"""
@@ -117,7 +118,7 @@ def kai_panel(r):
       <p class="kai-firstopen" id="kai-firstopen">{E(c["firstOpen"])}</p>
       <div class="kai-start" id="kai-start" role="group" aria-labelledby="kai-start-h"><h3 id="kai-start-h">{E(c["heading"])}</h3><button class="kai-big" type="button" data-kai-button="struggling">{E(c["struggling"]["label"])}</button><button class="kai-big" type="button" data-kai-button="cravings">{E(c["cravings"]["label"])}</button><button class="kai-big" type="button" data-kai-button="meeting">{E(c["meeting"]["label"])}</button><p class="kai-typehint">{E(c["typeHint"])}</p></div>
       <p class="kai-note"><strong>Kai isn't AI, and isn't a person, counselor, doctor or sponsor.</strong> Replies are written in this browser from saved rules. No network and no AI service: nothing you type leaves your browser.</p>
-      <p class="kai-note">Kai is a recovery buddy, not a counselor. HomeCircle doesn't give medical advice. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>. Kai looks for some words that may mean you're in danger, but it can miss things. If you're unsafe, call <a href="tel:911">911</a> or call or text <a href="tel:988">988</a> yourself.</p>
+      <p class="kai-note">Kai is a recovery buddy, not a counselor. HomeCircle doesn't give medical advice. In an emergency call 911. For crisis support call or text 988. If you type something that may mean you're in danger, Kai tries to show help numbers, but it can miss things. If you're not safe, tap I'm not safe or call 911.</p>
       <p class="kai-empty" id="kai-empty">Kai is here. Pick a chip, or write a line.</p>
       <div class="kai-log" id="kai-log"></div>
       <div class="kai-after" id="kai-after"></div>
@@ -129,7 +130,7 @@ def kai_panel(r):
       <textarea id="kai-input" rows="1" maxlength="500" placeholder="Write a line"></textarea>
       <button class="btn" type="submit">Send</button>
     </form>
-    <p class="kai-foot">The chat is kept only in this browser until you clear it. <button class="linkish" type="button" id="kai-move">Move Kai to the left</button></p>
+    <p class="kai-foot">{E(c["footLine"])} <button class="linkish" type="button" id="kai-move">Move Kai to the left</button></p>
   </section>
   <button class="kai-bubble" id="kai-bubble" type="button" aria-expanded="false" aria-controls="kai-panel" aria-label="Kai, Recovery Buddy. Not AI and not a person."><img src="{r}assets/kai.png" alt="" width="64" height="64" draggable="false"></button>
 </div>
@@ -548,7 +549,7 @@ def build_support():
 <h3>Do I need an account?</h3><p>No. The website has no accounts and no sign-in, and everything on it is free.</p>
 <h3>Does the website collect my data?</h3><p>No. There are no cookies, no ads, no trackers, no analytics and no third-party scripts or fonts. Nothing you type or save is sent to HomeCircle.</p>
 <h3>What does the website save, and where?</h3><p>Only what you choose to save: the breath-hold setting, Kai's chat and where you put Kai on the screen. These stay in this browser's local storage, on this device. Private browsing or clearing your browser data removes them.</p>
-<h3>Is Kai on the website?</h3><p>Yes. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Replies are put together in your browser from saved rules. Kai makes no network calls. Kai looks for some words that may mean you're in danger and then shows 911 and 988, but it can miss things. If you're unsafe, call 911 or call or text 988 yourself. You can minimize Kai, drag it to the other side, or clear the chat.</p>
+<h3>Is Kai on the website?</h3><p>Yes. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Replies are put together in your browser from saved rules. Kai makes no network calls. If you type something that may mean you're in danger, Kai tries to show help numbers, but it can miss things. If you're not safe, tap I'm not safe or call 911. You can minimize Kai, drag it to the other side, or clear the chat.</p>
 <h2>Privacy and terms</h2><p>Read the <a href="{PRIVACY}">Privacy Policy</a> and <a href="{TERMS}">Terms of Use</a>. {E(BROWSER_ONLY)}</p>"""
     page("support.html", "support.html", "Support – HomeCircle", "Get help with the HomeCircle website: contact, FAQs and crisis support.", body)
 
@@ -568,7 +569,7 @@ def build_legal():
     page("terms.html", "", "Terms of Use – HomeCircle", "HomeCircle US terms of use.", f"""<h1>Terms of Use</h1>
 <p><strong>Terms of Use.</strong> Last updated {updated}. These terms are between you and Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897, who runs HomeCircle. Contact: {mail} (not a crisis line).</p>
 <h2>18+ only</h2><p>You must be 18 or older to use HomeCircle.</p>
-<h2>Support, not care</h2><p>HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Kai looks for some words that may mean you're in danger, but it can miss things. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</p>
+<h2>Support, not care</h2><p>HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. If you type something that may mean you're in danger, Kai tries to show help numbers, but it can miss things. If you're not safe, tap I'm not safe or call 911. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</p>
 <h2>Not affiliated</h2><p>HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous. Their names belong to them. Links go to their own sites, which we don't control.</p>
 <h2>Free, as is</h2><p>HomeCircle is free. We try to keep it accurate and working, but we provide it "as is". We can't promise it will always be available, error-free, or that helpline details won't change. Check the service's own site.</p>
 <h2>Our liability</h2><p>To the extent the law allows, we are not liable for indirect or consequential loss from using the site. Nothing in these terms limits liability that can't legally be limited, such as for gross negligence, willful misconduct, or death or personal injury caused by negligence. Nothing in these terms takes away rights you have under the consumer laws where you live.</p>

@@ -51,7 +51,11 @@ ok(!/box breathing|4-7-8/i.test(r.text), `hideHolds: anxious reply avoids holds:
   let b = K.buttonReply("struggling", {}); ok(b.route === "struggling" && !b.crisis && /tap I'm not safe/.test(b.text) && /911/.test(b.text), `struggling button -> ${b.route}: ${b.text.slice(0, 120)}`);
   b = K.buttonReply("cravings", {}); ok(b.route === "craving" && /drink/.test(b.text) && /use/.test(b.text) && /bet/.test(b.text) && /sponsor/.test(b.text) && /15 minutes/.test(b.text), `cravings button -> ${b.route}`);
   b = K.buttonReply("cravings", {}); ok(b.text.endsWith("If you're not safe right now, tap I'm not safe or call 911."), `cravings reply ends with the not-safe line (911)`);
-  ok(K.BUTTON_COPY.firstOpen === "Kai is a support tool, not medical care or an emergency service. Kai can miss things.", "first-open line is Hale's wording");
+  ok(K.BUTTON_COPY.firstOpen === "Kai is a recovery buddy, not a person, counselor, medical care or an emergency service. Kai can miss things.", "first-open line is Hale's final wording");
+  ok(K.BUTTON_COPY.footLine === "Kai isn't a person or AI, and isn't medical care. Kai can miss things. The chat stays in this browser until you clear it.", "line under the text box is Hale's wording");
+  ok(K.BUTTON_COPY.tels.every(t => t.label.length <= 18 && (/^(Call|Text) /.test(t.label) || /^Call /.test(t.aria || ""))), "pinned labels short; shortened ones keep an aria Call ... label");
+  ok(K.BUTTON_COPY.dangerLine === "If you type something that may mean you're in danger, Kai tries to show help numbers, but it can miss things. If you're not safe, tap I'm not safe or call 911." && require("fs").readFileSync(__dirname + "/build.py", "utf8").includes(K.BUTTON_COPY.dangerLine) && !/looks for some words/.test(require("fs").readFileSync(__dirname + "/build.py", "utf8")), "Hale's danger line in the engine block and build.py; old line gone");
+  ok(K.BUTTON_COPY.liveCrisis === "Get help now: call 911, or call or text 988", "live-region crisis line");
   b = K.buttonReply("meeting", {}); ok(b.route && (b.extraLinks || []).some(l => /library\.html/.test(l.href)), `meeting button -> ${b.route} ${(b.extraLinks || []).map(l => l.href)}`);
   for (const m of ["I'm not safe", "im not safe right now", "help me, I'm not safe", "please help he's bleeding everywhere", "I don't feel safe"]) {
     const r = say(m); ok(r.crisis === true && r.text === C.replyText("emergency", "US"), `typed "${m}" -> full emergency reply`);

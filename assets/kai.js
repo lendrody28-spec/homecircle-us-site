@@ -59,7 +59,7 @@
       after.appendChild(a);
     }
     if (latest && latest.extra) latest.extra.forEach(function (x) { var a = el("a", "kai-link", x.label); a.href = /^(tel|sms|https?):/.test(x.href) ? x.href : base + x.href; after.appendChild(a); });
-    if (latest && latest.tels) latest.tels.forEach(function (x) { var a = el("a", "btn kai-tel" + (x.kind === "emergency" ? " danger" : ""), x.label); a.href = x.href; after.appendChild(a); });
+    if (latest && latest.tels) latest.tels.forEach(function (x) { var a = el("a", "btn kai-tel" + (x.kind === "emergency" ? " danger" : ""), x.label); a.href = x.href; if (x.aria) a.setAttribute("aria-label", x.aria); after.appendChild(a); });
     if (latest && latest.stat && /^https:\/\//.test(latest.stat.sourceURL)) {
       var s = el("a", "kai-source", "Source: " + latest.stat.sourceTitle);
       s.href = latest.stat.sourceURL; s.rel = "noopener";
@@ -99,6 +99,8 @@
   }
   /* After a crisis reply, focus goes to the reply itself (read first), then Tab reaches the call links below it. */
   function focusReply() {
+    var live = document.getElementById("kai-live");   /* Finn/Sage: short region line in the live region; the focused reply carries the full text */
+    if (live) live.textContent = (E.BUTTON_COPY && E.BUTTON_COPY.liveCrisis) || "";
     var rows = log.querySelectorAll(".kai-msg.from-kai"), row = rows[rows.length - 1];
     if (!row) return;
     row.id = "kai-reply-latest"; row.setAttribute("tabindex", "-1");

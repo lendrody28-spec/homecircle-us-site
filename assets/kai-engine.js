@@ -183,7 +183,10 @@
   var BUTTON_COPY = {
     "heading": "What would help right now?",
     "typeHint": "Or write a line below.",
-    "firstOpen": "Kai is a support tool, not medical care or an emergency service. Kai can miss things.",
+    "firstOpen": "Kai is a recovery buddy, not a person, counselor, medical care or an emergency service. Kai can miss things.",
+    "dangerLine": "If you type something that may mean you're in danger, Kai tries to show help numbers, but it can miss things. If you're not safe, tap I'm not safe or call 911.",
+    "liveCrisis": "Get help now: call 911, or call or text 988",
+    "footLine": "Kai isn't a person or AI, and isn't medical care. Kai can miss things. The chat stays in this browser until you clear it.",
     "notSafe": {
       "label": "I'm not safe",
       "aria": "I'm not safe, get help now",
@@ -227,6 +230,7 @@
     "fallbackLead": "I'm not safe:",
     "panelLabel": "Get help now"
   };
+  /* footLine: the "isn't AI" claim is only true while web Kai is rule-based and runs entirely in the browser. Change it if Kai ever uses an AI model or a server. */
   /* ===== HALE-REVIEW-END ===== */
   var Crisis = (root && root.HCKaiCrisis) || (typeof require === "function" ? require("./kai-crisis.js") : null);
   function crisisRoute(text) { return Crisis ? Crisis.primaryRoute(Crisis.routes(text)) : null; }
