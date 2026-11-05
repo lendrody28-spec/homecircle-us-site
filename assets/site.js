@@ -272,6 +272,7 @@
   if (wipe) wipe.addEventListener("click", function () {
     if (!confirm("This deletes your sober date, journal, health answers, Kai chat and settings from this browser. It can't be undone.")) return;
     try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("hc") === 0 || /kai/i.test(k)) localStorage.removeItem(k); }); } catch (e) {}
+    try { Object.keys(sessionStorage).forEach(function (k) { if (k.indexOf("hc") === 0 || /kai/i.test(k)) sessionStorage.removeItem(k); }); } catch (e) {}   /* Kai's breathing follow-up flag */
     location.reload();
   });
   document.querySelectorAll("[data-storage-check]").forEach(function (n) {

@@ -168,7 +168,7 @@
   /* ---------- KaiEngine ---------- */
   function freshSession() {
     return { recentReplyIDs: [], topic: null, mood: null, lastSuggestion: null, declined: [], disclaimerShown: false,
-      justListen: false, followUpAsked: false, privateShown: false, crisisHeld: false, respectHeld: false, mensReferralHeld: false };
+      justListen: false, followUpAsked: false, privateShown: false, crisisHeld: false, respectHeld: false, mensReferralHeld: false, fu: null };
   }
   function copySession(s) { var o = freshSession(); s = s || {}; for (var k in o) if (own.call(s, k)) o[k] = Array.isArray(s[k]) ? s[k].slice() : s[k]; return o; }
   function contains(t, n) { return t.indexOf(n) >= 0; }
@@ -227,6 +227,67 @@
         "kind": "line"
       }
     ],
+    "followUp": {
+      "ask": "How was that? Did you notice any change in your body, even a small one?",
+      "better": "A bit better",
+      "same": "About the same",
+      "worse": "Worse",
+      "betterReply": "Good on you for giving it a go. You can come back to this any time.",
+      "journal": null,
+      "done": "I'm done",
+      "journalNote": "Tried a breathing or calming exercise with Kai. Felt a bit better after.",
+      "journalTitle": "Check-in with Kai",
+      "journalSaved": "Saved to your journal, in this browser only.",
+      "journalFailed": "This browser isn't letting the site save notes, so nothing was kept.",
+      "sameReply": "That's okay. Not every tool works every time. Want to try a different one?",
+      "techniques": [
+        {
+          "id": "ground",
+          "practice": "guide-54321",
+          "label": "Try 5-4-3-2-1 grounding",
+          "sub": "Something some people find helps: notice 5 things you can see, 4 you can feel, 3 you can hear, 2 you can smell and 1 you can taste."
+        },
+        {
+          "id": "outbreath",
+          "practice": "breath-46",
+          "label": "Try a slow out-breath",
+          "sub": "Something some people find helps: breathe out slowly, a little longer than you breathe in."
+        },
+        {
+          "id": "meditation",
+          "practice": "med-breath",
+          "label": "Try a short meditation",
+          "sub": "Something some people find helps: a short meditation from the Library."
+        }
+      ],
+      "encourage": "Today sounds hard. You're still here and still trying, and that counts. You've got a goal and people in your corner.",
+      "worseReply": "Thanks for telling me. You don't have to push through this alone.",
+      "reachOut": "Reaching out takes guts. Who would you like to contact?",
+      "friend": "Message a friend or sponsor",
+      "friendLine": "Having a rough day, can you talk?",
+      "friendDesktop": "On a computer, copy this line into a message to a friend or sponsor:",
+      "copy": "Copy",
+      "copied": "Copied.",
+      "reachTels": [
+        {
+          "label": "Call or text 988",
+          "href": "tel:988",
+          "kind": "line"
+        },
+        {
+          "label": "Call the SAMHSA National Helpline 1-800-662-4357",
+          "href": "tel:18006624357",
+          "kind": "line"
+        },
+        {
+          "label": "Call or text 1-800-MY-RESET (1-800-697-3738)",
+          "href": "tel:+18006973738",
+          "kind": "line",
+          "ga": true
+        }
+      ],
+      "meeting": "Find a meeting"
+    },
     "fallbackLead": "I'm not safe:",
     "panelLabel": "Get help now"
   };
@@ -567,6 +628,69 @@
       replyID: session.recentReplyIDs.length ? session.recentReplyIDs[session.recentReplyIDs.length - 1] : o.id, stat: o.stat || null, route: o.route || o.id };
   }
 
+  /* ----- Breathing follow-up ("Did that help?"). Fixed replies only. Asked by kai.js once, on return from a practice
+     opened from Kai's own breathing button, within 30 minutes. Typed crisis text always wins (fixedCrisisFilter runs first). ----- */
+  var TECH_CHIPS = /^(breathing|breathe|start|ground|grounding|meditate|walk|eat|calm|tools|fu:t:.*|practice:.*)$/;
+  function worseFilter(r, ctx) {   /* after "Worse": no technique or breathing offer for the rest of the day */
+    if (!r || !ctx || !ctx.worseToday || r.crisis) return r;
+    r.quickReplies = (r.quickReplies || []).filter(function (q) { return !TECH_CHIPS.test(q.chip || ""); });
+    r.offerBreathing = false;
+    r.text = String(r.text).replace(" " + BREATHING_OFFER, "").replace(BREATHING_OFFER, "").trim();
+    if (r.link && r.link.practiceID) { var it = D().items[r.link.practiceID]; if (it && (it.kind === "breathing" || it.kind === "meditation" || r.link.practiceID === "guide-54321")) r.link = null; }
+    return r;
+  }
+  function fuCopy(f) { return f ? { done: (f.done || []).slice(), same: f.same || 0 } : { done: [], same: 0 }; }
+  function followUpAsk(session, practiceID) {
+    var c = BUTTON_COPY.followUp, s = copySession(session);
+    s.fu = fuCopy(s.fu); if (practiceID && s.fu.done.indexOf(practiceID) < 0) s.fu.done.push(practiceID);
+    return { id: "followUp", route: "followUp", text: c.ask, session: s, crisis: false, offerBreathing: false, link: null, stat: null,
+      quickReplies: [Q("fu-better", c.better, "fu:better"), Q("fu-same", c.same, "fu:same"), Q("fu-worse", c.worse, "fu:worse")] };
+  }
+  function nextTechnique(fu, ctx) {
+    var done = fu.done || [];
+    var list = BUTTON_COPY.followUp.techniques.filter(function (t) {
+      if (done.indexOf(t.practice) >= 0) return false;   /* never the one just done, never the same one twice */
+      if (t.practice === "breath-46" && done.some(function (d) { var i = D().items[d]; return i && i.kind === "breathing"; }) && hidesBreathHolds(ctx.health)) return false;   /* first was breathing with holds hidden: that was breath-46 already */
+      return true;
+    });
+    return list[0] || null;
+  }
+  function followUp(chip, ctx) {
+    var c = BUTTON_COPY.followUp, s = copySession(ctx.session), fu = s.fu = fuCopy(s.fu);
+    var base = { route: "followUp", crisis: false, offerBreathing: false, link: null, stat: null, session: s };
+    function out(o) { for (var k in base) if (!(k in o)) o[k] = base[k]; o.text = o.messages.length ? o.messages[o.messages.length - 1].text : ""; return o; }
+    if (chip === "fu:better") {
+      return out({ id: "fuBetter", messages: [{ text: c.betterReply }], quickReplies: (c.journal ? [Q("fu-journal", c.journal, "fu:journal")] : []).concat([Q("fu-done", c.done, "fu:done")]) });   /* US site has no journal page */
+    }
+    if (chip === "fu:journal") return out({ id: "fuJournal", messages: [], journal: { title: c.journalTitle, body: c.journalNote }, quickReplies: [Q("fu-done", c.done, "fu:done")] , noKai: true });
+    if (chip === "fu:done") { s.fu = null; return out({ id: "fuDone", messages: [], quickReplies: [], noKai: true }); }
+    if (chip === "fu:worse") {
+      var crisisText = Crisis && Crisis.checkInText ? Crisis.checkInText(KAI_REGION).replace(/\s*Want to tell me more\?\s*$/, "") : BUTTON_COPY.notSafe.fallbackText;
+      s.fu = null; s.topic = "crisis"; s.crisisHeld = true;
+      return out({ id: "fuWorse", crisis: true, worse: true, messages: [{ text: crisisText, crisis: true }, { text: c.worseReply }, { text: c.reachOut }],
+        quickReplies: [], tels: BUTTON_COPY.tels.slice(), reach: reachOut(ctx) });
+    }
+    if (chip === "fu:same") {
+      fu.same = (fu.same || 0) + 1;
+      var t = fu.same === 1 ? nextTechnique(fu, ctx) : null;
+      if (!t) { s.fu = null; return out({ id: "fuReach", messages: [{ text: c.reachOut }], quickReplies: [], reach: reachOut(ctx) }); }
+      return out({ id: "fuSame", messages: [{ text: c.sameReply }, { text: c.encourage }], note: t.sub,
+        quickReplies: [Q("fu-t-" + t.id, t.label, "fu:t:" + t.id)] });
+    }
+    if (chip.indexOf("fu:t:") === 0) {
+      var tt = c.techniques.filter(function (x) { return "fu:t:" + x.id === chip; })[0];
+      if (!tt) return null;
+      return out({ id: "fuTechnique", messages: [{ text: tt.sub }], quickReplies: [], link: L.practice(tt.practice), arm: tt.practice });
+    }
+    return null;
+  }
+  function reachOut(ctx) {
+    var c = BUTTON_COPY.followUp;
+    return { friend: { label: c.friend, line: c.friendLine, desktop: c.friendDesktop, copy: c.copy, copied: c.copied },
+      tels: c.reachTels.filter(function (x) { return !x.ga || ctx.includesGA; }).map(function (x) { return { label: x.label, href: x.href, kind: x.kind }; }),
+      meeting: { label: c.meeting, href: "meetings.html" } };
+  }
+
   function fixedCrisisFilter(message, session) {
     var route = crisisRoute(message);
     if (!route) {
@@ -628,6 +752,7 @@
     now = now || new Date();
     var c = fixedCrisisFilter(message || "", ctx.session);
     if (c) return c;
+    if (chip && String(chip).indexOf("fu:") === 0) { var fr = followUp(String(chip), ctx); if (fr) return fr; }
     var text = String(message || "").trim(), f = text.toLowerCase(), session = copySession(ctx.session);
     var listenQR = [Q("listen", "Keep listening", "listen"), Q("ideas", "I'm ready for an idea", "ideas")];
     if (wantsJustListen(f) || chip === "listen") {
@@ -681,7 +806,10 @@
     return base + "library.html";
   }
 
-  return { buttonReply: buttonReply, BUTTON_COPY: BUTTON_COPY, reply: reply, isCrisis: isCrisis, crisisRoute: crisisRoute, crisisTier: crisisTier, feelings: feelings, strongest: strongest, asksForCalmingTools: asksForCalmingTools,
+  return { BUTTON_COPY: BUTTON_COPY, isCrisis: isCrisis, crisisRoute: crisisRoute, crisisTier: crisisTier, feelings: feelings, strongest: strongest, asksForCalmingTools: asksForCalmingTools,
+    reply: function (m, chip, ctx, now) { return worseFilter(reply(m, chip, ctx, now), ctx); },
+    buttonReply: function (id, ctx) { return worseFilter(buttonReply(id, ctx), ctx); },
+    followUpAsk: followUpAsk, followUp: followUp, worseFilter: worseFilter,
     tokens: tokens, normalizeForMatch: normalizeForMatch, freshSession: freshSession, linkTitle: linkTitle, linkHref: linkHref,
     hidesBreathHolds: hidesBreathHolds, stageForDay: stageForDay, intent: intent };
 });

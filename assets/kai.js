@@ -6,7 +6,7 @@
   var E = window.HCKaiEngine, root = document.getElementById("kai");
   if (!E || !root) return;   /* if Kai can't start, the static #kai-fallback with tel: links stays on the page */
   var base = root.getAttribute("data-root") || "";
-  var KEY = "hc.kai.v1", POS = "hc.kai.pos.v1";
+  var KEY = "hc.kai.v1", POS = "hc.kai.pos.v1", FU = "hc.kai.fu.v1", FU_MS = 30 * 60 * 1000;   /* FU: "came back from Kai's breathing", this tab only (sessionStorage) */
   function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage off: chat stays on this page */ } }
   var state = load(KEY, null);
@@ -50,7 +50,7 @@
       day = diff < 0 ? 0 : diff + 1;
     }
     var mine = state.messages.filter(function (m) { return !m.kai; }).slice(-5).map(function (m) { return m.text; });
-    return { dayCount: day, health: load("hc.health.v1", {}), session: state.session, recentUserLines: mine, includesGA: false, offeredBreathingToday: state.breathOfferedOn === todayKey() };
+    return { dayCount: day, health: load("hc.health.v1", {}), session: state.session, recentUserLines: mine, includesGA: false, offeredBreathingToday: state.breathOfferedOn === todayKey(), worseToday: state.worseOn === todayKey() };
   }
 
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
@@ -68,14 +68,17 @@
     if (latest && latest.link) {
       var a = el("a", "kai-link", E.linkTitle(latest.link));
       a.href = E.linkHref(latest.link, base);
+      if (latest.arm) a.addEventListener("click", function () { armFollowUp(latest.arm, a.getAttribute("href")); });
       after.appendChild(a);
     }
     if (latest && latest.extra) latest.extra.forEach(function (x) { var a = el("a", "kai-link", x.label); a.href = /^(tel|sms|https?):/.test(x.href) ? x.href : base + x.href; after.appendChild(a); });
+    if (latest && latest.note) after.appendChild(el("p", "kai-note", latest.note));
     if (latest && latest.tels) latest.tels.forEach(function (x) { var a = el("a", "btn kai-tel" + (x.kind === "emergency" ? " danger" : ""), x.label); a.href = x.href; if (x.aria) a.setAttribute("aria-label", x.aria); after.appendChild(a); });
+    if (latest && latest.reach) renderReach(latest.reach, latest.tels || []);
     /* Read aloud (optional, assets/readaloud.js): goes AFTER the reply's call buttons, so it never comes first. */
-    var RA = window.HCReadAloud, lastKai = null;
-    state.messages.forEach(function (m) { if (m.kai) lastKai = m.text; });
-    if (RA && RA.button && lastKai) after.appendChild(RA.button("Read Kai's reply aloud", function () { return [lastKai]; }, true));
+    var RA = window.HCReadAloud, lastKai = [];   /* every Kai line since your last message, in order (e.g. "Worse": crisis reply first) */
+    state.messages.forEach(function (m) { if (!m.kai) lastKai = []; else lastKai.push(m.text); });
+    if (RA && RA.button && lastKai.length) after.appendChild(RA.button("Read Kai's reply aloud", function () { return lastKai.slice(); }, true));
     if (latest && latest.stat && /^https:\/\//.test(latest.stat.sourceURL)) {
       var s = el("a", "kai-source", "Source: " + latest.stat.sourceTitle);
       s.href = latest.stat.sourceURL; s.rel = "noopener";
@@ -92,6 +95,45 @@
     log.scrollTop = log.scrollHeight;
     scrollChat();
   }
+  /* Reach-out buttons (breathing follow-up). sms: opens a blank message on a phone; on a computer the copyable line shows instead. */
+  function renderReach(r, shown) {
+    var phone = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+    if (phone) { var m = el("a", "btn kai-tel kai-friend", r.friend.label); m.href = "sms:"; after.appendChild(m); }
+    else {
+      var box = el("div", "kai-copy");
+      box.appendChild(el("p", "kai-note", r.friend.desktop));
+      var line = el("p", "kai-copyline", r.friend.line); box.appendChild(line);
+      var cb = el("button", "btn ghost kai-copybtn", r.friend.copy); cb.type = "button";
+      var st = el("span", "kai-copied"); st.setAttribute("role", "status");
+      cb.addEventListener("click", function () {
+        function done() { st.textContent = r.friend.copied; }
+        try { if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(r.friend.line).then(done, function () {}); } catch (e) {}
+      });
+      box.appendChild(cb); box.appendChild(st); after.appendChild(box);
+    }
+    r.tels.forEach(function (x) { if (shown.some(function (y) { return y.href === x.href; })) return; var a = el("a", "btn kai-tel", x.label); a.href = x.href; after.appendChild(a); });
+    var mt = el("a", "kai-link", r.meeting.label); mt.href = base + r.meeting.href; after.appendChild(mt);
+  }
+  function ss(fn) { try { return fn(window.sessionStorage); } catch (e) { return null; } }
+  function armFollowUp(practiceID, href) {
+    ss(function (s) { s.setItem(FU, JSON.stringify({ at: Date.now(), id: practiceID, href: String(href || "").replace(/^(\.\.\/)+/, "") })); });
+  }
+  /* Ask "How was that?" once: only after Kai's own breathing button opened a practice in this tab, on the next Kai page that isn't
+     that practice, within 30 minutes. The flag is cleared as soon as it is read, so a reload or another tab never asks. */
+  function checkFollowUp() {
+    var raw = ss(function (s) { return s.getItem(FU); }); if (!raw) return;
+    var f = null; try { f = JSON.parse(raw); } catch (e) {}
+    if (f && f.href && location.pathname.slice(-f.href.length) === f.href) return;   /* still on the practice page */
+    ss(function (s) { s.removeItem(FU); });
+    if (!f || typeof f.at !== "number") return;
+    var age = Date.now() - f.at; if (age < 0 || age > FU_MS) return;
+    var r = E.followUpAsk(state.session, f.id);
+    state.messages.push({ kai: true, text: r.text });
+    state.session = r.session;
+    state.quick = r.quickReplies.map(function (q) { return { label: q.label, chip: q.chip }; });
+    state.latest = { link: null, stat: null };
+    save(KEY, state);
+  }
   function scrollChat() {
     var sc = panel.querySelector(".kai-scroll"); if (!sc) return;
     sc.scrollTop = state.messages.length ? sc.scrollHeight : 0;   /* first open: top, so the start buttons show in full */
@@ -101,27 +143,45 @@
     if (!text) return;
     var r = E.reply(text, chip || null, context());
     if (r.offerBreathing) state.breathOfferedOn = todayKey();
+    if (r.worse) state.worseOn = todayKey();
+    var journalMsg = null;
+    if (r.journal) journalMsg = saveJournal(r.journal);
     state.messages.push({ kai: false, text: text });
-    state.messages.push({ kai: true, text: r.text, crisis: !!r.crisis });
+    var firstKai = state.messages.length;
+    if (r.messages) r.messages.forEach(function (m) { state.messages.push({ kai: true, text: m.text, crisis: !!m.crisis }); });
+    else if (!r.noKai) state.messages.push({ kai: true, text: r.text, crisis: !!r.crisis });
+    if (journalMsg) state.messages.push({ kai: true, text: journalMsg });
+    var back = state.messages.length - firstKai;
     if (state.messages.length > 200) state.messages = state.messages.slice(-200);
     state.session = r.session;
     state.quick = r.quickReplies.map(function (q) { return { label: q.label, chip: q.chip }; });
-    state.latest = { link: r.link, stat: r.stat ? { sourceTitle: r.stat.sourceTitle, sourceURL: r.stat.sourceURL } : null };
+    var arm = r.arm || (chip === "breathing" && r.link && r.link.practiceID) || null;   /* only Kai's own breathing button (or a follow-up technique) arms the follow-up */
+    state.latest = { link: r.link, stat: r.stat ? { sourceTitle: r.stat.sourceTitle, sourceURL: r.stat.sourceURL } : null, arm: arm,
+      note: r.note || null, tels: r.tels || null, reach: r.reach || null };
     save(KEY, state);
     render();
+    if (r.worse) { focusReply(state.messages.length - back, r.messages[0].text); return; }   /* "Worse": a real crisis reply, read first */
     if (r.crisis) { focusReply(); return; }
     var live = document.getElementById("kai-live");
     if (live) { live.textContent = ""; setTimeout(function () { live.textContent = "Kai: " + r.text; }, 30); }
   }
   /* After a crisis reply, focus goes to the reply itself (read first), then Tab reaches the call links below it. */
-  function focusReply() {
+  function focusReply(msgIndex, liveText) {
     var live = document.getElementById("kai-live");   /* Finn/Sage: short region line in the live region; the focused reply carries the full text */
-    if (live) live.textContent = (E.BUTTON_COPY && E.BUTTON_COPY.liveCrisis) || "";
+    if (live) live.textContent = liveText || (E.BUTTON_COPY && E.BUTTON_COPY.liveCrisis) || "";
     var rows = log.querySelectorAll(".kai-msg.from-kai"), row = rows[rows.length - 1];
+    if (msgIndex != null) row = log.querySelectorAll(".kai-msg")[msgIndex] || row;
     if (!row) return;
     row.id = "kai-reply-latest"; row.setAttribute("tabindex", "-1");
     row.setAttribute("role", "group"); row.setAttribute("aria-label", "Kai's reply");
     row.focus();
+  }
+  /* "Save a note to my journal": adds a note to the Your circle journal (hc.journal.v1), in this browser only. */
+  function saveJournal(j) {
+    var c = E.BUTTON_COPY.followUp, items = load("hc.journal.v1", []);
+    if (!Array.isArray(items)) items = [];
+    items.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), at: Date.now(), prompt: "", title: j.title, body: j.body, mood: "" });
+    try { localStorage.setItem("hc.journal.v1", JSON.stringify(items)); return c.journalSaved; } catch (e) { return c.journalFailed; }
   }
   function pressButton(id) {
     var r = E.buttonReply(id, context());
@@ -157,6 +217,7 @@
   confirmBox.querySelector("[data-yes]").addEventListener("click", function () {
     state = { messages: [], session: E.freshSession(), quick: null, latest: null };
     try { localStorage.removeItem(KEY); } catch (e) {}
+    ss(function (s) { s.removeItem(FU); });
     confirmBox.hidden = true; render(); input.focus();
   });
 
@@ -209,5 +270,6 @@
   moveBtn.textContent = pos.side === "left" ? "Move Kai to the right" : "Move Kai to the left";
   window.addEventListener("resize", place);
   place();
+  checkFollowUp();
   render();
 })();

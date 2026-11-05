@@ -24,11 +24,11 @@
       emergency: "000", crisisLine: "Lifeline", crisisNumber: "13 11 14",
       replies: {
         selfHarm: "If you might act on this, call 000 now. Lifeline is 13 11 14. Kai is a recovery buddy, not a counsellor, and can't diagnose. Kai can miss things, so please reach out yourself.",
-        emergency: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14, any time. Please make the call yourself. Kai can't call anyone. Kai can miss things.",
+        emergency: "If you or anyone else is in danger, call 000 now. Lifeline is 13 11 14, any time. Please make the call yourself. Kai can't call anyone. Kai can miss things.",
         familyHarm: "Call 000 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. Lifeline is 13 11 14. Men's Referral Service is 1300 766 491, for help to stop using violence. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14. 1800RESPECT is 1800 737 732, 24 hours, for family and domestic violence. Please call one of them yourself. Kai can't call anyone and can miss things.",
         childAbuse: "If anyone is in danger right now, call 000. 1800RESPECT (1800 737 732) helps with sexual abuse, any time. Kids Helpline (1800 55 1800) is for young people up to 25. Bravehearts (1800 272 831) supports people affected by child sexual abuse. Kai can miss things.",
-        checkIn: "Just checking in. If you or anyone else is in danger right now, call 000, or Lifeline on 13 11 14. Kai can miss things. Want to tell me more?",
+        checkIn: "If you or anyone else is in danger right now, call 000, or Lifeline on 13 11 14. Kai can miss things. Want to tell me more?",
         medical: "This sounds like a medical emergency. Call 000 now and ask for an ambulance. Stay with the person if it's safe. Lifeline is 13 11 14. Kai can't call anyone and can miss things, so please make the call yourself."
       }
     },
@@ -36,11 +36,11 @@
       emergency: "911", crisisLine: "988 Suicide & Crisis Lifeline", crisisNumber: "988",
       replies: {
         selfHarm: "If you might act on this, call 911 now. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai is a recovery buddy, not a counselor, and can't diagnose. Kai can miss things, so please reach out yourself.",
-        emergency: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone. Kai can miss things.",
+        emergency: "If you or anyone else is in danger, call 911 now. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone. Kai can miss things.",
         familyHarm: "Call 911 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone. Kai can miss things.",
         familyViolence: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. The National Domestic Violence Hotline is 1-800-799-7233, 24/7. Please call one of them yourself. Kai can't call anyone and can miss things.",
         childAbuse: "If anyone is in danger right now, call 911. The Childhelp National Child Abuse Hotline is 1-800-422-4453. Kai can miss things.",
-        checkIn: "Just checking in. If you or anyone else is in danger right now, call 911, or call or text 988. Kai can miss things. Want to tell me more?",
+        checkIn: "If you or anyone else is in danger right now, call 911, or call or text 988. Kai can miss things. Want to tell me more?",
         medical: "This sounds like a medical emergency. Call 911 now and ask for an ambulance. Stay with the person if it's safe. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai can't call anyone and can miss things, so please make the call yourself."
       }
     }
