@@ -87,7 +87,18 @@ def header(active, r):
 <a class="help-pill" id="help-pill" href="{r}help.html#now" aria-label="{E(C["crisis"]["accessibilityLabel"])}" aria-describedby="help-pill-hint" aria-controls="help-dialog">{HEART}<span aria-hidden="true">Help</span></a>
 <span class="sr-only" id="help-pill-hint">{E(C["crisis"]["accessibilityHint"])}</span>"""
 
+def kai_copy():
+    """Buttons-first panel strings live in one block in assets/kai-engine.js (HALE-REVIEW-START/END)."""
+    import json as _json
+    js = (ROOT / "assets/kai-engine.js").read_text()
+    m = re.search(r"HALE-REVIEW-START.*?\*/\s*var BUTTON_COPY = (\{.*?\});\s*/\* ===== HALE-REVIEW-END", js, re.S)
+    return _json.loads(m.group(1))
+
+def kai_tels(c):
+    return "".join(f'<a class="btn{" danger" if t["kind"] == "emergency" else ""}" href="{t["href"]}">{E(t["label"])}</a>' for t in c["tels"])
+
 def kai_panel(r):
+    c = kai_copy()
     return f"""
 <div class="kai" id="kai" data-root="{r}" hidden>
   <section class="kai-panel" id="kai-panel" role="dialog" aria-labelledby="kai-title" hidden>
@@ -101,10 +112,11 @@ def kai_panel(r):
       <p id="kai-confirm-h"><strong>Clear this chat?</strong> This removes the messages in this browser. The Help button in the top corner still offers 911 and 988, and the Help page lists every line.</p>
       <div class="btn-row"><button class="btn danger" type="button" data-yes>Clear chat</button><button class="btn ghost" type="button" data-no>Cancel</button></div>
     </div>
-    <div class="kai-crisis" id="kai-crisis" hidden><a class="btn danger" href="tel:911">Call 911</a><a class="btn" href="tel:988">Call or text 988</a></div>
+    <div class="kai-crisis kai-pinned" id="kai-crisis" role="region" aria-label="{E(c["panelLabel"])}"><button class="kai-notsafe" id="kai-notsafe" type="button" aria-label="{E(c["notSafe"]["aria"])}"><svg aria-hidden="true" focusable="false" width="22" height="22" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="3"/><circle cx="12" cy="12" r="3.5" fill="currentColor"/></svg><span>{E(c["notSafe"]["label"])}</span></button>{kai_tels(c)}</div>
     <div class="kai-scroll">
       <p class="kai-note"><strong>Kai isn't AI, and isn't a person, counselor, doctor or sponsor.</strong> Replies are written in this browser from saved rules. No network and no AI service: nothing you type leaves your browser.</p>
       <p class="kai-note">Kai is a recovery buddy, not a counselor. HomeCircle doesn't give medical advice. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>. Kai looks for some words that may mean you're in danger, but it can miss things. If you're unsafe, call <a href="tel:911">911</a> or call or text <a href="tel:988">988</a> yourself.</p>
+      <div class="kai-start" id="kai-start" role="group" aria-labelledby="kai-start-h"><h3 id="kai-start-h">{E(c["heading"])}</h3><button class="kai-big" type="button" data-kai-button="struggling">{E(c["struggling"]["label"])}</button><button class="kai-big" type="button" data-kai-button="cravings">{E(c["cravings"]["label"])}</button><button class="kai-big" type="button" data-kai-button="meeting">{E(c["meeting"]["label"])}</button><p class="kai-typehint">{E(c["typeHint"])}</p></div>
       <p class="kai-empty" id="kai-empty">Kai is here. Pick a chip, or write a line.</p>
       <div class="kai-log" id="kai-log"></div>
       <div class="kai-after" id="kai-after"></div>
@@ -119,6 +131,8 @@ def kai_panel(r):
     <p class="kai-foot">The chat is kept only in this browser until you clear it. <button class="linkish" type="button" id="kai-move">Move Kai to the left</button></p>
   </section>
   <button class="kai-bubble" id="kai-bubble" type="button" aria-expanded="false" aria-controls="kai-panel" aria-label="Kai, Recovery Buddy. Not AI and not a person."><img src="{r}assets/kai.png" alt="" width="64" height="64" draggable="false"></button>
+</div>
+<div class="kai-fallback" id="kai-fallback" role="region" aria-label="{E(c["panelLabel"])}"><strong>{E(c["fallbackLead"])}</strong> {kai_tels(c)}
 </div>"""
 
 def footer(r):

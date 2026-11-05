@@ -4,7 +4,7 @@
 (function () {
   "use strict";
   var E = window.HCKaiEngine, root = document.getElementById("kai");
-  if (!E || !root) return;
+  if (!E || !root) return;   /* if Kai can't start, the static #kai-fallback with tel: links stays on the page */
   var base = root.getAttribute("data-root") || "";
   var KEY = "hc.kai.v1", POS = "hc.kai.pos.v1";
   function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
@@ -20,6 +20,13 @@
     moveBtn = document.getElementById("kai-move"), confirmBox = document.getElementById("kai-confirm"),
     after = document.getElementById("kai-after");
   root.hidden = false;
+  var fallback = document.getElementById("kai-fallback"); if (fallback) fallback.hidden = true;
+  /* Buttons-first. "I'm not safe" is wired first, with no phrase matching, delay or animation. */
+  var notSafeBtn = document.getElementById("kai-notsafe");
+  if (notSafeBtn) notSafeBtn.addEventListener("click", function () { pressButton("notSafe"); });
+  Array.prototype.forEach.call(document.querySelectorAll("[data-kai-button]"), function (b) {
+    b.addEventListener("click", function () { pressButton(b.getAttribute("data-kai-button")); });
+  });
 
   function todayKey() { var d = new Date(); return d.getFullYear() + "-" + (d.getMonth() + 1) + "-" + d.getDate(); }
   function context() {
@@ -51,12 +58,14 @@
       a.href = E.linkHref(latest.link, base);
       after.appendChild(a);
     }
+    if (latest && latest.extra) latest.extra.forEach(function (x) { var a = el("a", "kai-link", x.label); a.href = /^(tel|sms|https?):/.test(x.href) ? x.href : base + x.href; after.appendChild(a); });
+    if (latest && latest.tels) latest.tels.forEach(function (x) { var a = el("a", "btn kai-tel" + (x.kind === "emergency" ? " danger" : ""), x.label); a.href = x.href; after.appendChild(a); });
     if (latest && latest.stat && /^https:\/\//.test(latest.stat.sourceURL)) {
       var s = el("a", "kai-source", "Source: " + latest.stat.sourceTitle);
       s.href = latest.stat.sourceURL; s.rel = "noopener";
       after.appendChild(s);
     }
-    crisis.hidden = !(state.session && state.session.crisisHeld);
+    crisis.hidden = false;   /* the I'm not safe button, 000/911 and Lifeline/988 stay on screen */
     chips.textContent = "";
     var quick = state.quick || [{ label: "I'm craving", chip: "craving" }, { label: "Find a meeting", chip: "meeting" }, { label: "Just listen", chip: "listen" }, { label: "What can help?", chip: "tools" }];
     quick.forEach(function (q) {
@@ -82,6 +91,22 @@
     render();
     var live = document.getElementById("kai-live");
     if (live) { live.textContent = ""; setTimeout(function () { live.textContent = "Kai: " + r.text; }, 30); }
+  }
+  function pressButton(id) {
+    var r = E.buttonReply(id, context());
+    if (!r) return;
+    var label = id === "notSafe" ? E.BUTTON_COPY.notSafe.label : (E.BUTTON_COPY[id] || {}).label || id;
+    state.messages.push({ kai: false, text: label });
+    state.messages.push({ kai: true, text: r.text, crisis: !!r.crisis });
+    if (state.messages.length > 200) state.messages = state.messages.slice(-200);
+    state.session = r.session;
+    state.quick = (r.quickReplies || []).map(function (q) { return { label: q.label, chip: q.chip }; });
+    state.latest = { link: r.link, stat: null, tels: r.tels || [], extra: r.extraLinks || [] };
+    save(KEY, state);
+    render();
+    var live = document.getElementById("kai-live");
+    if (live) live.textContent = "Kai: " + r.text;   /* announced at once, no timer */
+    if (r.crisis) { var first = after.querySelector("a"); if (first) first.focus(); }
   }
   form.addEventListener("submit", function (e) { e.preventDefault(); var t = input.value; input.value = ""; send(t, null); input.focus(); });
   input.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit")); } });

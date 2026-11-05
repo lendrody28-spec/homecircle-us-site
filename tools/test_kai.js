@@ -40,5 +40,23 @@ r = say("find a meeting", "meeting"); console.log("      meeting:", r.route, r.t
 // health: breath holds hidden
 r = K.reply("anxious", null, { health: { hideHolds: true } });
 ok(!/box breathing|4-7-8/i.test(r.text), `hideHolds: anxious reply avoids holds: ${r.text.slice(0, 100)}`);
+// Buttons-first (5 Nov): each button's route; I'm not safe always gives the full crisis reply
+{
+  const C = require("../assets/kai-crisis.js");
+  for (const ctx of [{}, { session: { crisisHeld: true } }, { session: { turns: 40 } }]) {
+    const b = K.buttonReply("notSafe", ctx);
+    ok(b.route === "notSafe" && b.crisis === true && b.crisisRoute === "emergency" && b.text === C.replyText("emergency", "US") && /911/.test(b.text) && /Kai can miss things\.$/.test(b.text) && b.tels.map(t => t.href).join(",") === "tel:911,tel:988,sms:988", `notSafe button -> ${b.route} ${b.tels.map(t => t.href)}: ${b.text}`);
+  }
+  ok(!/\\b000\\b/.test(JSON.stringify(K.BUTTON_COPY)) , "US button copy never shows 000");
+  let b = K.buttonReply("struggling", {}); ok(b.route === "struggling" && !b.crisis && /tap I'm not safe/.test(b.text) && /911/.test(b.text), `struggling button -> ${b.route}: ${b.text.slice(0, 120)}`);
+  b = K.buttonReply("cravings", {}); ok(b.route === "craving" && /drink/.test(b.text) && /use/.test(b.text) && /bet/.test(b.text) && /sponsor/.test(b.text) && /15 minutes/.test(b.text), `cravings button -> ${b.route}`);
+  b = K.buttonReply("meeting", {}); ok(b.route && (b.extraLinks || []).some(l => /library\.html/.test(l.href)), `meeting button -> ${b.route} ${(b.extraLinks || []).map(l => l.href)}`);
+  for (const m of ["I'm not safe", "im not safe right now", "help me, I'm not safe", "please help he's bleeding everywhere", "I don't feel safe"]) {
+    const r = say(m); ok(r.crisis === true && r.text === C.replyText("emergency", "US"), `typed "${m}" -> full emergency reply`);
+  }
+  for (const m of ["I'm not safe to drive after two beers so I took a cab"]) { const r = say(m); console.log(`      typed "${m}" -> crisis=${!!r.crisis}`); }
+  for (const m of ["I want to kill myself", "I'm going to end my life tonight"]) { const r = say(m); ok(r.crisis === true, `typed messages still run the crisis check: "${m}"`); }
+  ok(!/detect|recogni[sz]e/i.test(JSON.stringify(K.BUTTON_COPY)), "button copy makes no detection claim");
+}
 console.log(`\n${n - fail}/${n} passed`);
 process.exit(fail ? 1 : 0);

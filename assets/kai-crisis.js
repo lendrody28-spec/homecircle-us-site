@@ -24,7 +24,7 @@
       emergency: "000", crisisLine: "Lifeline", crisisNumber: "13 11 14",
       replies: {
         selfHarm: "If you might act on this, call 000 now. Lifeline is 13 11 14. Kai is a recovery buddy, not a counsellor, and can't diagnose. Kai can miss things, so please reach out yourself.",
-        emergency: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14, any time. Please make the call yourself. Kai can't call anyone and can miss things.",
+        emergency: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14, any time. Please make the call yourself. Kai can't call anyone. Kai can miss things.",
         familyHarm: "Call 000 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. Lifeline is 13 11 14. Men's Referral Service is 1300 766 491, for help to stop using violence. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14. 1800RESPECT is 1800 737 732, 24 hours, for family and domestic violence. Please call one of them yourself. Kai can't call anyone and can miss things.",
         childAbuse: "If anyone is in danger right now, call 000. 1800RESPECT (1800 737 732) helps with sexual abuse, any time. Kids Helpline (1800 55 1800) is for young people up to 25. Bravehearts (1800 272 831) supports people affected by child sexual abuse. Kai can miss things.",
@@ -36,8 +36,8 @@
       emergency: "911", crisisLine: "988 Suicide & Crisis Lifeline", crisisNumber: "988",
       replies: {
         selfHarm: "If you might act on this, call 911 now. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai is a recovery buddy, not a counselor, and can't diagnose. Kai can miss things, so please reach out yourself.",
-        emergency: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
-        familyHarm: "Call 911 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
+        emergency: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone. Kai can miss things.",
+        familyHarm: "Call 911 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone. Kai can miss things.",
         familyViolence: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. The National Domestic Violence Hotline is 1-800-799-7233, 24/7. Please call one of them yourself. Kai can't call anyone and can miss things.",
         childAbuse: "If anyone is in danger right now, call 911. The Childhelp National Child Abuse Hotline is 1-800-422-4453. Kai can miss things.",
         checkIn: "Just checking in. If you or anyone else is in danger right now, call 911, or call or text 988. Kai can miss things. Want to tell me more?",
@@ -180,6 +180,11 @@
     /\bshot up (way |far |heaps )?too much\b/,
     // WEB (round 6, Finn B): any request for help, police, cops or an ambulance goes to the full emergency route.
     /\b(call|calling|ring|ringing|phone|phoning|get|getting|send|sending|fetch|dial|need|needs|want|bring)( me| us| him| her| them)?( the| an| a| some)? (police|cops|cop|ambulance|ambulances|paramedics|emergency services|fire brigade|firies)\b/,
+    // WEB (buttons build): typed "I'm not safe" about myself goes to the same full reply as the I'm not safe button.
+    /\b(im|i am|i feel|feeling|i feel like im|i think im)( so| really| just| actually)? (not safe|unsafe)\b(?! (to drive|driving|on the roads?|at the (pool|beach)))/,
+    /\b(i )?(dont|do not) feel safe\b(?! (driving|to drive|at the (pool|beach)))/,
+    // WEB (buttons build): help plus an urgent cue (bleeding, not safe, not breathing...) is an emergency.
+    /\bhelp\b.*\b(bleeding|not safe|unsafe|not breathing|wont wake|cant wake|unconscious|choking|knife|gun)\b|\b(bleeding|not safe|unsafe|not breathing|unconscious|choking)\b.*\bhelp (me|us|him|her|now|please)\b/,
     // WEB (round 8): help is an emergency only with an urgent cue. Bare "help" and help with sobriety/steps/app/family get nothing.
     /\b(call|ring|phone|send|fetch|bring)( me| us| him| her| them)?( some| a| the)? help\b(?! (with|for (my|his|her|their) (drinking|gambling|using|recovery|steps?)))/,
     /\b(need|get|want) (help|someone|somebody) (now|right now|urgently|asap|fast|quick|quickly|immediately)\b/,

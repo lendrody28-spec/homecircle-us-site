@@ -179,6 +179,54 @@
   /* Crisis check: the build 31 KaiCrisis port in assets/kai-crisis.js, shared by the AU and US sites.
      KAI_REGION picks the phone numbers in the crisis replies. */
   var KAI_REGION = "US";
+  /* ===== HALE-REVIEW-START: every new user-visible string for the buttons-first Kai panel (US site). Keep this strict JSON: tools/build.py reads it. ===== */
+  var BUTTON_COPY = {
+    "heading": "What would help right now?",
+    "typeHint": "Or write a line below.",
+    "notSafe": {
+      "label": "I'm not safe",
+      "aria": "I'm not safe, get help now",
+      "fallbackText": "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai can miss things."
+    },
+    "struggling": {
+      "label": "I'm struggling",
+      "reply": "Thanks for telling me. You don't have to sort it all out right now. We could slow your breathing for a minute, find a meeting, or keep talking here. If you're not safe right now, tap I'm not safe or call 911.",
+      "breathing": "Breathing exercise",
+      "meeting": "Find a meeting",
+      "keepTalking": "Keep talking"
+    },
+    "cravings": {
+      "label": "I'm having cravings",
+      "reply": "Cravings for a drink, a use or a bet rise and fall, and this one can pass. Try to wait 15 minutes before you decide anything. Slow breathing can help, so can calling your sponsor or someone in your circle, or getting to a meeting.",
+      "breathing": "Breathing exercise",
+      "urge": "Urge plan",
+      "meeting": "Find a meeting"
+    },
+    "meeting": {
+      "label": "Find a meeting",
+      "library": "Open the Library"
+    },
+    "tels": [
+      {
+        "label": "Call 911",
+        "href": "tel:911",
+        "kind": "emergency"
+      },
+      {
+        "label": "Call 988",
+        "href": "tel:988",
+        "kind": "line"
+      },
+      {
+        "label": "Text 988",
+        "href": "sms:988",
+        "kind": "line"
+      }
+    ],
+    "fallbackLead": "I'm not safe:",
+    "panelLabel": "Get help now"
+  };
+  /* ===== HALE-REVIEW-END ===== */
   var Crisis = (root && root.HCKaiCrisis) || (typeof require === "function" ? require("./kai-crisis.js") : null);
   function crisisRoute(text) { return Crisis ? Crisis.primaryRoute(Crisis.routes(text)) : null; }
   function isCrisis(text) { return crisisRoute(text) != null; }
@@ -535,6 +583,38 @@
     return r;
   }
 
+  /* Buttons-first panel. "notSafe" never depends on phrase matching: it always returns the full emergency reply for this region. */
+  function buttonReply(id, ctx) {
+    ctx = ctx || {};
+    var c = BUTTON_COPY, s = copySession(ctx.session);
+    if (id === "notSafe") {
+      s.topic = "crisis"; s.justListen = false; s.crisisHeld = true;
+      var t = (Crisis && Crisis.replyText) ? Crisis.replyText("emergency", KAI_REGION) : c.notSafe.fallbackText;
+      return { id: "notSafe", route: "notSafe", crisis: true, crisisRoute: "emergency", text: t, quickReplies: [], link: null,
+        tels: c.tels.slice(), session: s, offerBreathing: false, stat: null };
+    }
+    if (id === "struggling") {
+      s.topic = "struggling"; s.justListen = false;
+      var r1 = finish({ id: "struggling", text: c.struggling.reply,
+        replies: [Q("breathing", c.struggling.breathing, "breathing"), Q("meeting", c.struggling.meeting, "meeting"), Q("listen", c.struggling.keepTalking, "listen")], link: null }, s);
+      r1.route = "struggling"; r1.tels = c.tels.filter(function (x) { return x.kind === "line"; });
+      return r1;
+    }
+    if (id === "cravings") {
+      s.topic = "craving"; s.lastSuggestion = "breathe";
+      var r2 = finish({ id: "craving", text: c.cravings.reply,
+        replies: [Q("breathing", c.cravings.breathing, "breathing"), Q("urge", c.cravings.urge, "craving"), Q("meeting", c.cravings.meeting, "meeting")], link: L.practice("guide-urge") }, s);
+      r2.route = "craving"; r2.meetingsLink = L.meetings; r2.tels = [];
+      return r2;
+    }
+    if (id === "meeting") {
+      var r3 = reply(c.meeting.label, "meeting", ctx);
+      r3.route = "meeting"; r3.extraLinks = [{ label: c.meeting.library, href: "library.html" }]; r3.tels = [];
+      return r3;
+    }
+    return null;
+  }
+
   /* reply(message, chip, ctx): ctx = { dayCount, health, session, recentUserLines, includesGA, offeredBreathingToday } */
   function reply(message, chip, ctx, now) {
     ctx = ctx || {};
@@ -596,7 +676,7 @@
     return base + "library.html";
   }
 
-  return { reply: reply, isCrisis: isCrisis, crisisRoute: crisisRoute, crisisTier: crisisTier, feelings: feelings, strongest: strongest, asksForCalmingTools: asksForCalmingTools,
+  return { buttonReply: buttonReply, BUTTON_COPY: BUTTON_COPY, reply: reply, isCrisis: isCrisis, crisisRoute: crisisRoute, crisisTier: crisisTier, feelings: feelings, strongest: strongest, asksForCalmingTools: asksForCalmingTools,
     tokens: tokens, normalizeForMatch: normalizeForMatch, freshSession: freshSession, linkTitle: linkTitle, linkHref: linkHref,
     hidesBreathHolds: hidesBreathHolds, stageForDay: stageForDay, intent: intent };
 });
