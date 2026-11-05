@@ -17,4 +17,4 @@
 
 ## Overdose page and gambling helpline (checked 5 Nov 2026)
 - overdose.html: American Red Cross opioid overdose first aid; CDC Lifesaving Naloxone (OTC in all 50 states; Good Samaritan laws in most states); FDA OTC Narcan approval (29 Mar 2023); NIAAA alcohol overdose; DEA meth and GHB fact sheets; DEA Get Smart About Drugs (Good Samaritan scope); poison.org (1-800-222-1222); SAMHSA National Helpline.
-- National Problem Gambling Helpline: ncpgambling.org lists 1-800-MY-RESET (1-800-697-3738) since 29 Jan 2026; 1-800-522-4700 still active; NCPG says 1-800-GAMBLER is no longer its national helpline number (since 29 Sep 2025).
+- National Problem Gambling Helpline: ncpgambling.org lists 1-800-MY-RESET (1-800-697-3738) since 29 Jan 2026; 1-800-522-4700 still active. Shown on the site as "Call or text 1-800-MY-RESET (1-800-697-3738)", tel:+18006973738 (Hale, 5 Nov 2026). No older national gambling numbers are listed.

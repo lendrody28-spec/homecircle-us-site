@@ -344,7 +344,7 @@ def build_item(i):
     if i.get("phoneDial"):
         main.append(f'<p><a class="btn ghost" href="tel:{i["phoneDial"]}">Call {E(i["phoneDisplay"])}</a></p>')
     if i["id"] == "fell-ga":
-        main.append('<div class="card mt"><h2 class="mt0">National Problem Gambling Helpline</h2><p>Professional help, not a fellowship: free, confidential and 24/7 by call, text or chat, for you or someone you\'re worried about. Run by the National Council on Problem Gambling.</p><div class="btn-row"><a class="btn ghost" href="tel:18006973738">Call 1-800-MY-RESET (1-800-697-3738)</a><a class="btn ghost" href="https://www.ncpgambling.org/help-treatment/" rel="noopener">ncpgambling.org</a></div><p class="small">The Gamblers Anonymous number above is a fellowship line. Checked 5 November 2026.</p></div>')
+        main.append('<div class="card mt"><h2 class="mt0">National Problem Gambling Helpline</h2><p>Professional help, not a fellowship: free, confidential and 24/7 by call, text or chat, for you or someone you\'re worried about. Run by the National Council on Problem Gambling.</p><div class="btn-row"><a class="btn ghost" href="tel:+18006973738">Call or text 1-800-MY-RESET (1-800-697-3738)</a><a class="btn ghost" href="https://www.ncpgambling.org/help-treatment/" rel="noopener">ncpgambling.org</a></div><p class="small">The Gamblers Anonymous number above is a fellowship line. Checked 5 November 2026.</p></div>')
     main.append(f'<p class="small">{E(L["gpLine"])}</p>')
     body = "".join(parts) + f'<div class="layout"><div>{"".join(main)}</div>{aside(r)}</div>'
     page(path, "library.html", f'{i["title"]} – HomeCircle Library', web(i["summary"]), body)
@@ -420,10 +420,10 @@ US_LINES = [
       "If someone may check your phone or browser, their site has its own quick-exit button."],
      "https://www.thehotline.org/"),
     ("National Problem Gambling Helpline", "For anyone worried about their own gambling or someone else's, including family and friends.",
-     [("tel:18006973738", "Call 1-800-MY-RESET (1-800-697-3738)"), ("sms:18006973738", "Text 1-800-697-3738")],
+     [("tel:+18006973738", "Call or text 1-800-MY-RESET (1-800-697-3738)"), ("sms:+18006973738", "Text 1-800-697-3738")],
      ["Run by the National Council on Problem Gambling. Free and confidential, by call, text or chat, 24/7.",
       "Connects you to local help in all 50 states and US territories. It isn't a crisis line: in a crisis call 911 or 988.",
-      "1-800-522-4700 also still works. 1-800-GAMBLER is no longer NCPG's national helpline number."],
+      "1-800-522-4700 also still works."],
      "https://www.ncpgambling.org/help-treatment/about-the-national-problem-gambling-helpline/"),
     ("Gamblers Anonymous national hotline (fellowship line)", "A fellowship line for people who think they might have a gambling problem.",
      [("tel:8552225542", "Call 855-222-5542")],
