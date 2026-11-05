@@ -17,7 +17,7 @@ async function context(b, opts) {
   const ctx = await b.newContext(Object.assign({ viewport: { width: 1280, height: 800 } }, opts || {}));
   await ctx.addInitScript(mock);
   ctx.net = []; ctx.on('request', r => { const u = r.url(); if (!u.startsWith(BASE) && !u.startsWith('data:') && !u.startsWith('blob:')) ctx.net.push(u); });
-  ctx.flowReqs = null; ctx.on('request', r => { if (ctx.flowReqs && r.resourceType() !== 'document' && !/\.(css|js|png|jpe?g|webp|svg|ico|woff2?)(\?|$)/.test(r.url()) && !/assets\/audio\//.test(r.url())) ctx.flowReqs.push(r.url()); });
+  ctx.flowReqs = null; ctx.on('request', r => { if (ctx.flowReqs && !/^(blob|data):/.test(r.url()) && r.resourceType() !== 'document' && !/\.(css|js|png|jpe?g|webp|svg|ico|woff2?)(\?|$)/.test(r.url()) && !/assets\/audio\//.test(r.url())) ctx.flowReqs.push(r.url()); });
   return ctx;
 }
 async function page(ctx, p0) { const p = p0 || await ctx.newPage(); p.errs = p.errs || []; if (!p0) p.on('pageerror', e => p.errs.push(e.message)); return p; }
