@@ -320,6 +320,8 @@ def build_item(i):
         main.append(src_list(links, "Official pages" if i["category"] == "fellowship" else "Read more"))
     if i.get("phoneDial"):
         main.append(f'<p><a class="btn ghost" href="tel:{i["phoneDial"]}">Call {E(i["phoneDisplay"])}</a></p>')
+    if i["id"] == "fell-ga":
+        main.append('<div class="card mt"><h2 class="mt0">National Problem Gambling Helpline</h2><p>Professional help, not a fellowship: free, confidential and 24/7 by call, text or chat, for you or someone you\'re worried about. Run by the National Council on Problem Gambling.</p><div class="btn-row"><a class="btn ghost" href="tel:18006973738">Call 1-800-MY-RESET (1-800-697-3738)</a><a class="btn ghost" href="https://www.ncpgambling.org/help-treatment/" rel="noopener">ncpgambling.org</a></div><p class="small">The Gamblers Anonymous number above is a fellowship line. Checked 5 November 2026.</p></div>')
     main.append(f'<p class="small">{E(L["gpLine"])}</p>')
     body = "".join(parts) + f'<div class="layout"><div>{"".join(main)}</div>{aside(r)}</div>'
     page(path, "library.html", f'{i["title"]} – HomeCircle Library', web(i["summary"]), body)
@@ -394,7 +396,13 @@ US_LINES = [
       "Live chat is on their website. If you're in immediate danger, call 911.",
       "If someone may check your phone or browser, their site has its own quick-exit button."],
      "https://www.thehotline.org/"),
-    ("Gamblers Anonymous national hotline", "For people who think they might have a gambling problem.",
+    ("National Problem Gambling Helpline", "For anyone worried about their own gambling or someone else's, including family and friends.",
+     [("tel:18006973738", "Call 1-800-MY-RESET (1-800-697-3738)"), ("sms:18006973738", "Text 1-800-697-3738")],
+     ["Run by the National Council on Problem Gambling. Free and confidential, by call, text or chat, 24/7.",
+      "Connects you to local help in all 50 states and US territories. It isn't a crisis line: in a crisis call 911 or 988.",
+      "1-800-522-4700 also still works. 1-800-GAMBLER is no longer NCPG's national helpline number."],
+     "https://www.ncpgambling.org/help-treatment/about-the-national-problem-gambling-helpline/"),
+    ("Gamblers Anonymous national hotline (fellowship line)", "A fellowship line for people who think they might have a gambling problem.",
      [("tel:8552225542", "Call 855-222-5542")],
      ["A fellowship, not a professional service. Meetings are in person, online or by phone, with no dues or fees.",
       "Hours for the hotline aren't published on the site."],
@@ -441,9 +449,77 @@ def build_help():
 <div class="card"><h2 class="mt0">Code of conduct</h2><p>{E(L["rulesBody"])}</p></div>
 </div>
 <div class="emergency-card mt"><h2 class="mt0">Call 911 immediately</h2><p>If a life is in danger, call 911 or go to your nearest emergency room.</p><a class="btn" href="tel:911">Call 911</a></div>
+<div class="card mt" id="overdose"><h2 class="mt0">What to do in an overdose</h2><p>Call 911 first. Then see the signs of overdose, the first aid steps, and where to get naloxone (Narcan).</p><a class="btn" href="overdose.html">What to do in an overdose</a></div>
 <p class="small">Hours and numbers can change, so check the service's own website. Checked 4 November 2026.</p>
 <p class="small">{E(L["gpLine"])}</p>"""
     page("help.html", "help.html", "Get help – HomeCircle", "US helplines: 911, 988 Suicide & Crisis Lifeline, Crisis Text Line, SAMHSA's National Helpline, National Domestic Violence Hotline, and family support.", body)
+
+OD_SRC = [
+    ("American Red Cross: Opioid overdose first aid", "https://www.redcross.org/take-a-class/resources/learn-first-aid/opioid-overdose"),
+    ("American Red Cross: CPR classes", "https://www.redcross.org/take-a-class/cpr"),
+    ("CDC: Lifesaving naloxone", "https://www.cdc.gov/stop-overdose/caring/naloxone.html"),
+    ("FDA: FDA approves first over-the-counter naloxone nasal spray", "https://www.fda.gov/news-events/press-announcements/fda-approves-first-over-counter-naloxone-nasal-spray"),
+    ("NIAAA (NIH): Understanding the dangers of alcohol overdose", "https://www.niaaa.nih.gov/publications/brochures-and-fact-sheets/understanding-dangers-of-alcohol-overdose"),
+    ("DEA: Methamphetamine fact sheet", "https://www.dea.gov/factsheets/methamphetamine"),
+    ("DEA: GHB fact sheet", "https://www.dea.gov/factsheets/ghb-gamma-hydroxybutyric-acid"),
+    ("DEA Get Smart About Drugs: What should you do during a drug overdose?", "https://www.getsmartaboutdrugs.gov/consequences/what-should-you-do-during-drug-overdose"),
+    ("SAMHSA's National Helpline", "https://www.samhsa.gov/find-help/helplines/national-helpline"),
+    ("Poison Control (poison.org)", "https://www.poison.org/"),
+]
+
+def build_overdose():
+    src = "; ".join(f'<a href="{u}" rel="noopener">{n}</a>' for n, u in OD_SRC)
+    body = f"""<div class="fam-strip" role="region" aria-label="Call for help now"><a class="btn danger fam-big" href="tel:911">Call 911 now</a>
+<button class="btn ghost fam-exit" type="button" id="quick-exit" aria-label="Quick exit, leaves this site">Quick exit, leaves this site<span class="small fam-esc"> (Esc)</span></button>
+<span class="small fam-exit-note">Quick exit won't clear your browser history. A private window is safer.</span></div>
+<p><strong>Say it's an overdose. Stay with them and do what the 911 dispatcher tells you.</strong></p>
+<p>This is general first aid information, not medical training. Always follow the 911 dispatcher.</p>
+<h1>What to do in an overdose</h1>
+<section class="card mt" id="steps"><h2 class="mt0">What to do</h2>
+<ol>
+<li><strong>Check the scene is safe</strong> for you and them.</li>
+<li><strong>Call <a href="tel:911">911</a></strong> and say it's an overdose.</li>
+<li><strong>If they're breathing,</strong> roll them onto their side.</li>
+<li><strong>If they're not breathing,</strong> start CPR as the 911 dispatcher directs, and use an AED if one is available.</li>
+<li><strong>Naloxone (Narcan).</strong> If opioids might be involved and you have naloxone, use it as the package directs. Don't delay CPR to do it.</li>
+<li><strong>Stay with them</strong> until help arrives.</li>
+<li><strong>Tell the paramedics</strong> what they took, how much and when, if you know.</li>
+</ol>
+<details class="more"><summary>More info</summary>
+<p>Keep them from getting too cold or too hot, and tell them help is on the way.</p>
+<p><strong>Good Samaritan laws.</strong> The CDC says Good Samaritan laws are in place in most states to protect people who are overdosing, and anyone helping them, from criminal penalties. They vary by state. The DEA's Get Smart About Drugs says they generally cover minor offenses like simple possession, not selling or trafficking. Don't let worry stop you calling 911.</p>
+</details></section>
+<section class="card mt" id="signs"><h2 class="mt0">Signs of an overdose</h2>
+<p>They don't need to have every sign. If you're worried, call <a href="tel:911">911</a>.</p>
+<details class="more"><summary>More info</summary>
+<h3>Opioids (like heroin, fentanyl, oxycodone or codeine)</h3>
+<ul><li>Not responding</li><li>Breathing slowly, or only a few times a minute</li><li>Gasping or gurgling</li><li>Bluish or grayish skin</li></ul>
+<h3>Alcohol</h3>
+<ul><li>Confusion, or can't stay awake or be woken</li><li>Vomiting</li><li>Seizures</li><li>Slow or irregular breathing</li><li>Slow heart rate and clammy skin</li><li>Very low body temperature, bluish skin or paleness</li></ul>
+<h3>Stimulants (like meth)</h3>
+<ul><li>Agitation, anxiety or paranoia</li><li>Fast heart rate and high body temperature</li><li>Seizures (convulsions)</li><li>Signs of a stroke or heart attack</li></ul>
+<h3>GHB</h3>
+<ul><li>Unconsciousness</li><li>Seizures</li><li>Greatly slowed breathing and a slow heart rate</li><li>Vomiting</li></ul>
+</details></section>
+<section class="card mt" id="dont"><h2 class="mt0">What not to do</h2>
+<ul><li>Don't leave them alone.</li><li>Don't assume they'll be fine sleeping it off.</li><li>Don't rely on cold showers, coffee or walking them around. They don't reverse an alcohol overdose and could make things worse.</li></ul></section>
+<section class="card mt" id="after"><h2 class="mt0">Afterward</h2>
+<p><strong>They still need medical care, even if they wake up.</strong> Naloxone's effects often wear off before the opioid's do.</p>
+<details class="more"><summary>More info</summary>
+<p>The CDC says that if you give naloxone, stay with them until emergency help arrives, or for at least four hours, to make sure their breathing returns to normal.</p>
+<p>For questions about a possible poisoning or medicine mix-up when they're awake and well, call Poison Help at <a href="tel:18002221222">1-800-222-1222</a>. If they collapse, have a seizure, have trouble breathing or can't be woken, call 911.</p>
+<p>For a crisis, including a substance use crisis, call or text <a href="tel:988">988</a>. For treatment referrals, call SAMHSA's National Helpline at <a href="tel:18006624357">1-800-662-4357</a>.</p>
+<div class="btn-row"><a class="btn ghost" href="tel:18002221222">Poison Help 1-800-222-1222</a><a class="btn ghost" href="tel:988">Call 988</a><a class="btn ghost" href="tel:18006624357">SAMHSA 1-800-662-4357</a></div></details></section>
+<section class="card mt" id="naloxone"><h2 class="mt0">Naloxone (Narcan) and first aid classes</h2>
+<p>The FDA approved Narcan naloxone nasal spray for over-the-counter use, without a prescription. The CDC says naloxone is available over the counter in all 50 states, at places like pharmacies, convenience stores, grocery stores and gas stations.</p>
+<details class="more"><summary>More info</summary>
+<p>Naloxone only reverses opioid overdoses, but the CDC says it won't harm someone who is overdosing on other drugs.</p>
+<p>A first aid or CPR class teaches you these skills hands-on. The American Red Cross runs classes across the US.</p>
+<div class="btn-row"><a class="btn ghost" href="https://www.cdc.gov/stop-overdose/caring/naloxone.html" rel="noopener">CDC: naloxone</a><a class="btn ghost" href="https://www.redcross.org/take-a-class/cpr" rel="noopener">Red Cross CPR classes</a></div></details></section>
+<p class="small"><strong>Sources:</strong> {src}. Last checked: 5 Nov 2026.</p>
+<p class="small">HomeCircle is a free support app, not medical care, and isn't part of any service listed here.</p>
+<script src="assets/quick-exit.js" defer></script>"""
+    page("overdose.html", "help.html", "What to do in an overdose – HomeCircle", "Signs of overdose and what to do: call 911, CPR, naloxone (Narcan), Good Samaritan laws. US sources.", body)
 
 def build_support():
     body = f"""<h1>HomeCircle Support</h1>
@@ -488,7 +564,7 @@ def build_kai_data():
     (ROOT / "assets" / "kai-data.js").write_text("/* Generated by tools/build.py from the app's content. Do not edit. */\nself.HCKaiData = " + _j.dumps(data, ensure_ascii=False, separators=(",", ":")) + ";\n")
 
 build_kai_data()
-build_home(); build_library(); build_steps(); build_meditations(); build_help(); build_support(); build_legal()
+build_home(); build_library(); build_steps(); build_meditations(); build_help(); build_overdose(); build_support(); build_legal()
 for i in C["items"]:
     build_item(i)
 build_books()

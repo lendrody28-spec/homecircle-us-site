@@ -14,3 +14,7 @@
 | Al-Anon Family Groups | For people worried about someone's drinking; Alateen | https://al-anon.org/ |
 | Nar-Anon Family Groups | Family/friends of addicts; Narateen; WSO (800) 477-6291 Mon–Fri 8am–2pm PST | https://nar-anon.org/ , https://nar-anon.org/contact/ (direct fetch blocked by bot protection; verified via search-indexed copy of the official pages) |
 | AA Twelve Steps link | Unchanged from AU site | https://www.aa.org/the-twelve-steps (HTTP 200) |
+
+## Overdose page and gambling helpline (checked 5 Nov 2026)
+- overdose.html: American Red Cross opioid overdose first aid; CDC Lifesaving Naloxone (OTC in all 50 states; Good Samaritan laws in most states); FDA OTC Narcan approval (29 Mar 2023); NIAAA alcohol overdose; DEA meth and GHB fact sheets; DEA Get Smart About Drugs (Good Samaritan scope); poison.org (1-800-222-1222); SAMHSA National Helpline.
+- National Problem Gambling Helpline: ncpgambling.org lists 1-800-MY-RESET (1-800-697-3738) since 29 Jan 2026; 1-800-522-4700 still active; NCPG says 1-800-GAMBLER is no longer its national helpline number (since 29 Sep 2025).
