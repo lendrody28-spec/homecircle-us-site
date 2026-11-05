@@ -69,6 +69,7 @@ def head(title, desc, r):
 <link rel="stylesheet" href="{r}assets/site.css?v={CSS_V}">
 <script src="{r}assets/site.js" defer></script>
 <script src="{r}assets/kai-data.js" defer></script>
+<script src="{r}assets/kai-crisis.js" defer></script>
 <script src="{r}assets/kai-engine.js" defer></script>
 <script src="{r}assets/kai.js" defer></script>
 </head>

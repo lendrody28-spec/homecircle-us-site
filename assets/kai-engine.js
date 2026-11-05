@@ -1,5 +1,6 @@
 /* Kai, HomeCircle's recovery buddy: a plain JavaScript port of KaiEngine.swift and
-   KaiFeelings.swift from the HomeCircle iOS app (1.3.0, build 30).
+   KaiFeelings.swift from the HomeCircle iOS app (1.3.0, build 30), with the build 31 crisis check
+   (KaiCrisis.swift, commit 149628f) in assets/kai-crisis.js.
    Kai isn't AI and isn't a person. Replies come from fixed rules in this file.
    No network calls. Nothing typed leaves the browser. */
 (function (root, factory) {
@@ -167,7 +168,7 @@
   /* ---------- KaiEngine ---------- */
   function freshSession() {
     return { recentReplyIDs: [], topic: null, mood: null, lastSuggestion: null, declined: [], disclaimerShown: false,
-      justListen: false, followUpAsked: false, privateShown: false, crisisHeld: false };
+      justListen: false, followUpAsked: false, privateShown: false, crisisHeld: false, respectHeld: false, mensReferralHeld: false };
   }
   function copySession(s) { var o = freshSession(); s = s || {}; for (var k in o) if (own.call(s, k)) o[k] = Array.isArray(s[k]) ? s[k].slice() : s[k]; return o; }
   function contains(t, n) { return t.indexOf(n) >= 0; }
@@ -175,23 +176,12 @@
   function Q(id, label, chip) { return { id: id, label: label, chip: chip }; }
   var PRACTICE = "practice:";
 
-  var crisisNeedles = ["kill myself", "end my life", "want to die", "wanna die", "end it all", "better off dead",
-    "took too many pills", "don't want to be here", "dont want to be here",
-    "suicide", "suicidal", "self-harm", "self harm",
-    "hurt myself", "hurting myself", "hurt my self",
-    "can't go on", "cannot go on", "cant go on",
-    "no reason to live", "no reason left to live",
-    "unalive", "unaliving", "un-alive", "un alive",
-    "cut myself", "cutting myself",
-    "hang myself", "hanging myself",
-    "don't want to live", "dont want to live",
-    "overdose", "chest pain", "can't breathe", "cannot breathe", "cant breathe", "seizure",
-    "i collapsed", "severe withdrawal"];
-  function isCrisis(text) {
-    var f = normalizeForMatch(text);
-    if (crisisNeedles.some(function (n) { return contains(f, n); })) return true;
-    return splitWords(f).indexOf("kms") >= 0;
-  }
+  /* Crisis check: the build 31 KaiCrisis port in assets/kai-crisis.js, shared by the AU and US sites.
+     KAI_REGION picks the phone numbers in the crisis replies. */
+  var KAI_REGION = "US";
+  var Crisis = (root && root.HCKaiCrisis) || (typeof require === "function" ? require("./kai-crisis.js") : null);
+  function crisisRoute(text) { return Crisis ? Crisis.primaryRoute(Crisis.routes(text)) : null; }
+  function isCrisis(text) { return crisisRoute(text) != null; }
   function mentionsGambling(f) { return ["gambl", "casino", "betting", "poker", "pokies", "sportsbet", "slot machine"].some(function (n) { return contains(f, n); }); }
   function mentionsPrivateDetails(f) {
     return ["my address", "home address", "bank", "password", "bsb", "send money", "send me money",
@@ -524,11 +514,16 @@
   }
 
   function fixedCrisisFilter(message, session) {
-    if (!isCrisis(message)) return null;
+    var route = crisisRoute(message);
+    if (!route) return null;
     var s = copySession(session);
     s.topic = "crisis"; s.justListen = false; s.crisisHeld = true;
-    return finish({ id: "crisis", text: "If you might act on this, call 911 now. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai is a recovery buddy, not a counselor, and can't diagnose.",
+    if (route === "familyViolence") s.respectHeld = true;
+    if (route === "familyHarm") s.mensReferralHeld = true;
+    var r = finish({ id: "crisis", text: Crisis.replyText(route, KAI_REGION),
       crisis: true, replies: [Q("listen", "Stay with me", "listen")], link: L.help }, s);
+    r.crisisRoute = route;
+    return r;
   }
 
   /* reply(message, chip, ctx): ctx = { dayCount, health, session, recentUserLines, includesGA, offeredBreathingToday } */
@@ -592,7 +587,7 @@
     return base + "library.html";
   }
 
-  return { reply: reply, isCrisis: isCrisis, feelings: feelings, strongest: strongest, asksForCalmingTools: asksForCalmingTools,
+  return { reply: reply, isCrisis: isCrisis, crisisRoute: crisisRoute, feelings: feelings, strongest: strongest, asksForCalmingTools: asksForCalmingTools,
     tokens: tokens, normalizeForMatch: normalizeForMatch, freshSession: freshSession, linkTitle: linkTitle, linkHref: linkHref,
     hidesBreathHolds: hidesBreathHolds, stageForDay: stageForDay, intent: intent };
 });
