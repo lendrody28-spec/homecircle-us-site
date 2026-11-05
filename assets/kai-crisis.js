@@ -78,7 +78,8 @@
     words.forEach(function (w) {
       if (w === "not" && joined[joined.length - 1] === "can") joined[joined.length - 1] = "cant"; else joined.push(w);
     });
-    return joined.join(" ");
+    // WEB: "triple zero", "triple-0", "triple 0", "triple oh" all read as 000.
+    return joined.join(" ").replace(/\btriple (zero|0|oh|o)\b/g, "000");
   }
 
   /* ---------- Masks (known everyday phrases) ---------- */
@@ -97,6 +98,8 @@
     // Only the words that follow are looked at; "I need to call 988" still fires.
     /\b988 (training|trainings|course|courses|workshop|workshops|campaign|launch|anniversary|day|week|poster|posters|ad|ads|sticker|stickers|volunteer|volunteers|counselor training)\b/g,
     /\b(fent|fentanyl) test (strip|strips|kit|kits)( kit| kits)?\b/g,
+    // WEB: beating someone at a game or sport ("beat his kids at chess", "beats me at Uno").
+    /\b(beat|beats|beating|beaten|thrashed|thrashes|smashed|smashes|hammered|whooped|whupped|destroyed|kicked|kicks|kicking) (\w+ ){1,4}(at|in) (a |the |his |her |their |our |my )?(chess|uno|cards|card games?|games?|matches|match|monopoly|scrabble|checkers|draughts|poker|tennis|footy|football|soccer|basketball|netball|cricket|golf|ping pong|table tennis|pool|darts|mario kart|fifa|fortnite|minecraft|video games?|board games?|trivia|quiz|race|races|arm wrestling|wrestling match|sudoku|wordle|mahjong|dominoes|bingo|connect four|jenga)\b/g,
     // WEB (Finn adv rows): blue lips from something cold, or from food or drink colouring, is not a crisis.
     /\b(lips|lip|tongue|mouth|fingers|hands|nails|face) (is |are |were |was |went |turned |gone |going |have gone |have turned |all )*(blue|purple) (from|because of|after|cause of|coz of|thanks to) (the |an? |my |some |eating |drinking |that |this |swimming in )*(icy ?poles?|ice ?blocks?|ice blocks?|ice ?creams?|ice|popsicles?|slushies|slushie|slushy|slurpees?|snow ?cones?|lollies|lolly|lollipops?|candy|sweets|blueberries|berries|cordial|drink|drinks|gatorade|powerade|food colou?ring|dye|cold|freezing|the cold|snow|swimming|pool|water|ocean|beach|surf|frozen \w+)\b/g
   ];
@@ -121,6 +124,10 @@
   var family = "(partner|husband|wife|boyfriend|girlfriend|fiance|fiancee|ex|dad|mum|brother|sister|son|daughter|uncle|aunt|he|she|hes|shes)";
   var familyGap = "(?: (?:is|was|keeps|kept|keep|has|have|had|just|always|often|sometimes|still|again|really|been|will|would|wont stop|tried to|trying to|going to|threatened to|threatens to|threatening to|said|says|he|she|they|hes|shes|to|and|also|then|even)){0,6}";
   var familyVerbs = "(hits|hit|hitting|beats|beat|beating|bashes|bashed|bashing|chokes|choked|choking|strangles|strangled|strangling|punches|punched|punching|kicks|kicked|kicking|slaps|slapped|slapping|attacks|attacked|abuses|abused|abusing|raped|rapes|hurts|hurt|hurting|kill|stabbed|stab|threatens|threatened|threatening|stalking|stalks)";
+  var fvNouns = "(partner|husband|wife|boyfriend|girlfriend|fiance|fiancee|ex|dad|mum|stepdad|stepmum|brother|sister|son|daughter|uncle|aunt|auntie|aunty|grandad|grandpa|grandma|nan|nanna|pop|cousin|housemate|flatmate|carer|kids?|children|child|baby|babies|bub|bubs|toddler|family|parents?|stepkids?|stepson|stepdaughter|stepbrother|stepsister|siblings?|nephew|niece)";
+  var fvSubject = "(he|she|hes|shes|they|theyre|((my|our|the|mums|dads|my mums|my dads|her|his) )?((little|big|older|younger|baby|new|old|step) )?" + fvNouns + ")";
+  var fvVerbs = "(hits|hit|hitting|beats|beat|beating|beaten|bashes|bashed|bashing|hurts|hurt|hurting|punches|punched|punching|kicks|kicked|kicking|chokes|choked|choking|strangles|strangled|strangling|slaps|slapped|slapping|attacks|attacked|attacking|abuses|abused|abusing|smacks|smacked|smacking|belts|belted|belting|throttles|throttled)";
+  var fvObject = "(me|him|her|them|us|(my|his|her|their|our|the|your)( (little|big|older|younger|baby|new|step))? " + fvNouns + ")";
   var pills = "(pills|tablets|meds|medication|medications|painkillers|panadol|sleeping pills|valium|xanax|oxys?|endone)";
   function R(s) { return new RegExp(s); }
 
@@ -134,6 +141,7 @@
     /\b(someone|somebody|people|a man|a guy|a woman|this guy|some guy|strangers?)( \w+){0,5} (is |are |keeps |keep |going to |trying to |wants to |will )?(hurting|hitting|attacking|beating|bashing|threatening|following|chasing|kill|hurt|attack|stab|shoot|rape|raping) me\b/,
     /\b(someone|somebody) (is |has )?(broken|breaking) in\b/,
     // WEB (Finn adv rows): asking Kai to call emergency services. Kai can't call; the reply says so.
+    /\b(help me|can you|could you|can u|will you|please|pls|plz) (to )?(call|ring|phone|dial|get) (911|000|an ambulance|the ambulance|the police|the cops|emergency services)\b/,
     /\b(call|ring|phone|dial) (911|000|triple zero|an ambulance|the police|the cops|emergency services|for help) for (me|us|him|her|them)\b/,
     R("\\b" + intent + fillers + " (smash|bash|kick|cave|punch|stomp) (his|her|their|your|someones|somebodys|that guys|this guys) (head|face|skull)( in)?\\b")
   ];
@@ -141,6 +149,8 @@
   var familyViolencePatterns = [
     R("\\b" + family + familyGap + " " + familyVerbs + " me\\b"),
     R("\\b" + family + familyGap + " (wont|will not|doesnt|does not) let me (leave|go|out)\\b"),
+    // WEB (Finn fresh rows): anyone in the family or household hurting another person, any tense.
+    R("\\b" + fvSubject + familyGap + " " + fvVerbs + " " + fvObject + "\\b(?! (record|time|score|best|pb|personal best|high score|lap time|to it|to the))"),
     // WEB (Finn adv rows): a child being hurt, e.g. "my brother is beating his kids".
     R("\\b" + family + familyGap + " " + familyVerbs + " (his|her|their|my|our|the|your) (kids?|kiddies|children|child|son|sons|daughter|daughters|baby|babies|bub|bubs|toddler|stepkids?|stepson|stepdaughter)\\b"),
     /\b(not|dont feel|never feel|dont|never) safe (at|in my( own)?) home\b/,
@@ -154,7 +164,7 @@
     /\b(not|isnt|is not|stopped|aint|arent|wasnt) breathing\b/,
     /\bcant breathe\b/,
     /\b(unconscious|unresponsive)\b/,
-    /\b(wont|will not|isnt|is not|not) (wake|waking) up\b/,
+    /\b(wont|will not|isnt|is not|not) (wake|waking) up\b(?! (early|this early|so early|that early|before|so|too|for|in time|on time|late|the|a|an|him|her|them|us|my|your|his|their|our|anyone|anybody|everyone|everybody|someone|somebody|people|neighbou?rs|until|till|at \d|at (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|noon|dawn|sunrise|lunch)))/,
     /\bcant wake (him|her|them|my \w+|\w+ up)\b/,
     /\b(i|he|she|they|we|hes|shes|theyve|ive|someone|somebody|mate|friend|partner|son|daughter|brother|sister|has|have|just|think|might|may) (has |have |just |probably |might have |may have )?(od|ods|oding|oded)\b/,
     /\b(overdose|overdoses|overdosed|overdosing)\b/,
@@ -222,17 +232,27 @@
     /\b(need to|have to|got to|gotta|going to|want to|about to|should i|should|i will|i might|i am calling|i am texting|im calling) (call|ring|text|phone) (988|911|000|lifeline|the lifeline|a crisis line|the crisis line|suicide (and |& )?crisis lifeline|the suicide (and |& )?crisis lifeline)\b/,
     R("\\b(going to|want to|will|might|about to|ready to|planning to|plan to|thinking about|thinking of|feel like) (take|taking|swallow|swallowing) (all|every one of|the whole|a whole|the rest of|heaps of|a handful of|a bunch of|loads of)( (packet|bottle|box|pack|strip))?( of)?( my| the| those| these)? " + pills + "\\b"),
     /\b(thinking about|thinking of|want to|going to|planning to|plan to|ready to|about to|might|feel like) (end|ending) (it|things|everything)\b(?! (with|between|early|off)\b)/,
-    /\b(dont|do not|never) want to wake up\b(?! (early|at|before|so|too|for|in time))/,
+    /\b(dont|do not|never) want to wake up\b(?! (early|this early|so early|that early|before|so|too|for|in time|on time|late|the|a|an|him|her|them|us|my|your|his|their|our|anyone|anybody|everyone|everybody|someone|somebody|people|neighbou?rs|until|till|at \d|at (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|noon|dawn|sunrise|lunch)))/,
     /\b(shoot|shooting) (myself|my self)\b/,
+    // WEB (Finn fresh rows): a knife, blade or razor at, on or against the wrist or throat.
+    /\b(knife|knives|blade|blades|razor|razors|razor blade|box cutter|stanley knife|scalpel|shard|broken glass)( \w+){0,3} (at|on|against|to|across|into|in) (my|my own) (wrist|wrists|throat|neck|arm|arms|veins?|skin)\b/,
     /\b(gun|pistol|rifle|shotgun|firearm|revolver|glock)( \w+){0,8} (on|at|against|to) (myself|my self|my head)\b/,
     /\b(eat|eating) (a |my )?(gun|bullet)\b/,
     // WEB (Finn adv rows): hoping not to wake up, and holding a gun.
-    /\b(hope|hoping|wish|pray|praying) (that )?i (dont|do not|never|wont|will not) wake up\b(?! (early|at|before|so|too|for|in time))/,
+    /\b(hope|hoping|wish|pray|praying) (that )?i (dont|do not|never|wont|will not) wake up\b(?! (early|this early|so early|that early|before|so|too|for|in time|on time|late|the|a|an|him|her|them|us|my|your|his|their|our|anyone|anybody|everyone|everybody|someone|somebody|people|neighbou?rs|until|till|at \d|at (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|noon|dawn|sunrise|lunch)))/,
+    // WEB (Finn fresh rows): wanting to sleep and never wake up.
+    /\b(hope|hoping|wish|want|wanting|pray|praying|rather)( \w+){0,8} never wake up\b(?! (early|this early|so early|that early|before|so|too|for|in time|on time|late|the|a|an|him|her|them|us|my|your|his|their|our|anyone|anybody|everyone|everybody|someone|somebody|people|neighbou?rs|until|till|at \d|at (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|noon|dawn|sunrise|lunch)))/,
+    /\b(go to sleep|fall asleep|sleep|lie down|close my eyes|drift off|nod off)( \w+){0,4} (and|then) never wake up\b(?! (early|this early|so early|that early|before|so|too|for|in time|on time|late|the|a|an|him|her|them|us|my|your|his|their|our|anyone|anybody|everyone|everybody|someone|somebody|people|neighbou?rs|until|till|at \d|at (one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|noon|dawn|sunrise|lunch)))/,
     /\b(gun|pistol|rifle|shotgun|firearm|revolver|glock|handgun) (is )?in my (hand|hands|lap|mouth)\b/
   ];
 
   function mentionsWeaponAndHarm(t) {
     return /\b(have|got|grabbed|holding) (a|my|the) (knife|gun|weapon|machete|bat)\b/.test(t) && R("\\b" + harmVerbs + "\\b").test(t);
+  }
+  // WEB (Finn fresh rows): took too much, or overdid it, plus a body symptom.
+  function tooMuchAndSymptom(t) {
+    return /\b((took|taken|take|had|have had|did|done|used|drank|smoked|snorted|shot up|injected|swallowed)( way| far| a bit| a little| a lot| slightly)? too much|overdid it|overdone it|over did it|over done it|overdid|too big a dose|too high a dose)\b/.test(t)
+      && /\b(chest (hurts|is hurting|hurting|pain|pains|is tight|feels tight|tight|is killing me)|pain in my chest|cant breathe|cant breath|struggling to breathe|hard to breathe|trouble breathing|short of breath|breathing (is )?(weird|slow|shallow|funny)|heart (is )?(racing|pounding|going crazy|beating (really |so |too )?fast|going so fast|skipping)|(passing|passed|pass|blacking|blacked) out|vomiting|throwing up|threw up|spewing|cant stop (vomiting|throwing up|spewing)|seizure|seizing|fitting|convulsing|shaking (badly|uncontrollably)|cant stay awake|cant keep my eyes open|nodding off|keep falling asleep|turning blue|cant feel my)\b/.test(t);
   }
   function followedAndScared(t) {
     return R("\\b" + family + familyGap + " (wont stop|keeps|keep|is|wont leave me alone and keeps) (following|watching|stalking) me\\b").test(t)
@@ -246,7 +266,7 @@
     if (matches(m, familyHarmPatterns)) found.push("familyHarm");
     if (matches(m, emergencyPatterns) || mentionsWeaponAndHarm(m)) found.push("emergency");
     if (matches(m, familyViolencePatterns) || followedAndScared(m)) found.push("familyViolence");
-    if (matches(m, medicalPatterns)) found.push("medical");
+    if (matches(m, medicalPatterns) || tooMuchAndSymptom(m)) found.push("medical");
     if (matches(m, selfHarmPatterns)) found.push("selfHarm");
     return found;
   }
