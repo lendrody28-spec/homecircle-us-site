@@ -105,6 +105,16 @@
     // WEB: a police or customs seizure of drugs or goods, not a medical seizure.
     /\b(drug|drugs|police|cocaine|meth|ice|heroin|cannabis|weed|record|border|customs|asset|cash|gun|guns|weapons|firearms) seizures?\b/g,
     /\bseizures? of (the |a |an |some |\w+ ){0,3}(drugs|cash|guns|weapons|firearms|money|assets|goods|property|shipment|shipments|cocaine|meth|ice|heroin|cannabis|weed|contraband|cars?|vehicles?|phones?|documents)\b/g,
+    // WEB (Finn last rows): everyday or injury uses of "myself" verbs.
+    /\b(hurt|hurting|cut|cutting|burnt|burned|burn|burning|injured|injure|injuring) (myself|my self) (at (the )?(gym|training|work|footy|soccer|netball|cricket|practice|park|pool)|playing \w+|lifting|training|running|cooking|gardening|on (the |a )?(stove|kettle|oven|iron|pan|fence|glass|tin|can|bbq|grill|heater|tray|paper|corner|table)|with (the |a )?(kettle|iron|stove|oven|pan|scissors|bread knife)|in the (kitchen|garden|shed)|by accident|accidentally|doing \w+|skating|surfing|skiing|riding)\b/g,
+    /\b(kill|killing|killed) (myself|my self) (laughing|with laughter)\b/g,
+    /\b(shot|shoot|shooting) (myself|my self) in the foot\b/g,
+    /\b(burn|burning|burnt|burned|wore|wear|wearing|run|ran|running|worn) (myself|my self) (out|down|ragged)\b/g,
+    /\b(throw|throwing|threw) (myself|my self) a (party|bbq|birthday)\b/g,
+    /\b(throw|throwing|threw|thrown) (myself|my self) (in|into) (my |the |a )?(work|it|study|studies|training|recovery|the program|program|job|role|things|everything|meetings|service|project|gym|music|hobbies)\b/g,
+    // WEB (Finn last rows): breathing practice, not a crisis.
+    /\b((slow|slowly|deep|box|calm|belly|mindful|steady|shallow) )?breathing (exercise|exercises|technique|techniques|practice|app|guide|helps|helped|really helps|calms|to calm|to relax)\b/g,
+    /\bbreathing slowly (helps|to calm|to relax|calms)\b/g,
     // WEB: beating someone at a game or sport ("beat his kids at chess", "beats me at Uno").
     /\b(beat|beats|beating|beaten|flogged|flogs|flogging|flog|belted|belts|belting|thrashed|thrashes|smashed|smashes|hammered|whooped|whupped|destroyed|kicked|kicks|kicking) (\w+ ){1,4}(at|in) (a |the |his |her |their |our |my )?(chess|uno|cards|card games?|games?|matches|match|monopoly|scrabble|checkers|draughts|poker|tennis|footy|football|soccer|basketball|netball|cricket|golf|ping pong|table tennis|pool|darts|mario kart|fifa|fortnite|minecraft|video games?|board games?|trivia|quiz|race|races|arm wrestling|wrestling match|sudoku|wordle|mahjong|dominoes|bingo|connect four|jenga)\b/g,
     // WEB (Finn adv rows): blue lips from something cold, or from food or drink colouring, is not a crisis.
@@ -167,6 +177,8 @@
     R("\\b" + family + familyGap + " (wont|will not|doesnt|does not) let me (leave|go|out)\\b"),
     // WEB (Finn fresh rows): anyone in the family or household hurting another person, any tense.
     R("\\b" + fvSubject + familyGap + " " + fvVerbs + " " + fvObject + "\\b(?! (record|time|score|best|pb|personal best|high score|lap time|to it|to the))"),
+    // WEB (Finn last rows): any man or partner in mum's, dad's or a sibling's life hurting someone.
+    R("\\b((my )?(mums|dads|sisters|brothers|nans|grandmas|aunties|aunts|her|his)( (new|old|current|latest|step))? (bloke|boyfriend|bf|partner|guy|man|husband|hubby|fella|girlfriend|gf|wife|missus|ex|stepdad)|(the |her |my mums |mums )?new (guy|bloke|boyfriend|fella|man|partner)|stepdad|stepfather|step dad)" + familyGap + " " + fvVerbs + " " + fvObject + "\\b"),
     // WEB (Finn adv rows): a child being hurt, e.g. "my brother is beating his kids".
     R("\\b" + family + familyGap + " " + familyVerbs + " (his|her|their|my|our|the|your) (kids?|kiddies|children|child|son|sons|daughter|daughters|baby|babies|bub|bubs|toddler|stepkids?|stepson|stepdaughter)\\b"),
     /\b(not|dont feel|never feel|dont|never) safe (at|in my( own)?) home\b/,
@@ -188,11 +200,13 @@
     /\b(i|he|she|they|we|hes|shes|theyve|ive|someone|somebody|mate|friend|partner|son|daughter|brother|sister|has|have|just|think|might|may) (has |have |just |probably |might have |may have )?(od|ods|oding|oded)\b/,
     /\b(overdose|overdoses|overdosed|overdosing)\b/,
     R("\\b(took|taken|take|taking|had|swallowed) too many( \\w+){0,3} " + pills + "\\b"),
-    /\b(took|taken|swallowed) (heaps|lots|a lot|a heap|a bunch|loads|a load|a handful|handfuls|all|the whole|a whole|the rest)( (packet|bottle|box|pack|strip))?( of)?( my| the| his| her| those| these)? (pills|tablets|meds|medication|medications|painkillers|panadol|sleeping pills|valium|xanax|oxys?|endone|benzos)\b/,
     /\b(mixed|mixing|mix) (xanax|valium|benzos?|oxys?|endone|pills|meds|tablets|painkillers|sleeping pills|heroin|fent|fentanyl) (and|with) (grog|alcohol|booze|drink|drinks|vodka|beer|wine|goon|xanax|valium|benzos?|heroin|fent|fentanyl|oxys?|pills|meds)\b/,
     /\b(mixed|mixing|mix) (grog|alcohol|booze|drink|drinks|vodka|beer|wine|goon) (and|with) (xanax|valium|benzos?|oxys?|endone|pills|meds|tablets|painkillers|sleeping pills|heroin|fent|fentanyl)\b/,
     /\b(having|had|took|taken|taking) an? (overdose|od)\b/,
     /\b(seizure|seizures)\b/,
+    // WEB (Finn last rows): breathing that is not, barely, slow, weird, shallow or stopped (practice wording is masked).
+    /\b(not|barely|hardly|stopped|isnt|aint|wasnt|struggling|trouble|weird|funny|strange|shallow|slow|slowly) (\w+ )?breathing\b(?! down)/,
+    /\bbreathing (is |was |has |had |just |really |very |so |too |super |all )*(slow|slowly|shallow|weird|funny|strange|stopped|barely|ragged|gurgling|rattly|wrong)\b/,
     // WEB (Iris/Finn rows): fits, convulsions, foaming at the mouth, slow or shallow breathing, won't wake.
     /\b(having|had|has|having another|in the middle of|going into) (a |another )?(fit|fits)\b/,
     /\b(fitting|convulsing|convulsions)\b/,
@@ -207,7 +221,7 @@
     /\bsevere withdrawals?\b/,
     // WEB (US rows, Finn): fentanyl and other strong opioids taken, and someone turning blue.
     // The build 31 OD pattern above already covers "he's ODing" and "she OD'd".
-    /\b(took|taken|just took|smoked|snorted|shot up|shot|injected|did|done|had) (some |a lot of |heaps of |too much |more |a bit of )?(fent|fentanyl|nitazenes?|tranq|xylazine)\b(?! (test|strip|strips))/,
+    /\b(took|taken|just took|smoked|snorted|shot up|shot|injected|did|done|had) (some |a lot of |heaps of |too much |more |a bit of )?(fent|fentanyl|nitazenes?|tranq|xylazine|h|gear|smack|heroin)\b(?! (test|strip|strips))/,
     /\bcant feel my (legs|arms|body|face|hands|feet)\b/,
     /\b(turning|turned|gone|going) (blue|purple)\b/,
     /\b(lips|lip|face|skin|fingertips|fingers|nails) (is |are |was |were |have |has )?(went |turned |turning |gone |going |looking |look |looks )?(blue|purple|grey|gray)\b/,
@@ -216,12 +230,15 @@
   ];
 
   var selfHarmPatterns = [
+    // WEB (Finn last rows): broad rule, a harm verb with "myself" (everyday and injury phrases are masked above).
+    /\b(kill|killing|killed|hurt|hurting|cut|cutting|drown|drowning|drowned|gas|gassing|gassed|hang|hanging|hanged|shoot|shooting|shot|stab|stabbing|stabbed|burn|burning|burnt|burned|starve|starving|starved|throw|throwing|threw|poison|poisoning|poisoned|od|ode|overdose|overdosing|off|offing|offed|electrocute|suffocate|suffocating|smother|set fire to|run over|bleed|bleeding) (myself|my self)\b(?! (on fire alarm))/,
+    /\b(end|ending|ended) my (own )?life\b(?! (insurance|policy|story))/,
+    // WEB (Finn last rows): "better (off) without me" in any form; "plays better without me" style is excluded.
+    /(?<!\b(plays?|played|playing|runs?|ran|running|sounds?|sounded|looks?|looked|works?|worked|went|goes|go|cooks?|sings?|sang|did|does|do|fits?) )\bbetter( off)? without me\b/,
     // WEB (Finn signoff rows): methods. Intent words needed, so "stepped in front of the camera" and "catching the train" stay clean.
     /\b(going to|want to|wanted to|will|might|gonna|about to|ready to|planning to|plan to|thinking about|thinking of|feel like|tempted to|urge to|could just|should just|i will just)( just)? (step|stepping|jump|jumping|throw myself|walk|walking|lie down|lying down|lay down|run|running) (out )?in front of (a |the |an |that |this |oncoming )?(next |\w+ )?(train|trains|bus|truck|tram|car|lorry|semi|traffic)\b/,
     /\b(going to|want to|wanted to|will|might|gonna|about to|ready to|planning to|plan to|thinking about|thinking of|feel like|tempted to|urge to)( just)? (drive|driving|crash|crashing|wrap|wrapping|plough|ploughing|plow|steer|steering|run|running|put|putting|smash|smashing) ((my |the )?(car|ute|truck|van|bike|motorbike)( \w+){0,2} )?(into|off|over) (a |the |that |this )?(tree|wall|pole|power pole|pylon|bridge|cliff|pier|river|dam|truck|oncoming traffic|barrier|edge)\b/,
     /\b(on|up on|at|onto) (the |a |this |my |that )?(roof|rooftop|ledge|balcony|bridge|cliff|top floor|railing)\b.*\b(going to|want to|about to|gonna|will|ready to|might|plan to|planning to) jump\b/,
-    /\b(stockpiled|stockpiling|stockpile|saving up|saved up|hoarding|hoarded|hoard|stashing|stashed|been saving|been collecting|collecting) (all |up )?(my |the |some |a lot of |heaps of )?(meds|medication|medications|pills|tablets|painkillers|sleeping pills|benzos|oxys?|endone|panadol|scripts)\b/,
-    /\b(take|taking|took|swallow|swallowing|swallowed|down|neck|necking) (them|all of them|the lot|everything|all my \w+( \w+)?|my \w+( \w+)?)( all)? at once\b/,
     // WEB (Finn signoff rows): a note left for family; errands ("to buy milk", "for the plumber") stay clean.
     /\b(left|leave|leaving|wrote|written|writing|write) (a |my |some )?(note|notes|letter|letters)( \w+){0,2} (for|to) (my |the )?(family|kids|children|partner|wife|husband|mum|dad|parents|son|daughter|girlfriend|boyfriend|loved ones|everyone)\b(?! (to (buy|get|pick|grab|call|feed|take|put|do|remember|say|let)|about|saying (i|where|when)|on the))/,
     // WEB (Finn signoff rows): better off if I wasn't here / they'd all be better off.
@@ -306,7 +323,7 @@
   // WEB (Iris/Finn rows): alcohol mixed with pills, sedatives, G or other drugs.
   function mixedAlcoholAndSedatives(t) {
     var alc = /\b((drank|drinking|drunk|had|downed|skolled|smashed|finished)( \w+){0,4} (bottle|bottles|slab|carton|goon|heaps|a lot|lots|vodka|whisky|whiskey|rum|gin|tequila|wine|beers|shots|drinks|too much)\b(?! of (water|coffee|tea|juice|milk|cola|coke|soda))|\b(alcohol|grog|booze))\b/.test(t);
-    var sed = /\b(took|taken|take|taking|had|swallowed|popped|necked|dropped|did|done|mixed|mixing|on|some|a bunch of|heaps of|my)( \w+){0,3} (pills|sleeping pills|benzos?|xanax|valium|meds|medication|tablets|g|ghb|oxys?|endone|painkillers|seroquel|codeine|opioids?|heroin|fent|fentanyl|ketamine|ket)\b/.test(t);
+    var sed = /\b(took|taken|take|taking|had|swallowed|popped|necked|dropped|did|done|mixed|mixing|on|some|a bunch of|heaps of|my)( \w+){0,3} (pills|sleeping pills|benzos?|xanax|valium|meds|medication|tablets|g|ghb|oxys?|endone|painkillers|seroquel|codeine|opioids?|heroin|fent|fentanyl|ketamine|ket|h|gear|smack)\b/.test(t);
     return alc && sed;
   }
   // WEB (Iris rows): coercive control by a partner (locking in, taking phone/keys, money, isolating, tracking).
@@ -314,6 +331,34 @@
     var partner = /\b(my (partner|husband|wife|boyfriend|girlfriend|fiance|fiancee|ex|hubby|missus)|he|she|hes|shes)\b/.test(t);
     var act = /\b((locks|locked|locking|lock|keeps|kept) me (in|inside|out|in the house|in my room|in the room)|(takes|took|taking|hides|hid|hiding|smashed|smashes|breaks|broke|confiscates|confiscated|keeps|kept|steals|stole) (away )?my (phone|keys|car keys|wallet|cards?|bank cards?|money|passport|pay|medication)|(controls|controlling|controlled|control) (all )?(of )?(my|our) (money|finances|bank|accounts?|pay|spending|phone|life)|(wont|will not|doesnt|does not|never|dont|do not) (let|allow) me (to )?(see|talk to|call|visit|go out with|text|have|leave|work|go to work|go out)( (my|any))? ?(friends|family|mum|dad|sister|brother|anyone|people|money|a phone|my phone|the house|out|job)?|(tracks|tracking|tracked|monitors|monitoring|monitored|checks|checking|reads|reading|goes through|went through) (me|my phone|my location|where i go|my messages|my texts|my car|my bank))\b/.test(t);
     return partner && act;
+  }
+  // WEB (Finn last rows + Iris routine-meds exemption): medication with a saving, all, heap, necking, in-my-hand or whole-packet cue.
+  // Routine or prescribed context (breakfast, morning, as prescribed, the doctor said, Webster pack, methadone/bupe dosing,
+  // vitamins) exempts it UNLESS an intent or stockpile word is present. A bare "I'm going to take all my pills" still fires.
+  var MED = "(pills|tablets|meds|medication|medications|sleeping (pills|tablets)|sleepers|antidepressants|anti depressants|benzos?|oxys?|oxycodone|endone|panadol|paracetamol|nurofen|ibuprofen|codeine|painkillers|valium|xanax|seroquel|quetiapine|lithium|tramadol|lyrica|sertraline|zoloft|prozac|insulin|scripts|script)";
+  var medStock = R("\\b(stockpiled|stockpiling|stockpile|saving|saved|save|hoarding|hoarded|hoard|stashing|stashed|stash|collecting|collected)( up)?( all)?( of)?( my| the| some| a lot of| heaps of)?( \\w+)? " + MED + "\\b|\\b" + MED + "( \\w+){0,3} (stockpiled|saved up|stashed|hoarded)\\b");
+  var medIntent = /\b(going to|gonna|want to|wanna|wanted to|about to|ready to|planning to|plan to|thinking about|thinking of|tempted to|might just|end it|end things|end my life|kill myself|so i dont wake up|so i do not wake up|never wake up|to die|be dead|overdose|od)\b/;
+  var medRoutine = /\b(breakfast|lunch|dinner|morning|mornings|night|nights|nightly|bedtime|with food|with water|doctor|doctors|gp|dr|pharmacist|chemist|prescribed|prescription|my script|every day|everyday|daily|each day|vitamins|supplements|multivitamin|webster|dosette|blister pack|methadone|bupe|buprenorphine|suboxone|dose|dosing|dosed|so i dont forget|so i do not forget|routine|together)\b/;
+  function medsCheck(t) {
+    var med = R("\\b" + MED + "\\b").test(t), vit = /\b(vitamins|supplements|multivitamins?)\b/.test(t);
+    if (!med && !vit) return null;
+    var stock = medStock.test(t), intent = medIntent.test(t);
+    if (medRoutine.test(t) && !stock && !intent) return null;
+    if (!med) return null;
+    if (stock) return "selfHarm";
+    var cue = R("\\b(take|taking|took|taken|swallow|swallowing|swallowed|neck|necking|necked|down|downing|downed|pop|popping|popped|have|had|eat|ate|empty|emptied|finish|finished|use|using|chuck|chucking|chucked)( \\w+){0,2} (all|every one of|the lot of|a heap of|heaps of|a bunch of|a handful of|handfuls of|loads of|lots of|a lot of|the rest of|(the |a )?whole (packet|bottle|box|pack|strip|lot) of|(a |two |three |\\d+ )?(months|weeks) worth of)( the| my| these| those| of my| of the| his| her)? (\\w+ )?" + MED + "\\b").test(t)
+      || R("\\b(neck|necking|necked)( \\w+){0,3} " + MED + "\\b").test(t)
+      || R("\\b" + MED + "( \\w+){0,2} (in|on) my (hand|hands|palm|lap)\\b").test(t)
+      || R("\\b(holding|staring at|counting|lined up|lining up)( \\w+){0,3} " + MED + "\\b").test(t)
+      || R("\\b(the |a |my )?whole (packet|bottle|box|pack|strip|script|supply)( of)?( my| the)?( " + MED + ")?\\b").test(t)
+      || R("\\b" + MED + "( \\w+){0,4} (all )?(at once|in one go|in one hit)\\b").test(t) && intent
+      || R("\\bevery (pill|tablet) i (have|own|got)\\b").test(t);
+    if (!cue) return null;
+    return /\b(took|taken|swallowed|necked|downed|popped|had|ate|emptied|finished|used|chucked)\b/.test(t) && !intent ? "medical" : "selfHarm";
+  }
+  // WEB (Finn last rows): 000 / triple zero anywhere goes to emergency, unless it is informational.
+  function mentions000(t) {
+    return /\b000\b/.test(t) && !/\b(number|numbers|is the emergency|emergency number|fridge|taught|teach|teaching|learnt|learned|learning|poster|magnet|sticker|card|remember|in australia|for emergencies|if needed|if you need|if i need|when to call|how to call|what is|whats|said call|says call|tells you|reminder|ad|ads|advert|test|exam|quiz|class|school)\b/.test(t);
   }
   function followedAndScared(t) {
     return R("\\b" + family + familyGap + " (wont stop|keeps|keep|is|wont leave me alone and keeps) (following|watching|stalking) me\\b").test(t)
@@ -326,10 +371,11 @@
     if (!m) return found;
     if (matches(m, familyHarmPatterns)) found.push("familyHarm");
     var assault = matches(m, assaultPatterns);
-    if (matches(m, emergencyPatterns) || mentionsWeaponAndHarm(m) || assault) found.push("emergency");
+    var meds = medsCheck(m);
+    if (matches(m, emergencyPatterns) || mentionsWeaponAndHarm(m) || assault || mentions000(m)) found.push("emergency");
     if (matches(m, familyViolencePatterns) || followedAndScared(m) || coerciveControl(m) || (assault && R(household).test(m))) found.push("familyViolence");
-    if (matches(m, medicalPatterns) || tooMuchAndSymptom(m) || mixedAlcoholAndSedatives(m)) found.push("medical");
-    if (matches(m, selfHarmPatterns)) found.push("selfHarm");
+    if (matches(m, medicalPatterns) || tooMuchAndSymptom(m) || mixedAlcoholAndSedatives(m) || meds === "medical") found.push("medical");
+    if (matches(m, selfHarmPatterns) || meds === "selfHarm") found.push("selfHarm");
     return found;
   }
   var ORDER = ["familyViolence", "familyHarm", "emergency", "medical", "selfHarm"];
