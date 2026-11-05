@@ -96,7 +96,9 @@
     // WEB: "988 training", "fentanyl test strips": talking about the line or a harm-reduction kit, not a crisis.
     // Only the words that follow are looked at; "I need to call 988" still fires.
     /\b988 (training|trainings|course|courses|workshop|workshops|campaign|launch|anniversary|day|week|poster|posters|ad|ads|sticker|stickers|volunteer|volunteers|counselor training)\b/g,
-    /\b(fent|fentanyl) test (strip|strips|kit|kits)( kit| kits)?\b/g
+    /\b(fent|fentanyl) test (strip|strips|kit|kits)( kit| kits)?\b/g,
+    // WEB (Finn adv rows): blue lips from something cold, or from food or drink colouring, is not a crisis.
+    /\b(lips|lip|tongue|mouth|fingers|hands|nails|face) (is |are |were |was |went |turned |gone |going |have gone |have turned |all )*(blue|purple) (from|because of|after|cause of|coz of|thanks to) (the |an? |my |some |eating |drinking |that |this |swimming in )*(icy ?poles?|ice ?blocks?|ice blocks?|ice ?creams?|ice|popsicles?|slushies|slushie|slushy|slurpees?|snow ?cones?|lollies|lolly|lollipops?|candy|sweets|blueberries|berries|cordial|drink|drinks|gatorade|powerade|food colou?ring|dye|cold|freezing|the cold|snow|swimming|pool|water|ocean|beach|surf|frozen \w+)\b/g
   ];
 
   function matches(text, patterns) { return patterns.some(function (p) { p.lastIndex = 0; return p.test(text); }); }
@@ -131,12 +133,16 @@
     R("\\b" + intent + fillers + " " + harmVerbs + " " + others + "\\b"),
     /\b(someone|somebody|people|a man|a guy|a woman|this guy|some guy|strangers?)( \w+){0,5} (is |are |keeps |keep |going to |trying to |wants to |will )?(hurting|hitting|attacking|beating|bashing|threatening|following|chasing|kill|hurt|attack|stab|shoot|rape|raping) me\b/,
     /\b(someone|somebody) (is |has )?(broken|breaking) in\b/,
+    // WEB (Finn adv rows): asking Kai to call emergency services. Kai can't call; the reply says so.
+    /\b(call|ring|phone|dial) (911|000|triple zero|an ambulance|the police|the cops|emergency services|for help) for (me|us|him|her|them)\b/,
     R("\\b" + intent + fillers + " (smash|bash|kick|cave|punch|stomp) (his|her|their|your|someones|somebodys|that guys|this guys) (head|face|skull)( in)?\\b")
   ];
 
   var familyViolencePatterns = [
     R("\\b" + family + familyGap + " " + familyVerbs + " me\\b"),
     R("\\b" + family + familyGap + " (wont|will not|doesnt|does not) let me (leave|go|out)\\b"),
+    // WEB (Finn adv rows): a child being hurt, e.g. "my brother is beating his kids".
+    R("\\b" + family + familyGap + " " + familyVerbs + " (his|her|their|my|our|the|your) (kids?|kiddies|children|child|son|sons|daughter|daughters|baby|babies|bub|bubs|toddler|stepkids?|stepson|stepdaughter)\\b"),
     /\b(not|dont feel|never feel|dont|never) safe (at|in my( own)?) home\b/,
     /\bunsafe (at|in my( own)?) home\b/,
     /\b(scared|afraid|frightened|terrified) to go home\b/,
@@ -169,7 +175,9 @@
     /\b(took|taken|just took|smoked|snorted|shot up|shot|injected|did|done|had) (some |a lot of |heaps of |too much |more |a bit of )?(fent|fentanyl|nitazenes?|tranq|xylazine)\b(?! (test|strip|strips))/,
     /\bcant feel my (legs|arms|body|face|hands|feet)\b/,
     /\b(turning|turned|gone|going) (blue|purple)\b/,
-    /\b(lips|face|skin|fingertips|fingers|nails) (is |are |have |has )?(turned |turning |gone |going )?(blue|purple|grey|gray)\b/
+    /\b(lips|lip|face|skin|fingertips|fingers|nails) (is |are |was |were |have |has )?(went |turned |turning |gone |going |looking |look |looks )?(blue|purple|grey|gray)\b/,
+    // WEB (Finn adv rows): asking for or needing an ambulance.
+    /\b(call|calling|ring|ringing|phone|get|need|needs|send) (me )?(an|the) ambulance\b/
   ];
 
   var selfHarmPatterns = [
@@ -217,7 +225,10 @@
     /\b(dont|do not|never) want to wake up\b(?! (early|at|before|so|too|for|in time))/,
     /\b(shoot|shooting) (myself|my self)\b/,
     /\b(gun|pistol|rifle|shotgun|firearm|revolver|glock)( \w+){0,8} (on|at|against|to) (myself|my self|my head)\b/,
-    /\b(eat|eating) (a |my )?(gun|bullet)\b/
+    /\b(eat|eating) (a |my )?(gun|bullet)\b/,
+    // WEB (Finn adv rows): hoping not to wake up, and holding a gun.
+    /\b(hope|hoping|wish|pray|praying) (that )?i (dont|do not|never|wont|will not) wake up\b(?! (early|at|before|so|too|for|in time))/,
+    /\b(gun|pistol|rifle|shotgun|firearm|revolver|glock|handgun) (is )?in my (hand|hands|lap|mouth)\b/
   ];
 
   function mentionsWeaponAndHarm(t) {
