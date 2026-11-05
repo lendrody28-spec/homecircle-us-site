@@ -183,6 +183,7 @@
   var BUTTON_COPY = {
     "heading": "What would help right now?",
     "typeHint": "Or write a line below.",
+    "firstOpen": "Kai is a support tool, not medical care or an emergency service. Kai can miss things.",
     "notSafe": {
       "label": "I'm not safe",
       "aria": "I'm not safe, get help now",
@@ -197,7 +198,7 @@
     },
     "cravings": {
       "label": "I'm having cravings",
-      "reply": "Cravings for a drink, a use or a bet rise and fall, and this one can pass. Try to wait 15 minutes before you decide anything. Slow breathing can help, so can calling your sponsor or someone in your circle, or getting to a meeting.",
+      "reply": "Cravings for a drink, a use or a bet rise and fall, and this one can pass. Try to wait 15 minutes before you decide anything. Slow breathing can help, so can calling your sponsor or someone in your circle, or getting to a meeting. If you're not safe right now, tap I'm not safe or call 911.",
       "breathing": "Breathing exercise",
       "urge": "Urge plan",
       "meeting": "Find a meeting"

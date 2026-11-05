@@ -86,15 +86,24 @@
     var r = E.reply(text, chip || null, context());
     if (r.offerBreathing) state.breathOfferedOn = todayKey();
     state.messages.push({ kai: false, text: text });
-    state.messages.push({ kai: true, text: r.text });
+    state.messages.push({ kai: true, text: r.text, crisis: !!r.crisis });
     if (state.messages.length > 200) state.messages = state.messages.slice(-200);
     state.session = r.session;
     state.quick = r.quickReplies.map(function (q) { return { label: q.label, chip: q.chip }; });
     state.latest = { link: r.link, stat: r.stat ? { sourceTitle: r.stat.sourceTitle, sourceURL: r.stat.sourceURL } : null };
     save(KEY, state);
     render();
+    if (r.crisis) { focusReply(); return; }
     var live = document.getElementById("kai-live");
     if (live) { live.textContent = ""; setTimeout(function () { live.textContent = "Kai: " + r.text; }, 30); }
+  }
+  /* After a crisis reply, focus goes to the reply itself (read first), then Tab reaches the call links below it. */
+  function focusReply() {
+    var rows = log.querySelectorAll(".kai-msg.from-kai"), row = rows[rows.length - 1];
+    if (!row) return;
+    row.id = "kai-reply-latest"; row.setAttribute("tabindex", "-1");
+    row.setAttribute("role", "group"); row.setAttribute("aria-label", "Kai's reply");
+    row.focus();
   }
   function pressButton(id) {
     var r = E.buttonReply(id, context());
@@ -108,11 +117,11 @@
     state.latest = { link: r.link, stat: null, tels: r.tels || [], extra: r.extraLinks || [] };
     save(KEY, state);
     render();
+    if (r.crisis) { focusReply(); return; }   /* focus on the reply reads it at once, no timer */
     var live = document.getElementById("kai-live");
-    if (live) live.textContent = "Kai: " + r.text;   /* announced at once, no timer */
-    if (r.crisis) { var first = after.querySelector("a"); if (first) first.focus(); }
+    if (live) live.textContent = "Kai: " + r.text;
   }
-  form.addEventListener("submit", function (e) { e.preventDefault(); var t = input.value; input.value = ""; send(t, null); input.focus(); });
+  form.addEventListener("submit", function (e) { e.preventDefault(); var t = input.value; input.value = ""; send(t, null); var m = state.messages[state.messages.length - 1]; if (!(m && m.crisis)) input.focus(); });
   input.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit")); } });
 
   /* Open, minimise, clear */
