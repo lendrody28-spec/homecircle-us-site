@@ -2,8 +2,8 @@
  *
  * PRIVACY: read aloud never sends text anywhere.
  *  1. Fixed lines (Kai's crisis reply, start-button replies, first-open line, Help page)
- *     play pre-recorded clips made offline (MeloTTS, Kokoro). Clip files have neutral hashed
- *     names, and all of a page's clips for the chosen voice load together on the first
+ *     play pre-recorded clips made offline (Kokoro am_michael). Clip files have neutral hashed
+ *     names, and all of a page's clips load together on the first
  *     tap, so the server can't tell which line was played.
  *  2. Anything without a clip uses the device's own speech voice, and ONLY voices with
  *     voice.localService === true. Network voices (e.g. some Chrome "Google" voices)
@@ -46,7 +46,7 @@
     t = t.replace(/\b(13) (\d\d) (\d\d)\b/g, function (m, a, b, c) { return pair(a) + " " + pair(b) + " " + pair(c); });
     t = t.replace(/\b000\b/g, "triple zero");
     t = t.replace(/\bGPs\b/g, "G Ps").replace(/\bGP\b/g, "G P");
-    t = t.replace(/\bKai\b/g, "Kye");                                  /* both voices say "Kye" */
+    t = t.replace(/\bKai\b/g, "Kye");                                  /* voice says "Kye" */
     t = t.replace(/\b911\b/g, "nine one one");
     t = t.replace(/\b988\b/g, "nine eight eight");
     t = t.replace(/ > /g, ", then ");
@@ -160,15 +160,16 @@
   var FEMALE = /female|woman|karen|catherine|samantha|victoria|serena|kate|moira|tessa|fiona|allison|ava|susan|zira|hazel|libby|natasha|sonia|joanna|salli|kimberly/i;
   var MALE = /\bmale\b|\bman\b|daniel|lee|gordon|alex|fred|tom|aaron|arthur|oliver|george|ryan|william|james|david|mark|guy|rishi/i;
   /* Local voices only. Prefer the site's English (en-AU or en-US), then any local English;
-     within that, prefer the chosen voice's style ("female" for A, "male" for B). */
+     within that, prefer a male device voice (matches Voice B / am_michael). */
   function pickVoice(voices, lang, want) {
     var local = (voices || []).filter(function (v) { return v && v.localService === true && /^en([-_]|$)/i.test(v.lang || ""); });
     if (!local.length) return null;
+    want = want || "B";
     function score(v) {
       var s = 0, n = v.name || "";
       if ((v.lang || "").replace("_", "-").toLowerCase() === (lang || "en-AU").toLowerCase()) s += 4;
       if (want === "A" && FEMALE.test(n) && !/\bmale\b/i.test(n.replace(/female/i, ""))) s += 2;
-      if (want === "B" && MALE.test(n) && !/female/i.test(n)) s += 2;
+      if (want !== "A" && MALE.test(n) && !/female/i.test(n)) s += 2;
       return s;
     }
     return local.slice().sort(function (a, b) { return score(b) - score(a); })[0];
@@ -179,16 +180,15 @@
   /* ---------- browser ---------- */
   var html = document.documentElement, LANG = html.lang === "en-US" ? "en-US" : "en-AU";
   var SPK = '<svg aria-hidden="true" focusable="false" width="20" height="20" viewBox="0 0 24 24"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
-  var clips = { A: {}, B: {} }, voiceNames = {};
+  var clips = { B: {} }, voiceNames = {};
   try { var cj = JSON.parse((document.getElementById("ra-clips") || {}).textContent || "{}"); clips = cj.clips || clips; voiceNames = cj.voices || {}; } catch (e) {}
   var base = (document.getElementById("ra-clips") || { getAttribute: function () { return ""; } }).getAttribute("data-base") || "";
-  function hasVoice(v) { return clips[v] && Object.keys(clips[v]).length > 0; }
-  var both = hasVoice("A") && hasVoice("B");
-  function chosen() { var v = null; try { v = localStorage.getItem("hc.ra.voice.v1"); } catch (e) {} if (v !== "A" && v !== "B") v = "A"; if (!hasVoice(v)) v = hasVoice("A") ? "A" : (hasVoice("B") ? "B" : v); return v; }
-  function setChosen(v) { try { localStorage.setItem("hc.ra.voice.v1", v); } catch (e) {} syncVoiceUI(); }
+  /* Single voice (B / Kokoro am_michael). Ignore or clear any stored Voice A preference. */
+  try { var _ov = localStorage.getItem("hc.ra.voice.v1"); if (_ov === "A" || _ov === "B") localStorage.removeItem("hc.ra.voice.v1"); } catch (e) {}
+  function chosen() { return "B"; }
   var synth = window.speechSynthesis, localVoice = null;
   function refreshVoices() {
-    localVoice = synth && synth.getVoices ? pickVoice(synth.getVoices(), LANG, chosen()) : null;
+    localVoice = synth && synth.getVoices ? pickVoice(synth.getVoices(), LANG, "B") : null;
     update();
   }
   /* blobs: voice -> Promise<{file: Blob}> ; all of the page's clips for one voice, loaded together once, on first tap */
@@ -218,21 +218,20 @@
     var t = b.querySelector(".ra-t"); if (t) t.textContent = on ? "Stop" : "Read aloud";
     b.setAttribute("aria-label", on ? "Stop reading" : (b.getAttribute("data-ra-label") || "Read aloud"));
   }
-  /* play one text: chosen voice clip, else the other voice's clip, else device voice. Never silent if any exists. */
+  /* play one text: Voice B clip, else device voice. Never silent if any exists. */
   function playOne(text, my, done) {
-    var k = key(text), v = chosen(), o = v === "A" ? "B" : "A";
-    var order = [v, o].filter(function (x) { return clips[x] && clips[x][k]; });
-    function tryClip(i) {
+    var k = key(text), v = "B";
+    function tryClip() {
       if (my !== token) return;
-      if (i >= order.length) return speakDevice(text, my, done);
-      preload(order[i]).then(function (files) {
+      if (!(clips[v] && clips[v][k])) return speakDevice(text, my, done);
+      preload(v).then(function (files) {
         if (my !== token) return;
-        var blob = files[clips[order[i]][k]];
-        if (!blob) return tryClip(i + 1);
-        whenPlaying(function () { if (my === token) P.play(blob, function () { if (my === token) done(); }, function () { if (my === token) tryClip(i + 1); }); });
+        var blob = files[clips[v][k]];
+        if (!blob) return speakDevice(text, my, done);
+        whenPlaying(function () { if (my === token) P.play(blob, function () { if (my === token) done(); }, function () { if (my === token) speakDevice(text, my, done); }); });
       });
     }
-    tryClip(0);
+    tryClip();
   }
   function speakDevice(text, my, done) {
     if (!localVoice || !synth || typeof SpeechSynthesisUtterance === "undefined") return done();
@@ -288,7 +287,7 @@
       playOne(t, my, next);
     })();
   }
-  function canRead(texts) { return !!localVoice || texts.every(function (t) { var k = key(t); return (clips.A && clips.A[k]) || (clips.B && clips.B[k]); }); }
+  function canRead(texts) { return !!localVoice || texts.every(function (t) { var k = key(t); return clips.B && clips.B[k]; }); }
   var pageEls = [];
   function pageTexts() {
     var w = document.querySelector("main .wrap"); pageEls = []; return w ? chunksOf(w, pageEls) : [];
@@ -310,40 +309,19 @@
     syncVoiceUI();
   }
   function syncVoiceUI() {
-    var v = chosen();
-    Array.prototype.forEach.call(document.querySelectorAll(".ra-voices"), function (g) {
-      g.hidden = !both;
-      Array.prototype.forEach.call(g.querySelectorAll("[data-ra-voice]"), function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-ra-voice") === v ? "true" : "false"); });
-    });
-    if (synth && synth.getVoices) localVoice = pickVoice(synth.getVoices(), LANG, v);
+    if (synth && synth.getVoices) localVoice = pickVoice(synth.getVoices(), LANG, "B");
   }
+  /* No voice picker: Voice B only. Stub kept so kai.js can append without a second code path. */
   function voicePicker() {
     var g = document.createElement("div");
-    g.className = "ra-voices ra-skip"; g.setAttribute("role", "group"); g.setAttribute("aria-label", "Read aloud voice");
-    ["A", "B"].forEach(function (v) {
-      var pick = document.createElement("button");
-      pick.type = "button"; pick.className = "ra-voice"; pick.setAttribute("data-ra-voice", v);
-      pick.textContent = "Voice " + v; pick.setAttribute("aria-label", "Use Voice " + v + " for read aloud");
-      var smp = document.createElement("button");
-      smp.type = "button"; smp.className = "ra-sample"; smp.setAttribute("data-ra-sample", v);
-      smp.innerHTML = SPK + '<span class="sr-only">Play a sample of Voice ' + v + "</span>";
-      g.appendChild(pick); g.appendChild(smp);
-    });
-    g.hidden = !both;
+    g.className = "ra-voices ra-skip"; g.hidden = true; g.setAttribute("aria-hidden", "true");
     return g;
   }
   document.addEventListener("click", function (e) {
-    var t = e.target.closest ? e.target.closest(".ra-btn,.ra-pause,[data-ra-voice],[data-ra-sample]") : null;
+    var t = e.target.closest ? e.target.closest(".ra-btn,.ra-pause") : null;
     if (!t) return;
     if (t === pauseBtn) { togglePause(); return; }
-    if (t.hasAttribute("data-ra-voice")) { stop(); setChosen(t.getAttribute("data-ra-voice")); return; }
     if (t !== active) P.unlock();   /* synchronously in the tap, before any fetch or await (iOS) */
-    if (t.hasAttribute("data-ra-sample")) {
-      var v = t.getAttribute("data-ra-sample"), s = voiceNames.sample;
-      stop(); var my = token;
-      if (s && clips[v] && clips[v][s]) preload(v).then(function (f) { if (my !== token) return; var b = f[clips[v][s]]; if (b) P.play(b, function () {}, function () {}); });
-      return;
-    }
     if (t === active) { stop(); return; }
     run(t, t._raTexts());
   });
@@ -356,7 +334,7 @@
 
   function init() {
     var bar = document.querySelector(".ra-bar");
-    if (bar) { bar.insertBefore(button("Read this page aloud", pageTexts), bar.firstChild); bar.appendChild(voicePicker()); }
+    if (bar) { bar.insertBefore(button("Read this page aloud", pageTexts), bar.firstChild); }
     if (synth && synth.addEventListener) synth.addEventListener("voiceschanged", refreshVoices);
     else if (synth) synth.onvoiceschanged = refreshVoices;
     refreshVoices();
