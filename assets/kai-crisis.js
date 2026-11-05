@@ -27,7 +27,7 @@
         emergency: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14, any time. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyHarm: "Call 000 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. Lifeline is 13 11 14. Men's Referral Service is 1300 766 491, for help to stop using violence. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14. 1800RESPECT is 1800 737 732, 24 hours, for family and domestic violence. Please call one of them yourself. Kai can't call anyone and can miss things.",
-        checkIn: "That sounds serious. If you or anyone is in danger, call 000 now, or Lifeline on 13 11 14. Want to tell me more? Kai can miss things.",
+        checkIn: "Just checking in. If you or anyone else is in danger right now, call 000, or Lifeline on 13 11 14. Kai can miss things. Want to tell me more?",
         medical: "This sounds like a medical emergency. Call 000 now and ask for an ambulance. Stay with the person if it's safe. Lifeline is 13 11 14. Kai can't call anyone and can miss things, so please make the call yourself."
       }
     },
@@ -38,7 +38,7 @@
         emergency: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyHarm: "Call 911 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. The National Domestic Violence Hotline is 1-800-799-7233, 24/7. Please call one of them yourself. Kai can't call anyone and can miss things.",
-        checkIn: "That sounds serious. If you or anyone is in danger, call 911 now, or call or text 988. Want to tell me more? Kai can miss things.",
+        checkIn: "Just checking in. If you or anyone else is in danger right now, call 911, or call or text 988. Kai can miss things. Want to tell me more?",
         medical: "This sounds like a medical emergency. Call 911 now and ask for an ambulance. Stay with the person if it's safe. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai can't call anyone and can miss things, so please make the call yourself."
       }
     }
@@ -398,7 +398,7 @@
   }
   // WEB (round 6, Finn A): second tier. Broad risk words get a short check-in when no full crisis route fires.
   var checkInWords = /\b(die|dies|died|dying|dead|death|living|alive|kill|kills|killed|killing|top myself|topping myself|hurt|hurts|hurting|harm|cut|cuts|cutting|blood|bleeding|rope|noose|gun|guns|knife|knives|blade|razor|bridge|jump|jumping|overdose|overdosed|od|shot up|breathing|breathe|ambo|ambulance|cops|police|help|end it|end things|exist|existing|suicide|suicidal|unsafe|danger|scared|terrified|abuse|abused|hit me|hits me|bashed|choked|pills|tablets|meds|unconscious|collapsed|seizure|fitting|blue|bleed|wrists?|throat|gone|goodbye|no point|give up|giving up|cant go on|cant do this|disappear|vanish)\b/;
-  var checkInIdioms = /\b(killing it|killed it|kill it|killing time|kill time|kill for an?|killing me laughing|dying to|dying for|died laughing|dead tired|dead set|deadline|deadlines|blue sky|feeling blue|help me (with|find|understand)|(what|that|it|this|which|things that|anything that|something that) (can |might |would |will |could |does |usually )?helps?|cut back|cut down|cut out|cutting back|cutting down|short cut|haircut|hair cut|jump start|jump in|jumped at|gone to|gone for|gone out|gone home|living room|cost of living|living with|for a living|is killing me|are killing me|youre killing me|dying of boredom|phone died|battery died|wifi collapsed)\b/g;
+  var checkInIdioms = /\b(killing it|killed it|kill it|killing time|kill time|kill for an?|killing me laughing|dying to|dying for|died laughing|dead tired|dead set|deadline|deadlines|blue sky|feeling blue|help me (with|find|understand|stay on track|stay sober|stay clean)|(need|want|get|getting|some) (some )?help (with|staying|to stay) (my |the )?(sober|clean|step|steps|on track|recovery|meeting|meetings)|help staying (sober|clean)|sober living|living (one day|sober|clean)|joke killed me|(what|that|it|this|which|things that|anything that|something that) (can |might |would |will |could |does |usually )?helps?|cut back|cut down|cut out|cutting back|cutting down|short cut|haircut|hair cut|jump start|jump in|jumped at|gone to|gone for|gone out|gone home|living room|cost of living|living with|for a living|is killing me|are killing me|youre killing me|dying of boredom|phone died|battery died|wifi collapsed)\b/g;
   function checkIn(text) {
     var m = mask(canonical(text));
     if (!m || routes(text).length) return false;
