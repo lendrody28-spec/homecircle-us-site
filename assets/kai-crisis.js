@@ -27,6 +27,7 @@
         emergency: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14, any time. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyHarm: "Call 000 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. Lifeline is 13 11 14. Men's Referral Service is 1300 766 491, for help to stop using violence. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14. 1800RESPECT is 1800 737 732, 24 hours, for family and domestic violence. Please call one of them yourself. Kai can't call anyone and can miss things.",
+        checkIn: "That sounds serious. If you or anyone is in danger, call 000 now, or Lifeline on 13 11 14. Want to tell me more? Kai can miss things.",
         medical: "This sounds like a medical emergency. Call 000 now and ask for an ambulance. Stay with the person if it's safe. Lifeline is 13 11 14. Kai can't call anyone and can miss things, so please make the call yourself."
       }
     },
@@ -37,6 +38,7 @@
         emergency: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyHarm: "Call 911 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. The National Domestic Violence Hotline is 1-800-799-7233, 24/7. Please call one of them yourself. Kai can't call anyone and can miss things.",
+        checkIn: "That sounds serious. If you or anyone is in danger, call 911 now, or call or text 988. Want to tell me more? Kai can miss things.",
         medical: "This sounds like a medical emergency. Call 911 now and ask for an ambulance. Stay with the person if it's safe. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai can't call anyone and can miss things, so please make the call yourself."
       }
     }
@@ -115,6 +117,11 @@
     // WEB (Finn last rows): breathing practice, not a crisis.
     /\b((slow|slowly|deep|box|calm|belly|mindful|steady|shallow) )?breathing (exercise|exercises|technique|techniques|practice|app|guide|helps|helped|really helps|calms|to calm|to relax)\b/g,
     /\bbreathing slowly (helps|to calm|to relax|calms)\b/g,
+    // WEB (round 6, end-web): busy-day breathing and a toddler bump that is fine.
+    /\bbarely breathing (at|with) work\b/g,
+    /\b(hit|bumped|banged) (her|his|their) head on the (cot|table|bed|couch|door|chair|floor)\b(?=.*\b(fine|ok|okay|laughing|all good)\b)/g,
+    // WEB (round 6): "bullet journal", "bullet points" are not weapons.
+    /\bbullet (journal|journals|journaling|point|points|list|lists|proof|train)\b/g,
     // WEB: beating someone at a game or sport ("beat his kids at chess", "beats me at Uno").
     /\b(beat|beats|beating|beaten|flogged|flogs|flogging|flog|belted|belts|belting|thrashed|thrashes|smashed|smashes|hammered|whooped|whupped|destroyed|kicked|kicks|kicking) (\w+ ){1,4}(at|in) (a |the |his |her |their |our |my )?(chess|uno|cards|card games?|games?|matches|match|monopoly|scrabble|checkers|draughts|poker|tennis|footy|football|soccer|basketball|netball|cricket|golf|ping pong|table tennis|pool|darts|mario kart|fifa|fortnite|minecraft|video games?|board games?|trivia|quiz|race|races|arm wrestling|wrestling match|sudoku|wordle|mahjong|dominoes|bingo|connect four|jenga)\b/g,
     // WEB (Finn adv rows): blue lips from something cold, or from food or drink colouring, is not a crisis.
@@ -165,6 +172,12 @@
     R("\\b" + intent + fillers + " " + harmVerbs + " " + others + "\\b"),
     /\b(someone|somebody|people|a man|a guy|a woman|this guy|some guy|strangers?)( \w+){0,5} (is |are |keeps |keep |going to |trying to |wants to |will )?(hurting|hitting|attacking|beating|bashing|threatening|following|chasing|kill|hurt|attack|stab|shoot|rape|raping) me\b/,
     /\b(someone|somebody) (is |has )?(broken|breaking) in\b/,
+    // WEB (round 6, Finn B): any request for help, police, cops or an ambulance goes to the full emergency route.
+    /\b(call|calling|ring|ringing|phone|phoning|get|getting|send|sending|fetch|dial|need|needs|want|bring)( me| us| him| her| them)?( the| an| a| some)? (police|cops|cop|ambulance|ambulances|paramedics|emergency services|fire brigade|firies)\b/,
+    /\b(call|ring|phone|get|send|fetch|bring)( me| us| him| her| them)?( some| a| the)? help\b/,
+    /\bneed (help|someone|somebody) (now|right now|urgently|asap|fast|quick|quickly|please|immediately|here)\b/,
+    /^(please |pls |plz )?help\b(?! (me |us )?(with|find|to find|understand|learn|choose|pick|work|out|figure|write|plan|get to|get a|get into|get started|out with|a bit|on|my|the|setting|set))/,
+    /\b(someone|somebody|anyone) (please )?help\b(?! (me |us )?(with|find|understand|learn|choose|pick|out with|me out))/,
     // WEB (Finn adv rows): asking Kai to call emergency services. Kai can't call; the reply says so.
     /^(please |pls |plz |quick |quickly |someone |somebody |just )?(call|ring|phone|dial) (000|911|an ambulance|the ambulance|ambulance|the police|the cops|emergency services|emergency)( now| please| pls| plz| quick| quickly| asap| for me| for us| right now)*$/,
     /\b(help me|can you|could you|can u|will you|please|pls|plz) (to )?(call|ring|phone|dial|get) (911|000|an ambulance|the ambulance|the police|the cops|emergency services)\b/,
@@ -179,6 +192,10 @@
     R("\\b" + fvSubject + familyGap + " " + fvVerbs + " " + fvObject + "\\b(?! (record|time|score|best|pb|personal best|high score|lap time|to it|to the))"),
     // WEB (Finn last rows): any man or partner in mum's, dad's or a sibling's life hurting someone.
     R("\\b((my )?(mums|dads|sisters|brothers|nans|grandmas|aunties|aunts|her|his)( (new|old|current|latest|step))? (bloke|boyfriend|bf|partner|guy|man|husband|hubby|fella|girlfriend|gf|wife|missus|ex|stepdad)|(the |her |my mums |mums )?new (guy|bloke|boyfriend|fella|man|partner)|stepdad|stepfather|step dad)" + familyGap + " " + fvVerbs + " " + fvObject + "\\b"),
+    // WEB (round 6): throwing something at, lunging at, going for, or grabbing a family member by the throat.
+    R("\\b(threw|throws|throwing|chucked|chucks|chucking|hurled|hurls|hurling|flung|smashed|pegged) (a |an |the |his |her |my |some )?(\\w+ ){0,2}(at|into) " + fvObject + "\\b"),
+    R("\\b(lunged|lunges|lunging|went|goes|going|came|comes|coming|charged|charges|ran|runs) (at|for) " + fvObject + "\\b(?! (a |the )?(walk|run|coffee|lunch|dinner|drive|swim|ride|chat|drink|beer|visit))"),
+    R("\\b(grabbed|grabs|grabbing|held|holds|holding|pinned|pins|had|has) " + fvObject + " (by|around) the (throat|neck|hair)\\b"),
     // WEB (Finn adv rows): a child being hurt, e.g. "my brother is beating his kids".
     R("\\b" + family + familyGap + " " + familyVerbs + " (his|her|their|my|our|the|your) (kids?|kiddies|children|child|son|sons|daughter|daughters|baby|babies|bub|bubs|toddler|stepkids?|stepson|stepdaughter)\\b"),
     /\b(not|dont feel|never feel|dont|never) safe (at|in my( own)?) home\b/,
@@ -230,6 +247,20 @@
   ];
 
   var selfHarmPatterns = [
+    // WEB (round 6): a method on a body part without "myself". Injury context ("on the fence", "at work", "cooking") is excluded.
+    /\b(slash|slashing|slashed|slit|slitting|cut|cutting|stab|stabbing|shoot|shooting|blow|blowing|slice|slicing|open|opening) (open )?(my|me) (own )?(wrists?|arms?|head|throat|neck|veins?|temple)( open| off| out)?\b(?! (on|from|at work|cooking|shaving|while|by accident|accidentally|healing|is healing|in the kitchen))/,
+    /\b(bullet|bullets|gun|pistol|rifle|shotgun|blade|blades|knife|knives|razor|razors)( \w+){0,3} (in|into|to|through|against|on|at|across|in to) (my|me) (own )?(wrists?|arms?|head|throat|neck|temple|mouth|veins?|chest|heart)\b/,
+    // WEB (round 6): jump or leap off a height or any named bridge; not past-tense fun or swimming contexts.
+    /\b(jump|jumping|leap|leaping|throw myself|go|going|hurl myself) off (the |a |that |this |of )?(\w+ ){0,2}(bridge|cliff|cliffs|roof|rooftop|building|tower|overpass|balcony|car park|carpark|parking garage|top floor|gap|ledge|dam)\b(?!.*\b(swim|swimming|swam|pool|into the (water|river|creek|lake|ocean|sea)|diving|jetty|pier|bungee|parachute|movie|film|game|video)\b)/,
+    // WEB (round 6): crashing a vehicle on purpose.
+    /\b(crash|crashing|drive|driving|wrap|wrapping|roll|rolling|flip|flipping|plough|ploughing|smash|smashing|run|running|steer|steering|stack|stacking|put|putting)( \w+){0,3} (car|ute|truck|bike|motorbike|van)( \w+){0,5} (on purpose|deliberately|intentionally)\b/,
+    /\b(deliberately|on purpose|intentionally) (crash|drive|wrap|roll|stack|smash|run)\b/,
+    /\b(going to|want to|wanted to|will|might|gonna|about to|ready to|planning to|plan to|thinking about|thinking of|tempted to|urge to)( just)? (wrap|wrapping) (my |the )?(car|ute|truck|bike|motorbike|van) (around|round) (a |the )?(tree|pole|power pole)\b/,
+    // WEB (round 6): stop existing / not exist.
+    /\b(stop|stopped|stopping|cease|ceased|ceasing) (to )?exist(ing)?\b(?! on autopilot| like a robot| as a zombie)/,
+    /\b(want|wanna|wish|like|rather|prefer|need)( to)?( just)? (not|never) (to )?exist\b/,
+    /\b(dont|do not|never) (want to |wanna )?exist\b/,
+    /\bwish i (didnt|did not|never|wouldnt|could just not|could stop|could) (exist|existed|stop existing)\b/,
     // WEB (Finn last rows): broad rule, a harm verb with "myself" (everyday and injury phrases are masked above).
     /\b(kill|killing|killed|hurt|hurting|cut|cutting|drown|drowning|drowned|gas|gassing|gassed|hang|hanging|hanged|shoot|shooting|shot|stab|stabbing|stabbed|burn|burning|burnt|burned|starve|starving|starved|throw|throwing|threw|poison|poisoning|poisoned|od|ode|overdose|overdosing|off|offing|offed|electrocute|suffocate|suffocating|smother|set fire to|run over|bleed|bleeding) (myself|my self)\b(?! (on fire alarm))/,
     /\b(end|ending|ended) my (own )?life\b(?! (insurance|policy|story))/,
@@ -360,6 +391,22 @@
   function mentions000(t) {
     return /\b000\b/.test(t) && !/\b(number|numbers|is the emergency|emergency number|fridge|taught|teach|teaching|learnt|learned|learning|poster|magnet|sticker|card|remember|in australia|for emergencies|if needed|if you need|if i need|when to call|how to call|what is|whats|said call|says call|tells you|reminder|ad|ads|advert|test|exam|quiz|class|school)\b/.test(t);
   }
+  // WEB (round 6): "end it" without "all". Break-up and meeting/shift contexts are exempt.
+  function endIt(t) {
+    if (!/\b(going to|gonna|want to|wanna|ready to|time to|about to|planning to|plan to|will|i|just|need to|have to|gotta|could|should|might)( just)? end it\b(?! (with|there|here|between|early|for (today|now|the day|tonight)|at|after|on a|off|before))/.test(t)) return false;
+    return !/\b(relationship|boyfriend|girlfriend|bf|gf|dating|marriage|break up|breakup|broke up|dumped|cheating|cheated|the meeting|meeting|shift|class|game|lease|contract|subscription|membership|series|show|chapter|story|book)\b/.test(t);
+  }
+  // WEB (round 6, Finn A): second tier. Broad risk words get a short check-in when no full crisis route fires.
+  var checkInWords = /\b(die|dies|died|dying|dead|death|living|alive|kill|kills|killed|killing|top myself|topping myself|hurt|hurts|hurting|harm|cut|cuts|cutting|blood|bleeding|rope|noose|gun|guns|knife|knives|blade|razor|bridge|jump|jumping|overdose|overdosed|od|shot up|breathing|breathe|ambo|ambulance|cops|police|help|end it|end things|exist|existing|suicide|suicidal|unsafe|danger|scared|terrified|abuse|abused|hit me|hits me|bashed|choked|pills|tablets|meds|unconscious|collapsed|seizure|fitting|blue|bleed|wrists?|throat|gone|goodbye|no point|give up|giving up|cant go on|cant do this|disappear|vanish)\b/;
+  var checkInIdioms = /\b(killing it|killed it|kill it|killing time|kill time|kill for an?|killing me laughing|dying to|dying for|died laughing|dead tired|dead set|deadline|deadlines|blue sky|feeling blue|help me (with|find|understand)|(what|that|it|this|which|things that|anything that|something that) (can |might |would |will |could |does |usually )?helps?|cut back|cut down|cut out|cutting back|cutting down|short cut|haircut|hair cut|jump start|jump in|jumped at|gone to|gone for|gone out|gone home|living room|cost of living|living with|for a living|is killing me|are killing me|youre killing me|dying of boredom|phone died|battery died|wifi collapsed)\b/g;
+  function checkIn(text) {
+    var m = mask(canonical(text));
+    if (!m || routes(text).length) return false;
+    var r = m.replace(checkInIdioms, " ");
+    var medOnly = /\b(pills|tablets|meds)\b/.test(r) && !R("\\b(die|dead|kill|hurt|overdose|od|end it|exist|suicid\\w*|alive)\\b").test(r);
+    if (medOnly && medRoutine.test(m) && !medStock.test(m) && !medIntent.test(m)) return false;
+    return checkInWords.test(r);
+  }
   function followedAndScared(t) {
     return R("\\b" + family + familyGap + " (wont stop|keeps|keep|is|wont leave me alone and keeps) (following|watching|stalking) me\\b").test(t)
       && /\b(scared|afraid|frightened|terrified|unsafe|not safe)\b/.test(t);
@@ -375,7 +422,7 @@
     if (matches(m, emergencyPatterns) || mentionsWeaponAndHarm(m) || assault || mentions000(m)) found.push("emergency");
     if (matches(m, familyViolencePatterns) || followedAndScared(m) || coerciveControl(m) || (assault && R(household).test(m))) found.push("familyViolence");
     if (matches(m, medicalPatterns) || tooMuchAndSymptom(m) || mixedAlcoholAndSedatives(m) || meds === "medical") found.push("medical");
-    if (matches(m, selfHarmPatterns) || meds === "selfHarm") found.push("selfHarm");
+    if (matches(m, selfHarmPatterns) || meds === "selfHarm" || endIt(m)) found.push("selfHarm");
     return found;
   }
   var ORDER = ["familyViolence", "familyHarm", "emergency", "medical", "selfHarm"];
@@ -383,7 +430,11 @@
   function region(code) { return REGIONS[code] || REGIONS.AU; }
   function replyText(route, code) { return region(code).replies[route] || region(code).replies.selfHarm; }
   function isCrisis(text) { return routes(text).length > 0; }
+  function checkInText(code) { return region(code).replies.checkIn; }
+  // tier(text): "crisis" (full route), "checkIn" (second tier) or null.
+  function tier(text) { return routes(text).length ? "crisis" : (checkIn(text) ? "checkIn" : null); }
 
   return { REGIONS: REGIONS, normalizeForMatch: normalizeForMatch, canonical: canonical, mask: mask, routes: routes,
-    primaryRoute: primaryRoute, replyText: replyText, region: region, isCrisis: isCrisis };
+    primaryRoute: primaryRoute, replyText: replyText, region: region, isCrisis: isCrisis,
+    checkIn: checkIn, checkInText: checkInText, tier: tier };
 });

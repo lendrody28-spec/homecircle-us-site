@@ -182,6 +182,7 @@
   var Crisis = (root && root.HCKaiCrisis) || (typeof require === "function" ? require("./kai-crisis.js") : null);
   function crisisRoute(text) { return Crisis ? Crisis.primaryRoute(Crisis.routes(text)) : null; }
   function isCrisis(text) { return crisisRoute(text) != null; }
+  function crisisTier(text) { return Crisis && Crisis.tier ? Crisis.tier(text) : (isCrisis(text) ? "crisis" : null); }
   function mentionsGambling(f) { return ["gambl", "casino", "betting", "poker", "pokies", "sportsbet", "slot machine"].some(function (n) { return contains(f, n); }); }
   function mentionsPrivateDetails(f) {
     return ["my address", "home address", "bank", "password", "bsb", "send money", "send me money",
@@ -515,7 +516,15 @@
 
   function fixedCrisisFilter(message, session) {
     var route = crisisRoute(message);
-    if (!route) return null;
+    if (!route) {
+      // Round 6 second tier: a short check-in when broad risk words appear but no full route fires.
+      if (!Crisis || !Crisis.checkIn || !Crisis.checkIn(message)) return null;
+      var c = copySession(session);
+      var ci = finish({ id: "checkIn", text: Crisis.checkInText(KAI_REGION),
+        crisis: false, replies: [Q("listen", "Stay with me", "listen")], link: L.help }, c);
+      ci.checkIn = true; ci.crisisRoute = null;
+      return ci;
+    }
     var s = copySession(session);
     s.topic = "crisis"; s.justListen = false; s.crisisHeld = true;
     if (route === "familyViolence") s.respectHeld = true;
@@ -587,7 +596,7 @@
     return base + "library.html";
   }
 
-  return { reply: reply, isCrisis: isCrisis, crisisRoute: crisisRoute, feelings: feelings, strongest: strongest, asksForCalmingTools: asksForCalmingTools,
+  return { reply: reply, isCrisis: isCrisis, crisisRoute: crisisRoute, crisisTier: crisisTier, feelings: feelings, strongest: strongest, asksForCalmingTools: asksForCalmingTools,
     tokens: tokens, normalizeForMatch: normalizeForMatch, freshSession: freshSession, linkTitle: linkTitle, linkHref: linkHref,
     hidesBreathHolds: hidesBreathHolds, stageForDay: stageForDay, intent: intent };
 });
