@@ -44,7 +44,7 @@
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
   function render() {
     log.textContent = "";
-    empty.hidden = state.messages.length > 0;
+    empty.hidden = true;   /* the start buttons replace the old empty-state line */
     state.messages.forEach(function (m) {
       var row = el("div", "kai-msg " + (m.kai ? "from-kai" : "from-me"));
       row.appendChild(el("span", "sr-only", m.kai ? "Kai: " : "You: "));
@@ -67,14 +67,18 @@
     }
     crisis.hidden = false;   /* the I'm not safe button, 000/911 and Lifeline/988 stay on screen */
     chips.textContent = "";
-    var quick = state.quick || [{ label: "I'm craving", chip: "craving" }, { label: "Find a meeting", chip: "meeting" }, { label: "Just listen", chip: "listen" }, { label: "What can help?", chip: "tools" }];
+    var quick = state.messages.length ? (state.quick || []) : [];   /* start screen: one set of choices (the start buttons); chips are follow-ups only */
     quick.forEach(function (q) {
       var b = el("button", "chip", q.label); b.type = "button";
       b.addEventListener("click", function () { send(q.label, q.chip); });
       chips.appendChild(b);
     });
     log.scrollTop = log.scrollHeight;
-    var sc = panel.querySelector(".kai-scroll"); if (sc) sc.scrollTop = sc.scrollHeight;
+    scrollChat();
+  }
+  function scrollChat() {
+    var sc = panel.querySelector(".kai-scroll"); if (!sc) return;
+    sc.scrollTop = state.messages.length ? sc.scrollHeight : 0;   /* first open: top, so the start buttons show in full */
   }
   function send(text, chip) {
     text = String(text || "").trim();
@@ -114,7 +118,7 @@
   /* Open, minimise, clear */
   function open() {
     panel.hidden = false; bubble.setAttribute("aria-expanded", "true"); root.classList.add("open");
-    render(); input.focus();
+    render(); input.focus({ preventScroll: true }); scrollChat();
   }
   function minimise() {
     panel.hidden = true; confirmBox.hidden = true; bubble.setAttribute("aria-expanded", "false"); root.classList.remove("open"); bubble.focus();

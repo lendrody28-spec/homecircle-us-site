@@ -338,7 +338,7 @@
     return pick("reflect", ["I hear you. " + clip, "I'll stay with that. " + clip, "No plan from me. " + clip], session).split("?").join(".");
   }
   function starterReplies(ctx) {
-    var r = [Q("craving", "I'm craving", "craving"), meetingReply, listenReply];
+    var r = [Q("craving", "I'm having cravings", "craving"), meetingReply, listenReply];
     if (ctx.session.declined.indexOf("breathe") >= 0) r = r.filter(function (q) { return q.id !== "craving"; });
     return r.slice(0, 3);
   }
