@@ -443,7 +443,7 @@
         return { id: "body", text: b.text, offerBreathing: false, replies: [Q("breathe", "Breathe with me", "breathing"), listenReply], link: L.help, stat: b.stat };
       case "breathing":
         var practice = preferredBreathingID(ctx.health);
-        if (hidesBreathHolds(ctx.health)) text = "A slow out-breath fits the health notes you saved. Skip breath holds.";
+        if (hidesBreathHolds(ctx.health)) text = "A slow out-breath fits your breath-hold setting. Skip breath holds.";
         else if (prefersGroundingFirst(ctx.health)) text = "Feet on the floor first, then a short breath if you still want one.";
         else text = pick("breathing", ["We can do a short one. Stop any time.", "Box breathing, 4-7-8, or a slow out-breath. Your choice.",
           "A few breaths, then we stop. Nothing longer than you want."], session);
@@ -505,7 +505,7 @@
       if (session.privateShown) spoken += " Same reminder: don't share bank details or passwords. Tell your sponsor or a trusted person if someone asks.";
       else { spoken += " " + D().privateDetails; session.privateShown = true; }
     }
-    if (o.gambling) spoken += " The Gamblers Anonymous national hotline is 855-222-5542, and you can call or text 988 any time.";
+    if (o.gambling) spoken += " The National Problem Gambling Helpline is 1-800-MY-RESET (1-800-697-3738), with call, text and chat 24/7. The Gamblers Anonymous fellowship line is 855-222-5542, and you can call or text 988 any time.";
     if ((spoken.match(/\?/g) || []).length > 1) spoken = spoken.slice(0, spoken.indexOf("?") + 1);
     if (o.link) session.lastSuggestion = session.lastSuggestion == null ? o.id : session.lastSuggestion;
     return { text: spoken, offerBreathing: !!o.offerBreathing, crisis: !!o.crisis, privateDetailsReminder: !!o.privateDetails,
@@ -549,7 +549,7 @@
     }
     if (session.justListen && !chip) {
       var spoken = reflect(text, session);
-      if (shouldMentionGambling(f, "", ctx)) spoken += " The Gamblers Anonymous national hotline is 855-222-5542.";
+      if (shouldMentionGambling(f, "", ctx)) spoken += " The National Problem Gambling Helpline is 1-800-MY-RESET (1-800-697-3738), with call, text and chat 24/7. The Gamblers Anonymous fellowship line is 855-222-5542.";
       var p = mentionsPrivateDetails(f);
       return finish({ id: "listen", text: spoken, privateDetails: p, privateLine: p, replies: listenQR }, session);
     }
