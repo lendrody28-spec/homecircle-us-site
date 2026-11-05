@@ -301,7 +301,7 @@
     var parts = ["I can't tell how your body is going, and I won't guess. A doctor can."];
     var stage = stageForDay(ctx.dayCount);
     if (stage && ctx.dayCount) parts.push("Day " + ctx.dayCount + ". " + stage.kaiLine.charAt(0).toUpperCase() + stage.kaiLine.slice(1));
-    else parts.push("The stages page has general notes on the first days, weeks and months.");
+    else parts.push("For questions about withdrawal or how your body is doing, talk to a doctor.");
     var stat = D().stats[(stage && stage.statID) || "adf-withdrawal-weeks"] || null;
     if (stat) parts.push(stat.text + " Source: " + stat.sourceTitle + ".");
     parts.push(D().safetyLine);
@@ -440,7 +440,7 @@
       case "body":
         var b = bodyStageText(ctx);
         session.lastSuggestion = STAGES_ID;
-        return { id: "body", text: b.text, offerBreathing: false, replies: [Q("breathe", "Breathe with me", "breathing"), listenReply], link: L.practice(STAGES_ID), stat: b.stat };
+        return { id: "body", text: b.text, offerBreathing: false, replies: [Q("breathe", "Breathe with me", "breathing"), listenReply], link: L.help, stat: b.stat };
       case "breathing":
         var practice = preferredBreathingID(ctx.health);
         if (hidesBreathHolds(ctx.health)) text = "A slow out-breath fits the health notes you saved. Skip breath holds.";

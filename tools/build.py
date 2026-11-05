@@ -33,7 +33,7 @@ PRIVACY = L["privacyURL"]
 TERMS = L["termsURL"]
 import hashlib as _h
 CSS_V = _h.sha1((ROOT / "assets" / "site.css").read_bytes()).hexdigest()[:8]
-BROWSER_ONLY = "Site features that save anything (health notes, the breath-hold setting and Kai chat) keep it only in this browser's local storage. Nothing is sent to HomeCircle."
+BROWSER_ONLY = "Site features that save anything (Kai's chat, where you put Kai, and the breath-hold setting) keep it only in this browser's local storage. Nothing is sent to HomeCircle."
 SLUG = {
     "breath-box": "box-breathing", "breath-478": "4-7-8-breathing", "breath-46": "slow-out-breath",
     "guide-urge": "urge-surfing", "guide-halt": "halt", "guide-24h": "24-hour-plan", "guide-54321": "grounding-5-4-3-2-1",
@@ -104,7 +104,7 @@ def kai_panel(r):
     <div class="kai-crisis" id="kai-crisis" hidden><a class="btn danger" href="tel:911">Call 911</a><a class="btn" href="tel:988">Call or text 988</a></div>
     <div class="kai-scroll">
       <p class="kai-note"><strong>Kai isn't AI, and isn't a person, counselor, doctor or sponsor.</strong> Replies are written in this browser from saved rules. No network and no AI service: nothing you type leaves your browser.</p>
-      <p class="kai-note">Kai is a recovery buddy, not a counselor. HomeCircle doesn't give medical advice. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</p>
+      <p class="kai-note">Kai is a recovery buddy, not a counselor. HomeCircle doesn't give medical advice. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>. Kai looks for some words that may mean you're in danger, but it can miss things. If you're unsafe, call <a href="tel:911">911</a> or call or text <a href="tel:988">988</a> yourself.</p>
       <p class="kai-empty" id="kai-empty">Kai is here. Pick a chip, or write a line.</p>
       <div class="kai-log" id="kai-log"></div>
       <div class="kai-after" id="kai-after"></div>
@@ -133,8 +133,9 @@ def footer(r):
   </div>
   <div><h2>Explore</h2><ul>{"".join(f'<li><a href="{r}{h}">{E(t)}</a></li>' for h, t in PAGES)}</ul></div>
   <div><h2>About</h2><ul>
-    <li><a href="{r}{PRIVACY}">Privacy Policy (draft)</a></li>
-    <li><a href="{r}{TERMS}">Terms of Use (draft)</a></li>
+    <li><a href="{r}{PRIVACY}">Privacy Policy</a></li>
+    <li><a href="{r}{TERMS}">Terms of Use</a></li>
+    <li><a href="{r}privacy.html#health">Consumer Health Data Privacy</a></li>
     <li><a href="{r}support.html#website">About this website</a></li>
     <li><a href="mailto:support@homecircle.au">Contact</a></li>
     <li><a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line)</li>
@@ -315,7 +316,7 @@ def build_item(i):
         main.append("</div>")
     bg = BG.get(i["id"])
     if bg:
-        main.append(f'<div class="card"><h2 class="mt0">Where this comes from</h2><p>{E(bg["origin"])}</p><h2>Why it can help</h2><p>{E(bg["why"])}</p>{src_list(bg["sources"])}</div>')
+        main.append(f'<div class="card"><h2 class="mt0">Where this comes from</h2><p>{E(bg["origin"])}</p><h2>Why it can help</h2><p>{E(bg["why"].replace("a year later than people in usual aftercare.", "a year later than people in usual aftercare. That study tested a longer, guided program, not this page."))}</p>{src_list(bg["sources"])}</div>')
     links = [l for l in i["links"] if not l.get("inAppMeetings")]
     if links:
         main.append(src_list(links, "Official pages" if i["category"] == "fellowship" else "Read more"))
@@ -531,22 +532,33 @@ def build_support():
 <h2 id="website">About this website</h2>
 <h3>Do I need an account?</h3><p>No. The website has no accounts and no sign-in, and everything on it is free.</p>
 <h3>Does the website collect my data?</h3><p>No. There are no cookies, no ads, no trackers, no analytics and no third-party scripts or fonts. Nothing you type or save is sent to HomeCircle.</p>
-<h3>What does the website save, and where?</h3><p>Only what you choose to save: health safety answers, the breath-hold setting, Kai's chat and where you put Kai on the screen. These stay in this browser's local storage, on this device. Private browsing or clearing your browser data removes them.</p>
+<h3>What does the website save, and where?</h3><p>Only what you choose to save: the breath-hold setting, Kai's chat and where you put Kai on the screen. These stay in this browser's local storage, on this device. Private browsing or clearing your browser data removes them.</p>
 <h3>Is Kai on the website?</h3><p>Yes. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Replies are put together in your browser from saved rules. Kai makes no network calls. Kai looks for some words that may mean you're in danger and then shows 911 and 988, but it can miss things. If you're unsafe, call 911 or call or text 988 yourself. You can minimize Kai, drag it to the other side, or clear the chat.</p>
 <h2>Privacy and terms</h2><p>Read the <a href="{PRIVACY}">Privacy Policy</a> and <a href="{TERMS}">Terms of Use</a>. {E(BROWSER_ONLY)}</p>"""
     page("support.html", "support.html", "Support – HomeCircle", "Get help with the HomeCircle website: contact, FAQs and crisis support.", body)
 
 def build_legal():
-    draft = '<div class="notice"><strong>DRAFT, pending legal review (Hale).</strong> This page is a placeholder and is not yet in effect.</div>'
-    page("privacy.html", "", "Privacy Policy (DRAFT) – HomeCircle", "HomeCircle US privacy policy, draft.", f"""<h1>Privacy Policy</h1>{draft}
-<p>HomeCircle's US website has no accounts, cookies, ads, trackers or analytics. {E(BROWSER_ONLY)}</p>
-<p>The site is hosted by a web host that, like any host, receives normal web requests.</p>
-<p>Operator: {E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897. Contact: <a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a>.</p>""")
-    page("terms.html", "", "Terms of Use (DRAFT) – HomeCircle", "HomeCircle US terms of use, draft.", f"""<h1>Terms of Use</h1>{draft}
-<p>{E(L["notMedicalDevice"])} {E(L["notSubstitute"])} {E(L["gpLine"])}</p>
-<p>HomeCircle is not an emergency service. In an emergency call 911. For crisis support call or text 988.</p>
-<p>{E(L["notAffiliated"])}</p>
-<p>Operator: {E(L["owner"])} (sole trader), {E(L["ownerPlace"])}. ABN 53 687 374 897.</p>""")
+    # Hale's US legal review, 5 Nov 2026, items 1 and 4. Host: GitHub Pages.
+    updated = "5 November 2026"
+    mail = f'<a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a>'
+    page("privacy.html", "", "Privacy Policy – HomeCircle", "HomeCircle US privacy policy: what the site collects (nothing), what your browser saves, our web host, email, and consumer health data.", f"""<h1>Privacy Policy</h1>
+<p><strong>Privacy Policy.</strong> Last updated {updated}. HomeCircle is run by Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897. Contact: {mail}.</p>
+<h2>What we collect: nothing through the site</h2><p>There are no accounts, cookies, ads, trackers or analytics. We don't sell or share personal data, and we don't use it for ads.</p>
+<h2>What your browser saves</h2><p>Kai's chat, where you put Kai on the screen, and your "hide breath holds" choice are saved only in this browser's local storage, on this device. We can't see them. To delete them, press Clear in Kai, untick the setting, or clear this site's data in your browser. Private browsing removes them when you close the window.</p>
+<h2>Our web host</h2><p>The site is hosted on GitHub Pages. Like any host, GitHub receives standard request data (such as IP address, browser type and the page asked for) to deliver and secure the site, under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub's own privacy statement</a>. We don't receive or use these logs.</p>
+<h2>If you email us</h2><p>We get your email address and what you write. We use it only to reply, and we delete it when it is no longer needed. Our email is forwarded through ImprovMX to Gmail. Please don't send health details you'd rather keep private.</p>
+<h2 id="health">Consumer health data (Washington, Nevada, Connecticut and other states)</h2><p>We don't collect, share or sell consumer health data through the site. Anything health-related you type or save stays on your device. If you email us health information, we use it only to answer you. We never sell it or share it with anyone else. You can ask us to confirm, show or delete anything we hold by emailing {mail}. We will reply within 45 days.</p>
+<h2>Adults only</h2><p>HomeCircle is for people 18 and over. We don't knowingly collect information from children under 13 (or anyone under 18).</p>
+<h2>Changes</h2><p>We'll post any changes here with a new date.</p>""")
+    page("terms.html", "", "Terms of Use – HomeCircle", "HomeCircle US terms of use.", f"""<h1>Terms of Use</h1>
+<p><strong>Terms of Use.</strong> Last updated {updated}. These terms are between you and Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897, who runs HomeCircle. Contact: {mail} (not a crisis line).</p>
+<h2>18+ only</h2><p>You must be 18 or older to use HomeCircle.</p>
+<h2>Support, not care</h2><p>HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Kai looks for some words that may mean you're in danger, but it can miss things. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</p>
+<h2>Not affiliated</h2><p>HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous. Their names belong to them. Links go to their own sites, which we don't control.</p>
+<h2>Free, as is</h2><p>HomeCircle is free. We try to keep it accurate and working, but we provide it "as is". We can't promise it will always be available, error-free, or that helpline details won't change. Check the service's own site.</p>
+<h2>Our liability</h2><p>To the extent the law allows, we are not liable for indirect or consequential loss from using the site. Nothing in these terms limits liability that can't legally be limited, such as for gross negligence, willful misconduct, or death or personal injury caused by negligence. Nothing in these terms takes away rights you have under the consumer laws where you live.</p>
+<h2>Law and disputes</h2><p>These terms are governed by the laws of Queensland, Australia. You may also be able to bring a claim in the courts where you live. There is no arbitration and no class-action waiver. Please email us first so we can try to sort it out.</p>
+<h2>Changes</h2><p>We may update these terms and will post the new date here.</p>""")
 
 # ---------- Kai data for the in-browser engine ----------
 def build_kai_data():

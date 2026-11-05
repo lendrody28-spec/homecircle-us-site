@@ -33,11 +33,11 @@
     US: {
       emergency: "911", crisisLine: "988 Suicide & Crisis Lifeline", crisisNumber: "988",
       replies: {
-        selfHarm: "If you might act on this, call 911 now. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai is a recovery buddy, not a counselor, and can't diagnose.",
+        selfHarm: "If you might act on this, call 911 now. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai is a recovery buddy, not a counselor, and can't diagnose. Kai can miss things, so please reach out yourself.",
         emergency: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyHarm: "Call 911 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. The National Domestic Violence Hotline is 1-800-799-7233, 24/7. Please call one of them yourself. Kai can't call anyone and can miss things.",
-        medical: "This sounds like a medical emergency. Call 911 now and ask for an ambulance. Stay with the person if it's safe. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai can't call anyone, so please make the call yourself."
+        medical: "This sounds like a medical emergency. Call 911 now and ask for an ambulance. Stay with the person if it's safe. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai can't call anyone and can miss things, so please make the call yourself."
       }
     }
   };
