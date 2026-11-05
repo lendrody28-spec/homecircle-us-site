@@ -27,6 +27,7 @@
         emergency: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14, any time. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyHarm: "Call 000 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. Lifeline is 13 11 14. Men's Referral Service is 1300 766 491, for help to stop using violence. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 000 now if you or anyone else is in danger. Lifeline is 13 11 14. 1800RESPECT is 1800 737 732, 24 hours, for family and domestic violence. Please call one of them yourself. Kai can't call anyone and can miss things.",
+        childAbuse: "If anyone is in danger right now, call 000. 1800RESPECT (1800 737 732) helps with sexual abuse, any time. Kids Helpline (1800 55 1800) is for young people up to 25. Bravehearts (1800 272 831) supports people affected by child sexual abuse. Kai can miss things.",
         checkIn: "Just checking in. If you or anyone else is in danger right now, call 000, or Lifeline on 13 11 14. Kai can miss things. Want to tell me more?",
         medical: "This sounds like a medical emergency. Call 000 now and ask for an ambulance. Stay with the person if it's safe. Lifeline is 13 11 14. Kai can't call anyone and can miss things, so please make the call yourself."
       }
@@ -38,6 +39,7 @@
         emergency: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyHarm: "Call 911 now if anyone is in danger. Please keep everyone safe: step away and give yourself space. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Please make the call yourself. Kai can't call anyone and can miss things.",
         familyViolence: "Call 911 now if you or anyone else is in danger. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. The National Domestic Violence Hotline is 1-800-799-7233, 24/7. Please call one of them yourself. Kai can't call anyone and can miss things.",
+        childAbuse: "If anyone is in danger right now, call 911. The Childhelp National Child Abuse Hotline is 1-800-422-4453. Kai can miss things.",
         checkIn: "Just checking in. If you or anyone else is in danger right now, call 911, or call or text 988. Kai can miss things. Want to tell me more?",
         medical: "This sounds like a medical emergency. Call 911 now and ask for an ambulance. Stay with the person if it's safe. You can call or text 988, the Suicide & Crisis Lifeline, 24/7. Kai can't call anyone and can miss things, so please make the call yourself."
       }
@@ -120,6 +122,8 @@
     // WEB (round 6, end-web): busy-day breathing and a toddler bump that is fine.
     /\bbarely breathing (at|with) work\b/g,
     /\b(hit|bumped|banged) (her|his|their) head on the (cot|table|bed|couch|door|chair|floor)\b(?=.*\b(fine|ok|okay|laughing|all good)\b)/g,
+    // WEB (round 8): "die laughing" is an idiom.
+    /\b(die|dying|died|dead) (laughing|of laughter|from laughing)\b/g,
     // WEB (round 6): "bullet journal", "bullet points" are not weapons.
     /\bbullet (journal|journals|journaling|point|points|list|lists|proof|train)\b/g,
     // WEB: beating someone at a game or sport ("beat his kids at chess", "beats me at Uno").
@@ -172,12 +176,16 @@
     R("\\b" + intent + fillers + " " + harmVerbs + " " + others + "\\b"),
     /\b(someone|somebody|people|a man|a guy|a woman|this guy|some guy|strangers?)( \w+){0,5} (is |are |keeps |keep |going to |trying to |wants to |will )?(hurting|hitting|attacking|beating|bashing|threatening|following|chasing|kill|hurt|attack|stab|shoot|rape|raping) me\b/,
     /\b(someone|somebody) (is |has )?(broken|breaking) in\b/,
+    // WEB (round 8): an overdose of injected drugs is an emergency.
+    /\bshot up (way |far |heaps )?too much\b/,
     // WEB (round 6, Finn B): any request for help, police, cops or an ambulance goes to the full emergency route.
     /\b(call|calling|ring|ringing|phone|phoning|get|getting|send|sending|fetch|dial|need|needs|want|bring)( me| us| him| her| them)?( the| an| a| some)? (police|cops|cop|ambulance|ambulances|paramedics|emergency services|fire brigade|firies)\b/,
-    /\b(call|ring|phone|get|send|fetch|bring)( me| us| him| her| them)?( some| a| the)? help\b/,
-    /\bneed (help|someone|somebody) (now|right now|urgently|asap|fast|quick|quickly|please|immediately|here)\b/,
-    /^(please |pls |plz )?help\b(?! (me |us )?(with|find|to find|understand|learn|choose|pick|work|out|figure|write|plan|get to|get a|get into|get started|out with|a bit|on|my|the|setting|set))/,
-    /\b(someone|somebody|anyone) (please )?help\b(?! (me |us )?(with|find|understand|learn|choose|pick|out with|me out))/,
+    // WEB (round 8): help is an emergency only with an urgent cue. Bare "help" and help with sobriety/steps/app/family get nothing.
+    /\b(call|ring|phone|send|fetch|bring)( me| us| him| her| them)?( some| a| the)? help\b(?! (with|for (my|his|her|their) (drinking|gambling|using|recovery|steps?)))/,
+    /\b(need|get|want) (help|someone|somebody) (now|right now|urgently|asap|fast|quick|quickly|immediately)\b/,
+    /\bhelp (me|us|him|her) (now|right now|quick|quickly|asap|please hes|please shes)\b/,
+    /\b(emergency help|need an emergency|(its|this is) an emergency|medical emergency|emergency now)\b/,
+    /\b(someone|somebody) (please )?help (me|us|him|her)?\s*(now|please)?$/,
     // WEB (Finn adv rows): asking Kai to call emergency services. Kai can't call; the reply says so.
     /^(please |pls |plz |quick |quickly |someone |somebody |just )?(call|ring|phone|dial) (000|911|an ambulance|the ambulance|ambulance|the police|the cops|emergency services|emergency)( now| please| pls| plz| quick| quickly| asap| for me| for us| right now)*$/,
     /\b(help me|can you|could you|can u|will you|please|pls|plz) (to )?(call|ring|phone|dial|get) (911|000|an ambulance|the ambulance|the police|the cops|emergency services)\b/,
@@ -246,7 +254,40 @@
     /\b(call|calling|ring|ringing|phone|get|need|needs|send) (me )?(an|the) ambulance\b/
   ];
 
+  // WEB (round 8): child sexual abuse gets its own route.
+  var caWho = "(uncle|aunt|aunty|auntie|stepdad|step dad|stepfather|stepmum|step mum|stepmother|dad|father|mum|mother|grandad|grandpa|grandfather|pop|nan|cousin|brother|sister|stepbrother|coach|teacher|priest|pastor|neighbour|neighbor|babysitter|tutor|mums boyfriend|mums partner|family friend|youth leader|scout leader|leader|he|she|someone|an adult|a man|a guy|a lady|a woman)";
+  var caVictim = "(me|my (daughter|son|kid|kids|child|children|little (sister|brother|girl|boy)|sister|brother|niece|nephew|grandkids?|granddaughter|grandson))";
+  var childAbusePatterns = [
+    R("\\b" + caWho + "( \\w+){0,2} (touches|touched|keeps touching|is touching|was touching|molests|molested|is molesting|fondles|fondled|sexually abuses|sexually abused|keeps abusing) " + caVictim + "\\b"),
+    R("\\b(touch|touches|touched|touching)( \\w+){0,8} (our secret|a secret|not to tell|dont tell|never tell|wont tell)\\b"),
+    /\b(makes|made|forces|forced|keeps making|is making|tries to make) (me|my \w+) (do|watch) (sexual|sex|rude|dirty) (things|stuff|acts|videos)\b/,
+    /\b(makes|made|forces|forced|keeps making) me touch (him|her|them|his|their)\b/,
+    /\b(i was|im being|i am being|i have been|ive been|been|getting|she was|he was|shes being|hes being) (molested|sexually abused|groomed)\b(?!.*\b(years ago|when (i|she|he) was (a kid|little|young)|as a kid)\b(?!.*\b(still|again|now)\b))/,
+    /\b(molested|sexually abused|touched)( \w+){0,6} (and|but) (its|it is|he|she) (still|is still)( \w+)? (happening|does|doing it|going on)\b/
+  ];
   var selfHarmPatterns = [
+    // WEB (round 8): specific full rules (warning signs, means ready, burning, last night, want it all to stop).
+    /\b(burn|burns|burning|burnt|burned) (myself|my (arms?|legs?|skin|wrists?|hands?|thighs?|stomach|body))( \w+){0,4} (with|on purpose|deliberately)\b(?! (the|a) (oven|stove|iron|kettle|pan|tray))/,
+    /\b(hold|holds|held|holding|put|putting) (a |the |my )?(lighter|flame|cigarette|ciggie|match|lit \w+) (to|on|against) my (skin|arms?|legs?|wrists?|hands?|body)\b/,
+    /\b(this is|tonight is|today is|will be|its|it is|going to be|gonna be) my last (night|day)\b(?! (at|of|in|before|on (the|my) (job|shift|holiday|trip)|working))/,
+    /\bmy last night (on earth|alive|here)\b/,
+    /\b(want|wanna|need|wish)( \w+)? (it|it all|everything|this|all of this|all this) (all )?to (stop|end) (forever|permanently|for good)\b/,
+    /\b(im|i am) (so )?done with (life|living|being alive|it all|everything)\b/,
+    /\b(cant|can not|cannot|dont know if i can|not sure i can) keep myself safe\b/,
+    /\bnot safe (from|with|around) myself\b/,
+    /\b(dont|do not) (feel|trust myself) safe (with|around) myself\b/,
+    /\b(wrote|written|writing|write|made|making|finished) (my |a )?(will|goodbye (letters?|notes?)|suicide (letters?|notes?))\b(?!.*\b(lawyer|solicitor|estate|mortgage|house|addiction|old self|journal)\b)/,
+    /\b(gave|give|giving|given) (away )?(my|all my) (dog|cat|pets?|things|stuff|belongings|possessions|guitar|stuff) away\b|\b(gave|give|giving|given) away (my|all my) (dog|cat|pets?|things|stuff|belongings|possessions)\b/,
+    /\b(pills|tablets|meds|oxys?|rope|noose|gun|razor|blades?)( \w+){0,8} (ready|lined up|laid out|counted out|set out)\b/,
+    /\b(lined up|laid out|counted out) (my |the |all my )?(pills|tablets|meds)\b/,
+    /\b(bought|got|have|tied|hung|set up|made) (a |the |some )?(rope|noose)( today| tonight| for myself)?\b(?! swing)/,
+    /\bno reason to (keep )?(live|living|go on|going on|be here|being here|stay alive)\b/,
+    /\b(better|happier|easier) (off )?(if|when) i (died|was dead|were dead|was gone|wasnt here|disappeared|killed myself)\b/,
+    /\b(im|i am|i keep|keep|started|start) (cutting|burning|hurting myself|self harming) again\b/,
+    /\b(used to|stopped|quit) (cut|cutting|self harm|self harming|hurt myself|hurting myself|burn myself|burning myself)\b.*\b(again|started again)\b/,
+    /\b(gun|pistol|rifle)\b.*\b(thinking (of|about) using it|use it on myself|loaded)\b|\bloaded (the|my|a) (gun|pistol|rifle)\b/,
+    /\b(drink|drinking|use|using) (myself )?(until|till|til) i (die|am dead|dont wake up)\b/,
+    /\b(im going to|im gonna|gonna|going to|i will|ill|i might|might)( just)? top myself\b/,
     // WEB (round 6): a method on a body part without "myself". Injury context ("on the fence", "at work", "cooking") is excluded.
     /\b(slash|slashing|slashed|slit|slitting|cut|cutting|stab|stabbing|shoot|shooting|blow|blowing|slice|slicing|open|opening) (open )?(my|me) (own )?(wrists?|arms?|head|throat|neck|veins?|temple)( open| off| out)?\b(?! (on|from|at work|cooking|shaving|while|by accident|accidentally|healing|is healing|in the kitchen))/,
     /\b(bullet|bullets|gun|pistol|rifle|shotgun|blade|blades|knife|knives|razor|razors)( \w+){0,3} (in|into|to|through|against|on|at|across|in to) (my|me) (own )?(wrists?|arms?|head|throat|neck|temple|mouth|veins?|chest|heart)\b/,
@@ -397,15 +438,37 @@
     return !/\b(relationship|boyfriend|girlfriend|bf|gf|dating|marriage|break up|breakup|broke up|dumped|cheating|cheated|the meeting|meeting|shift|class|game|lease|contract|subscription|membership|series|show|chapter|story|book)\b/.test(t);
   }
   // WEB (round 6, Finn A): second tier. Broad risk words get a short check-in when no full crisis route fires.
-  var checkInWords = /\b(die|dies|died|dying|dead|death|living|alive|kill|kills|killed|killing|top myself|topping myself|hurt|hurts|hurting|harm|cut|cuts|cutting|blood|bleeding|rope|noose|gun|guns|knife|knives|blade|razor|bridge|jump|jumping|overdose|overdosed|od|shot up|breathing|breathe|ambo|ambulance|cops|police|help|end it|end things|exist|existing|suicide|suicidal|unsafe|danger|scared|terrified|abuse|abused|hit me|hits me|bashed|choked|pills|tablets|meds|unconscious|collapsed|seizure|fitting|blue|bleed|wrists?|throat|gone|goodbye|no point|give up|giving up|cant go on|cant do this|disappear|vanish)\b/;
-  var checkInIdioms = /\b(killing it|killed it|kill it|killing time|kill time|kill for an?|killing me laughing|dying to|dying for|died laughing|dead tired|dead set|deadline|deadlines|blue sky|feeling blue|help me (with|find|understand|stay on track|stay sober|stay clean)|(need|want|get|getting|some) (some )?help (with|staying|to stay) (my |the )?(sober|clean|step|steps|on track|recovery|meeting|meetings)|help staying (sober|clean)|sober living|living (one day|sober|clean)|joke killed me|(what|that|it|this|which|things that|anything that|something that) (can |might |would |will |could |does |usually )?helps?|cut back|cut down|cut out|cutting back|cutting down|short cut|haircut|hair cut|jump start|jump in|jumped at|gone to|gone for|gone out|gone home|living room|cost of living|living with|for a living|is killing me|are killing me|youre killing me|dying of boredom|phone died|battery died|wifi collapsed)\b/g;
+  // WEB (round 8, Finn): tier 2 narrowed to words that are risky on their own, or a risk word paired with myself, a hurt person, or intent.
+  var checkInWords = [
+    /\b(rope|noose|hang|hanging)( \w+){0,4} (myself|me)\b|\bmyself( \w+){0,4} (rope|noose)\b/,
+    /\b(my|this is my|tonight is my) last night\b/,
+    /\b(saying|say|said|written|wrote|writing) (my )?goodbyes?\b(?! to (my )?(old|the old|drinking|using|the bottle|booze|addiction|my addiction|grog|the pokies|the pub|alcohol|drugs))|\bgoodbye (everyone|all|forever|world|for good)\b/,
+    /\b(cant|can not|cannot) (go on|keep going|do this anymore|take (it|this) anymore|cope anymore)\b/,
+    /\b(no|whats the|what is the) point (anymore|in (living|life|going on|anything|trying|being here)|of (living|life|anything|going on|being here))\b/,
+    /\b(want|wanna|need|wish)( \w+)? (it|it all|everything|this|all of this|all this|the pain) (all )?to (stop|end)\b/,
+    /\b(im|i am|i feel|feeling|i dont feel|i do not feel|im not|i am not) (\w+ )?(unsafe|not safe|safe)\b(?!.*\bnot in danger\b)/,
+    /\b(kms|kys|unalive|unaliving)\b/,
+    /\b(suicide|suicidal)\b/,
+    /\b(hurt|hurting|harm|harming|cut|cutting|burn|burning|kill|killing|end|ending|punish|starve|starving) myself\b/,
+    /\b(want to|wanna|wish i (was|were|could)|going to|gonna|i should|might as well|rather|better off)( just)? (die|dead|be dead|disappear|not wake up|not be here|vanish|be gone)\b/,
+    /\b(dont|do not) want to (be here|live|wake up|exist|be alive|go on)\b(?! (early|at|for|so|before|til|till|until|on))/,
+    /\b(im going to|im gonna|going to|gonna) jump\s*$/,
+    /\b(tired|sick) of (living|life|being alive)\b(?! paycheck)/,
+    /\b(give|giving|gave) up on (life|living|everything|myself)\b/,
+    /\b(he|she|they|someone|somebody|my \w+|mum|dad)( is| are| was|s)? (hurt|bleeding|unconscious|not breathing|not moving|choking|blue|bashed)\b(?!.*\b(fine|ok|okay|all good|now|last|years ago|at work)\b)/,
+    /\b(i took|ive taken|just took|took) (all|too many|heaps of|a whole|the whole)( \w+){0,3} (pills|tablets|meds|packet)\b(?!.*\b(as prescribed|with (breakfast|dinner|lunch|food)|this morning|like (the|my) (doctor|gp)))/
+  ];
+  // Past-only: "used to", "years ago" etc. with no present-tense risk. Lowers non-self-harm routes to nothing (medical/emergency) or a check-in; self-harm drops to a check-in, never nothing.
+  var pastCue = /\b(used to|years ago|year ago|back then|back in the day|last year|in my (teens|twenties|20s|30s)|in (19|20)\d\d|when (i|he|she) was (a kid|young|younger|little|a teenager))\b/;
+  var presentCue = /\b(again|now|tonight|today|right now|this week|still|keep|keeps|want to|wanna|going to|gonna|will|started|starting|is happening)\b/;
+  function pastOnly(m) { return pastCue.test(m) && !presentCue.test(m); }
   function checkIn(text) {
     var m = mask(canonical(text));
     if (!m || routes(text).length) return false;
-    var r = m.replace(checkInIdioms, " ");
-    var medOnly = /\b(pills|tablets|meds)\b/.test(r) && !R("\\b(die|dead|kill|hurt|overdose|od|end it|exist|suicid\\w*|alive)\\b").test(r);
-    if (medOnly && medRoutine.test(m) && !medStock.test(m) && !medIntent.test(m)) return false;
-    return checkInWords.test(r);
+    var low = rawRoutes(m);   // a full route lowered by past-only context: self-harm, abuse and violence still get a check-in
+    for (var k = 0; k < low.length; k++) if (low[k] !== "medical" && low[k] !== "emergency") return true;
+    for (var i = 0; i < checkInWords.length; i++) if (checkInWords[i].test(m)) return true;
+    return false;
   }
   function followedAndScared(t) {
     return R("\\b" + family + familyGap + " (wont stop|keeps|keep|is|wont leave me alone and keeps) (following|watching|stalking) me\\b").test(t)
@@ -414,8 +477,17 @@
 
   function routes(text) {
     var m = mask(canonical(text));
+    if (!m) return [];
+    var found = rawRoutes(m);
+    if (found.length && pastOnly(m)) {
+      var keep = [];
+      return keep;
+    }
+    return found;
+  }
+  function rawRoutes(m) {
     var found = [];
-    if (!m) return found;
+    if (matches(m, childAbusePatterns)) found.push("childAbuse");
     if (matches(m, familyHarmPatterns)) found.push("familyHarm");
     var assault = matches(m, assaultPatterns);
     var meds = medsCheck(m);
@@ -425,7 +497,7 @@
     if (matches(m, selfHarmPatterns) || meds === "selfHarm" || endIt(m)) found.push("selfHarm");
     return found;
   }
-  var ORDER = ["familyViolence", "familyHarm", "emergency", "medical", "selfHarm"];
+  var ORDER = ["childAbuse", "familyViolence", "familyHarm", "emergency", "medical", "selfHarm"];
   function primaryRoute(found) { for (var i = 0; i < ORDER.length; i++) if (found.indexOf(ORDER[i]) >= 0) return ORDER[i]; return null; }
   function region(code) { return REGIONS[code] || REGIONS.AU; }
   function replyText(route, code) { return region(code).replies[route] || region(code).replies.selfHarm; }
