@@ -33,6 +33,15 @@ let r = say("im stressed and anxious");
 ok(r.route === "mixedFeelings" && (r.quickReplies || []).map(q => q.chip).join(",") === "anxious,stress", `mixed: route ${r.route}, chips ${(r.quickReplies || []).map(q => q.chip)}`);
 r = say("cant cope and so angry"); ok(r.route === "struggling", `"cant cope and so angry" -> ${r.route}`);
 r = say("what can help"); ok(r.route === "calmTools", `"what can help" -> ${r.route}: ${r.text}`);
+r = K.reply("what can help", null, { health: { hideHolds: true } });
+ok(/breath-hold setting/.test(r.text) && !/health notes/.test(r.text), `calm tools names the breath-hold setting: ${r.text}`);
+r = say("what happens to my body in withdrawal");
+ok(/For questions about withdrawal or how your body is doing, talk to a doctor\./.test(r.text) && K.linkTitle(r.link) === "Open Help" && K.linkHref(r.link, "") === "help.html", `body reply opens Help: ${K.linkTitle(r.link)} ${K.linkHref(r.link, "")}`);
+ok(K.linkTitle({ practiceID: "page-body-stages" }) === "Open Help" && K.linkHref({ practiceID: "page-body-stages" }, "") === "help.html" && K.linkHref({ practiceID: "page-body-stages" }, "../") === "../help.html" && !/Open body & recovery stages/.test(require("fs").readFileSync(__dirname + "/../assets/kai-engine.js", "utf8")), "dropped body-stages id opens Help");
+{
+  const Cfix = require("../assets/kai-crisis.js");
+  ok(/can't diagnose\. Kai can miss things, so please reach out yourself\./.test(Cfix.replyText("selfHarm", "US")), "US selfHarm reply says Kai can miss things");
+}
 r = say("I'm craving", "craving"); ok(r.route === "craving", `craving chip -> ${r.route}`);
 r = say("got pissed last night"); ok(r.route === "slip", `"got pissed last night" -> ${r.route}`);
 r = say("are you ai"); console.log("      about Kai:", r.text);
@@ -54,7 +63,9 @@ ok(!/box breathing|4-7-8/i.test(r.text), `hideHolds: anxious reply avoids holds:
   ok(K.BUTTON_COPY.firstOpen === "Kai is a recovery buddy, not a person, counselor, medical care or an emergency service. Kai can miss things.", "first-open line is Hale's final wording");
   ok(K.BUTTON_COPY.footLine === "Kai isn't a person or AI, and isn't medical care. Kai can miss things. The chat stays in this browser until you clear it.", "line under the text box is Hale's wording");
   ok(K.BUTTON_COPY.tels.every(t => t.label.length <= 18 && (/^(Call|Text) /.test(t.label) || /^Call /.test(t.aria || ""))), "pinned labels short; shortened ones keep an aria Call ... label");
-  ok(K.BUTTON_COPY.dangerLine === "If you type something that may mean you're in danger, Kai tries to show help numbers, but it can miss things. If you're not safe, tap I'm not safe or call 911." && require("fs").readFileSync(__dirname + "/build.py", "utf8").includes(K.BUTTON_COPY.dangerLine) && !/looks for some words/.test(require("fs").readFileSync(__dirname + "/build.py", "utf8")), "Hale's danger line in the engine block and build.py; old line gone");
+  const buildPy = require("fs").readFileSync(__dirname + "/build.py", "utf8");
+  const haleMiss = "Kai looks for some words that may mean you're in danger, but it can miss things. If you're unsafe, call 911 or call or text 988 yourself.";
+  ok(K.BUTTON_COPY.dangerLine === "If you type something that may mean you're in danger, Kai tries to show help numbers, but it can miss things. If you're not safe, tap I'm not safe or call 911." && buildPy.includes(K.BUTTON_COPY.dangerLine) && buildPy.includes(haleMiss), "panel keeps the not-safe line and Hale's can-miss sentence");
   ok(K.BUTTON_COPY.liveCrisis === "Get help now: call 911, or call or text 988", "live-region crisis line");
   b = K.buttonReply("meeting", {}); ok(b.route && (b.extraLinks || []).some(l => /library\.html/.test(l.href)), `meeting button -> ${b.route} ${(b.extraLinks || []).map(l => l.href)}`);
   for (const m of ["I'm not safe", "im not safe right now", "help me, I'm not safe", "please help he's bleeding everywhere", "I don't feel safe"]) {

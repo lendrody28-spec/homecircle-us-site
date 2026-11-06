@@ -588,7 +588,7 @@
           "That's a lot of feelings in one go. Which one do you want to start with?"], session);
         return { id: "mixedFeelings", text: text, offerBreathing: false, replies: found.slice(0, 3).map(function (x) { return Q(x, CHOICE[x], x); }), link: null };
       case "calmTools":
-        var breaths = hidesBreathHolds(ctx.health) ? "a slow out-breath (it suits your health notes)" : "breathing exercises (box, 4-7-8 and a slow out-breath)";
+        var breaths = hidesBreathHolds(ctx.health) ? "a slow out-breath (it suits your breath-hold setting)" : "breathing exercises (box, 4-7-8 and a slow out-breath)";
         // Web edit: the website has no check-in after each practice, so that part is left out.
         session.lastSuggestion = null;
         return { id: "calmTools", text: "Here's what's in HomeCircle: " + breaths + ", short meditations, a mindful walk, 5-4-3-2-1 grounding and a HALT check. Pick one, or just tell me how you're feeling.",
@@ -789,7 +789,7 @@
     var id = link.practiceID;
     if (!id) return "Open";
     if (id === STEPS_ID) return "Open The 12 Steps";
-    if (id === STAGES_ID) return "Open body & recovery stages";
+    if (id === STAGES_ID) return "Open Help";
     if (id === BOOKS_ID) return "Open recovery books";
     if (id === "breath-box" || id === "breath-478" || id === "breath-46") return "Try a breathing exercise";
     var t = itemTitle(id);
@@ -798,7 +798,7 @@
   function linkHref(link, base) {
     base = base || "";
     if (!link) return null;
-    if (link.openHelp) return base + "help.html";
+    if (link.openHelp || link.practiceID === STAGES_ID) return base + "help.html";
     if (link.openMeetings) return "https://www.aa.org/find-aa";
     if (link.openFamily) return base + "help.html#family";
     var id = link.practiceID, pages = D().pages || {};
