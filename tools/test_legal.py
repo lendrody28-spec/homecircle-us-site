@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Checks Hale's US pre-launch must-fixes on every built page. Run after tools/build.py."""
 import html
+import re
 import sys
 from pathlib import Path
 
@@ -35,8 +36,11 @@ for path in PAGES:
         bad(f"{rel}: footer storage line")
     if "(health notes" in text or "health safety answers" in text:
         bad(f"{rel}: still mentions health notes or health safety answers")
-    if MISS not in text:
+    notes = re.findall(r'<p class="kai-note">.*?</p>', text)
+    if not any(MISS in n for n in notes):
         bad(f"{rel}: Kai panel is missing Hale's can-miss line")
+    if any(n.count("can miss things") > 1 or "tries to show help numbers, but it can miss things" in n for n in notes):
+        bad(f"{rel}: Kai panel still repeats the can-miss warning")
     if "Privacy Policy</a>" not in text or "Terms of Use</a>" not in text:
         bad(f"{rel}: privacy or terms link label")
     if OPERATOR not in text:
@@ -69,7 +73,7 @@ for snippet in [
     "These terms are between you and Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897",
     "(not a crisis line)",
     "You must be 18 or older to use HomeCircle.",
-    "Kai isn't AI, and isn't a person, counselor, doctor or sponsor. Kai looks for some words that may mean you're in danger, but it can miss things.",
+    "Kai is a fixed-reply program, not a person, counselor, doctor or sponsor. Kai looks for some words that may mean you're in danger, but it can miss things.",
     'In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.',
     "There is no arbitration and no class-action waiver.",
     "These terms are governed by the laws of Queensland, Australia.",
@@ -79,6 +83,8 @@ for snippet in [
         bad(f"terms.html missing: {snippet}")
 if "tap I'm not safe" in terms:
     bad("terms.html main still uses the panel's not-safe line instead of Hale's terms sentence")
+if "Kai isn't AI" in terms:
+    bad("terms.html main still says Kai isn't AI")
 
 support = main_text(html.unescape((ROOT / "support.html").read_text()))
 if "Only what you choose to save: the breath-hold setting, Kai's chat and where you put Kai on the screen." not in support:

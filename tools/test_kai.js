@@ -64,8 +64,9 @@ ok(!/box breathing|4-7-8/i.test(r.text), `hideHolds: anxious reply avoids holds:
   ok(K.BUTTON_COPY.footLine === "Kai isn't a person or AI, and isn't medical care. Kai can miss things. The chat stays in this browser until you clear it.", "line under the text box is Hale's wording");
   ok(K.BUTTON_COPY.tels.every(t => t.label.length <= 18 && (/^(Call|Text) /.test(t.label) || /^Call /.test(t.aria || ""))), "pinned labels short; shortened ones keep an aria Call ... label");
   const buildPy = require("fs").readFileSync(__dirname + "/build.py", "utf8");
-  const haleMiss = "Kai looks for some words that may mean you're in danger, but it can miss things. If you're unsafe, call 911 or call or text 988 yourself.";
-  ok(K.BUTTON_COPY.dangerLine === "If you type something that may mean you're in danger, Kai tries to show help numbers, but it can miss things. If you're not safe, tap I'm not safe or call 911." && buildPy.includes(K.BUTTON_COPY.dangerLine) && buildPy.includes(haleMiss), "panel keeps the not-safe line and Hale's can-miss sentence");
+  const panelNote = "Kai is a recovery buddy, not a counselor. HomeCircle doesn't give medical advice. In an emergency call 911. For crisis support call or text 988. Kai looks for some words that may mean you're in danger, but it can miss things. If you're unsafe, call 911 or call or text 988 yourself.";
+  const panelNotes = buildPy.match(/<p class="kai-note">[\s\S]*?<\/p>/g) || [];
+  ok(panelNotes.some(n => n.includes(panelNote)) && panelNotes.every(n => (n.match(/can miss things/g) || []).length <= 1), "panel note warns once and keeps 911 and 988");
   ok(K.BUTTON_COPY.liveCrisis === "Get help now: call 911, or call or text 988", "live-region crisis line");
   b = K.buttonReply("meeting", {}); ok(b.route && (b.extraLinks || []).some(l => /library\.html/.test(l.href)), `meeting button -> ${b.route} ${(b.extraLinks || []).map(l => l.href)}`);
   for (const m of ["I'm not safe", "im not safe right now", "help me, I'm not safe", "please help he's bleeding everywhere", "I don't feel safe"]) {
