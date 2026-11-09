@@ -51,6 +51,9 @@ for rel in published:
         continue
     t = p.read_text(errors="ignore")
     if "kai" in rel.lower() or re.search(r"kai", t, re.I): fail(f"Kai reference in {rel}")
+    for banned in ("US fellowships", "collects (nothing)"):
+        if banned in t: fail(f"banned wording {banned!r} in {rel}")
+    if re.search(r"read-aloud|read aloud|press Play", t, re.I) and rel.endswith(".html"): fail(f"read-aloud mention in {rel}")
     for m in AU.finditer(t):
         fail(f"Australian number in {rel}: ...{t[max(0, m.start()-30):m.end()+30]!r}...")
 

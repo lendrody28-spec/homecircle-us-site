@@ -33,6 +33,9 @@ for path in PAGES:
     rel = path.relative_to(ROOT).as_posix()
     raw = path.read_text()
     vis = text_of(raw)
+    for banned in ("US fellowships", "collects (nothing)", "Support, not care"):
+        if banned in html.unescape(raw):
+            bad(f"{rel}: banned wording {banned!r} (visible text or meta)")
     if re.search(r"read-aloud|read aloud|press Play", vis, re.I):
         bad(f"{rel}: mentions read-aloud, which isn't on the US site")
     bar = raw.split('<div class="crisis-bar"', 1)[-1].split("</div></div>", 1)[0]
@@ -90,7 +93,7 @@ for snippet in [
 terms = main_text((ROOT / "terms.html").read_text())
 for snippet in [
     f"Last updated {DATE}",
-    "Support, not care HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. In an emergency call 911. For crisis support call or text 988.",
+    "Support, not medical care HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. In an emergency call 911. For crisis support call or text 988.",
     "There is no arbitration and no class-action waiver.",
     "These terms are governed by the laws of Queensland, Australia.",
 ]:

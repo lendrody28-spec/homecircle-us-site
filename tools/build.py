@@ -174,7 +174,7 @@ def build_home():
     r = ""
     feats = [
         ("meditations.html", "Breathe now", "An animated breathing guide: box, 4-7-8 or a slow out-breath.", "Breathing", "breatheIn"),
-        ("library.html", "Library", "Guides, breathing, meditation and links to US fellowships.", "Library", "oneThing"),
+        ("library.html", "Library", "Guides, breathing, meditation and links to AA, NA and GA's own sites.", "Library", "oneThing"),
         ("twelve-steps.html", "The 12 Steps", C["twelveStepsCopy"]["summary"], "12 Steps", "dayPlan"),
         ("help.html", "Helplines", "911, 988 and US helplines for substance use, crisis and domestic violence.", "Help", "handOnChest"),
     ]
@@ -184,7 +184,7 @@ def build_home():
   <div>
     <p class="eyebrow">Free · United States · No sign-in</p>
     <h1><span class="grad-text">Support for your recovery journey</span></h1>
-    <p class="lede">HomeCircle is a free recovery support website for people in the United States. Breathe along with a guide, read plain-language guides and the 12 Steps, and find US fellowships.</p>
+    <p class="lede">HomeCircle is a free recovery support website for people in the United States. Breathe along with a guide, read plain-language guides and the 12 Steps, and find links to AA, NA and GA's own sites.</p>
     <div class="btn-row"><a class="btn" href="meditations.html">Breathe now</a><a class="btn ghost" href="library.html">Open the Library</a><a class="btn ghost" href="help.html">Get help</a></div>
     <p class="small">Everything here is free. No accounts, no cookies, no ads, no trackers and no analytics. Anything you save stays in this browser.</p>
   </div>
@@ -196,7 +196,7 @@ def build_home():
 <div class="card mt"><h2 class="mt0">Coming soon</h2><p>A US meeting finder, events and pages for families and partners are on the way. For now, find meetings through <a href="https://www.aa.org/find-aa" rel="noopener">aa.org</a> and <a href="https://na.org/meetingsearch/" rel="noopener">na.org</a>.</p></div>
 <div class="card sage mt"><h3>Support, not medical care</h3><p>{E(L["gpLine"])}</p><p>{E(L["notAffiliated"])}</p><p>HomeCircle never reproduces the Big Book or NA literature. We link to the free official pages instead.</p></div>"""
     page("index.html", "index.html", "HomeCircle – Support for your recovery journey",
-         "HomeCircle is a free recovery support website for the US: breathing and meditation guides, the 12 Steps, US fellowships and helplines. No accounts.", body)
+         "HomeCircle is a free US recovery support website: breathing and meditation guides, the 12 Steps, helplines and links to AA, NA and GA's own sites. No accounts.", body)
 
 # ---------- library hub ----------
 def build_library():
@@ -223,7 +223,7 @@ def build_library():
 {HOLDS_NOTE}
 {"".join(out)}
 <p class="note small">{E(L["gpLine"])} {E(L["notAffiliated"])}</p>"""
-    page("library.html", "library.html", "Library – HomeCircle", "Free recovery guides, breathing, meditation and links to US fellowships.", body)
+    page("library.html", "library.html", "Library – HomeCircle", "Free recovery guides, breathing, meditation and links to AA, NA and GA's own sites.", body)
 
 HOLDS_NOTE = '<p class="note small" data-holds-hidden-note hidden>Breath holds are hidden in this browser, so box breathing and 4-7-8 breathing are left out. Use the setting on the breathing page to change this.</p>'
 
@@ -524,7 +524,7 @@ def build_legal():
     # Hale's US legal review (5 Nov 2026), items 1 and 4, and Hale's US static wording file (10 Nov 2026).
     updated = "10 November 2026"
     mail = f'<a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a>'
-    page("privacy.html", "", "Privacy Policy – HomeCircle", "HomeCircle US privacy policy: what the site collects (nothing), what your browser saves, our web host, email, and consumer health data.", f"""<h1>Privacy Policy</h1>
+    page("privacy.html", "", "Privacy Policy – HomeCircle", "HomeCircle US privacy policy: what our web host logs, what your browser saves, email, and consumer health data.", f"""<h1>Privacy Policy</h1>
 <p><strong>Privacy Policy.</strong> Last updated {updated}. HomeCircle is run by Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897. Contact: {mail}.</p>
 <h2>What we collect</h2><p>We don't collect anything through the site itself. There are no accounts, cookies, ads, trackers or analytics, and we don't sell or share personal data or use it for ads. Our web host does keep technical records of visits, as explained under "Our web host".</p>
 <h2>What your browser saves</h2><p>Some features save your choices in this browser's local storage, on this device only: {E(SAVED_FEATURES)}. We can't see them. To delete them, change the setting back or clear this site's data in your browser. Private browsing removes them when you close the window.</p>
@@ -536,7 +536,7 @@ def build_legal():
     page("terms.html", "", "Terms of Use – HomeCircle", "HomeCircle US terms of use.", f"""<h1>Terms of Use</h1>
 <p><strong>Terms of Use.</strong> Last updated {updated}. These terms are between you and Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897, who runs HomeCircle. Contact: {mail} (not a crisis line).</p>
 <h2>18+ only</h2><p>You must be 18 or older to use HomeCircle.</p>
-<h2>Support, not care</h2><p>HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</p>
+<h2>Support, not medical care</h2><p>HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</p>
 <h2>Not affiliated</h2><p>HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous. Their names belong to them. Links go to their own sites, which we don't control.</p>
 <h2>Free, as is</h2><p>HomeCircle is free. We try to keep it accurate and working, but we provide it "as is". We can't promise it will always be available, error-free, or that helpline details won't change. Check the service's own site.</p>
 <h2>Our liability</h2><p>To the extent the law allows, we are not liable for indirect or consequential loss from using the site. Nothing in these terms limits liability that can't legally be limited, such as for gross negligence, willful misconduct, or death or personal injury caused by negligence. Nothing in these terms takes away rights you have under the consumer laws where you live.</p>
