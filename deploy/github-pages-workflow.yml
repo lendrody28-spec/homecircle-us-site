@@ -1,0 +1,65 @@
+# Builds the US site into _site/ and deploys it to GitHub Pages.
+# TO ACTIVATE: move this file to .github/workflows/pages.yml (the agent's GitHub token has no `workflow`
+# scope, so it could not commit it there). Moving it is the only step; nothing else in the file changes.
+# Pages itself is NOT enabled by this file: LJ turns it on in repo settings (Source: GitHub Actions)
+# after Finn signs off the commit. Until then the deploy job fails harmlessly; the check job still runs on PRs.
+name: Pages
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Rebuild pages and check the committed output matches
+        run: |
+          python3 tools/build.py
+          git status --porcelain
+          git diff --exit-code
+          test -z "$(git status --porcelain --untracked-files=all)"
+      - name: Links, legal wording and helpline checks
+        run: |
+          python3 tools/check_links.py
+          python3 tools/test_legal.py
+          python3 tools/test_gambling_number.py
+      - name: Assemble _site (excludes tools/, README.md, SOURCES.md, shots/, *.bundle) and fail if any would be published
+        run: python3 tools/package_site.py _site
+      - name: Double-check the artifact folder
+        run: |
+          bad=$(cd _site && find . \( -path ./tools -o -path ./shots -o -name README.md -o -name SOURCES.md -o -name '*.bundle' -o -path ./.git -o -path ./.github \) -print)
+          if [ -n "$bad" ]; then echo "Would publish excluded files:"; echo "$bad"; exit 1; fi
+          test "$(cat _site/CNAME)" = "homecirclerecovery.com"
+      - uses: actions/upload-pages-artifact@v3
+        if: github.event_name != 'pull_request'
+        with:
+          path: _site
+
+  deploy:
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
