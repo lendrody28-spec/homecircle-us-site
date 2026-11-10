@@ -35,6 +35,101 @@ import hashlib as _h
 CSS_V = _h.sha1((ROOT / "assets" / "site.css").read_bytes()).hexdigest()[:8]
 SITE_V = _h.sha1((ROOT / "assets" / "site.js").read_bytes()).hexdigest()[:8]
 SITE_URL = "https://homecirclerecovery.com"
+
+# Published HTML paths on each site. hreflang tags are generated from the intersection.
+AU_SITE_PATHS = {
+    'events.html',
+    'families/child.html',
+    'families/family.html',
+    'families/friend.html',
+    'families/index.html',
+    'families/kids.html',
+    'families/overdose.html',
+    'families/partner.html',
+    'families/safety.html',
+    'families/withdrawal.html',
+    'help.html',
+    'index.html',
+    'library.html',
+    'library/24-hour-plan.html',
+    'library/4-7-8-breathing.html',
+    'library/alcohol-and-the-body.html',
+    'library/alcoholics-anonymous.html',
+    'library/body-and-recovery-stages.html',
+    'library/body-scan.html',
+    'library/box-breathing.html',
+    'library/breathing-anchor.html',
+    'library/cannabis-and-the-body.html',
+    'library/gambling-support.html',
+    'library/grounding-5-4-3-2-1.html',
+    'library/halt.html',
+    'library/mindful-eating.html',
+    'library/mindful-walking.html',
+    'library/narcotics-anonymous.html',
+    'library/one-thing-focus.html',
+    'library/opioids-and-the-body.html',
+    'library/pornography-addiction-support.html',
+    'library/recovery-books.html',
+    'library/slow-out-breath.html',
+    'library/stimulants-and-the-body.html',
+    'library/stress-and-anxiety.html',
+    'library/urge-surfing-meditation.html',
+    'library/urge-surfing.html',
+    'meditations.html',
+    'meetings.html',
+    'support.html',
+    'twelve-steps.html',
+    'your-circle.html',
+}
+US_SITE_PATHS = {
+    'health-privacy.html',
+    'help.html',
+    'index.html',
+    'library.html',
+    'library/24-hour-plan.html',
+    'library/4-7-8-breathing.html',
+    'library/alcoholics-anonymous.html',
+    'library/body-scan.html',
+    'library/box-breathing.html',
+    'library/breathing-anchor.html',
+    'library/gamblers-anonymous.html',
+    'library/grounding-5-4-3-2-1.html',
+    'library/halt.html',
+    'library/mindful-eating.html',
+    'library/mindful-walking.html',
+    'library/narcotics-anonymous.html',
+    'library/one-thing-focus.html',
+    'library/pornography-addiction-support.html',
+    'library/recovery-books.html',
+    'library/slow-out-breath.html',
+    'library/stress-and-anxiety.html',
+    'library/urge-surfing-meditation.html',
+    'library/urge-surfing.html',
+    'meditations.html',
+    'overdose.html',
+    'privacy.html',
+    'support.html',
+    'terms.html',
+    'twelve-steps.html',
+}
+
+AU_ORIGIN = "https://homecircle.au"
+US_ORIGIN = "https://homecirclerecovery.com"
+
+def page_abs_url(origin, path):
+    return origin + "/" + ("" if path == "index.html" else path)
+
+def hreflang_tags(path):
+    """Alternate language tags for paths that exist on both sites. x-default is the AU URL."""
+    if path not in (AU_SITE_PATHS & US_SITE_PATHS):
+        return ""
+    au = page_abs_url(AU_ORIGIN, path)
+    us = page_abs_url(US_ORIGIN, path)
+    return (
+        f'<link rel="alternate" hreflang="en-AU" href="{au}">\n'
+        f'<link rel="alternate" hreflang="en-US" href="{us}">\n'
+        f'<link rel="alternate" hreflang="x-default" href="{au}">\n'
+    )
 HEALTH_PRIVACY = "health-privacy.html"
 # Hale's wording file (10 Nov 2026), section 4: footer line on every page.
 BROWSER_ONLY = "Anything you save stays in this browser's local storage. Our web host logs visits."
@@ -69,13 +164,13 @@ def head(title, desc, r, path):
 <html lang="en-US" class="no-js">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <title>{E(title)}</title>
 <meta name="description" content="{E(desc)}">
 <link rel="canonical" href="{canonical(path)}">
-<link rel="icon" href="{r}favicon.png" type="image/png">
+{hreflang_tags(path)}<link rel="icon" href="{r}favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="{r}assets/logo-192.png">
 <link rel="stylesheet" href="{r}assets/site.css?v={CSS_V}">
 <script src="{r}assets/site.js?v={SITE_V}" defer></script>
@@ -85,22 +180,26 @@ def head(title, desc, r, path):
 {crisis_bar()}"""
 
 def crisis_bar():
-    """Static crisis bar at the top of every page. Plain links: works with no JavaScript at all."""
-    return """<div class="crisis-bar" role="region" aria-label="Crisis lines"><div class="wrap"><strong class="cb-lead">Need help now?</strong>
+    """Static crisis bar at the top of every page. Plain links: works with no JavaScript at all.
+    At 480px and under, SAMHSA and the gambling helpline sit in a no-JS <details> so the bar stays compact."""
+    sam = '<a class="cb-btn" href="tel:18006624357" aria-label="Call SAMHSA\'s National Helpline, 1-800-662-4357">SAMHSA Helpline 1-800-662-4357</a>'
+    gam = '<a class="cb-btn" href="tel:+18006973738" aria-label="Call or text 1-800-MY-RESET, National Problem Gambling Helpline, 1-800-697-3738">Gambling help 1-800-MY-RESET</a>'
+    return f"""<div class="crisis-bar" role="region" aria-label="Crisis lines"><div class="wrap"><strong class="cb-lead">Need help now?</strong>
   <a class="cb-btn cb-911" href="tel:911">Call 911</a>
   <a class="cb-btn" href="tel:988" aria-label="Call 988, Suicide and Crisis Lifeline">Call 988</a>
   <a class="cb-btn" href="sms:988" aria-label="Text 988, Suicide and Crisis Lifeline">Text 988</a>
-  <a class="cb-btn" href="tel:18006624357" aria-label="Call SAMHSA's National Helpline, 1-800-662-4357">SAMHSA Helpline 1-800-662-4357</a>
-  <a class="cb-btn" href="tel:+18006973738" aria-label="Call or text 1-800-MY-RESET, National Problem Gambling Helpline, 1-800-697-3738">Gambling help 1-800-MY-RESET</a>
+  <span class="cb-wide">{sam}{gam}</span>
+  <details class="cb-more"><summary>More help lines</summary>{sam}{gam}</details>
 </div></div>"""
 
 def header(active, r):
     lis = "".join(f'<li><a href="{r}{h}"{" aria-current=\"page\"" if h == active else ""}>{E(t)}</a></li>' for h, t in PAGES)
     return f"""
 <header class="site-head"><div class="wrap">
-  <a class="brand" href="{r}index.html"><img src="{r}assets/logo-96.png" alt="" width="46" height="46"><span><b>HomeCircle</b><small>Support for your recovery journey</small></span></a>
+  <a class="brand" href="{r}index.html"><img src="{r}assets/logo-96.png" alt="" width="46" height="46"><span><b>HomeCircle</b><span class="us-badge" title="HomeCircle US"><span class="sr-only">, United States</span><span aria-hidden="true">US</span></span><small>Support for your recovery journey</small></span></a>
+  <a class="region-switch region-switch-header" href="https://homecircle.au/">In Australia? Go to HomeCircle AU</a>
   <button class="btn ghost menu-btn" id="menu-btn" type="button" aria-expanded="false" aria-controls="site-nav" hidden>Menu</button>
-  <nav class="nav" id="site-nav" aria-label="Main"><ul>{lis}</ul></nav>
+  <nav class="nav" id="site-nav" aria-label="Main"><ul>{lis}<li class="region-switch-item"><a class="region-switch region-switch-menu" href="https://homecircle.au/">In Australia? Go to HomeCircle AU</a></li></ul></nav>
 </div></header>
 <a class="help-pill" id="help-pill" href="{r}help.html#now" aria-label="{E(C["crisis"]["accessibilityLabel"])}" aria-describedby="help-pill-hint" aria-controls="help-dialog">{HEART}<span aria-hidden="true">Help</span></a>
 <span class="sr-only" id="help-pill-hint">{E(C["crisis"]["accessibilityHint"])}</span>"""
@@ -307,7 +406,7 @@ def build_item(i):
     if i.get("phoneDial"):
         main.append(f'<p><a class="btn ghost" href="tel:{i["phoneDial"]}">Call {E(i["phoneDisplay"])}</a></p>')
     if i["id"] == "fell-ga":
-        main.append('<div class="card mt"><h2 class="mt0">National Problem Gambling Helpline</h2><p>Professional help, not a fellowship: free, confidential and 24/7 by call, text or chat, for you or someone you\'re worried about. Run by the National Council on Problem Gambling.</p><div class="btn-row"><a class="btn ghost" href="tel:+18006973738">Call or text 1-800-MY-RESET (1-800-697-3738)</a><a class="btn ghost" href="https://www.ncpgambling.org/help-treatment/" rel="noopener">ncpgambling.org</a></div><p class="small">The Gamblers Anonymous number above is a fellowship line. Checked 5 November 2026.</p></div>')
+        main.append('<div class="card mt"><h2 class="mt0">National Problem Gambling Helpline</h2><p>Professional help, not a fellowship: free, confidential and 24/7 by call, text or chat, for you or someone you\'re worried about. Run by the National Council on Problem Gambling.</p><div class="btn-row"><a class="btn ghost" href="tel:+18006973738">Call or text 1-800-MY-RESET (1-800-697-3738)</a><a class="btn ghost" href="sms:+18006973738">Text 1-800-697-3738</a><a class="btn ghost" href="https://www.ncpgambling.org/help-treatment/" rel="noopener">ncpgambling.org</a></div><p class="small">The Gamblers Anonymous number above is a fellowship line. Checked 5 November 2026.</p></div>')
     main.append(f'<p class="small">{E(L["gpLine"])}</p>')
     body = "".join(parts) + f'<div class="layout"><div>{"".join(main)}</div>{aside(r)}</div>'
     page(path, "library.html", f'{i["title"]} – HomeCircle Library', web(i["summary"]), body)
