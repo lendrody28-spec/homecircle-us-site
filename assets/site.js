@@ -1,13 +1,13 @@
-/* HomeCircle website script. No tracking, no cookies, no third parties, no network calls except the
-   site's own files. Your day count, journal, health notes and Kai chat are kept only in this
-   browser's localStorage (keys starting "hc."), and you can delete them on the Your circle page. */
+/* HomeCircle US website script. No tracking, no cookies, no third parties, no network calls except the
+   site's own files. The only thing saved is the "hide breath holds" setting, kept only in this
+   browser's localStorage (key "hc.health.v1"). */
 (function () {
   "use strict";
   document.documentElement.classList.remove("no-js");
 
   function load(k, d) { try { var v = JSON.parse(localStorage.getItem(k)); return v == null ? d : v; } catch (e) { return d; } }
   function save(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (e) { return false; } }
-  /* A practice is running: Kai's bubble steps aside until it stops. */
+  /* A practice is running (marks the page while a breathing guide or player runs). */
   var running = 0;
   function practice(on) { running = Math.max(0, running + (on ? 1 : -1)); document.body.classList.toggle("practice-running", running > 0); }
 
@@ -204,79 +204,4 @@
   });
   applyHealth();
 
-  /* Your circle: day count and journal, kept only in this browser. */
-  var CKEY = "hc.circle.v1", JKEY = "hc.journal.v1";
-  var dateIn = document.getElementById("sober-date");
-  function dayCount(iso) {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(iso || "")) return null;
-    var p = iso.split("-"), start = new Date(+p[0], +p[1] - 1, +p[2]), n = new Date();
-    var diff = Math.round((new Date(n.getFullYear(), n.getMonth(), n.getDate()) - start) / 86400000);
-    return diff < 0 ? 0 : diff + 1;
-  }
-  function showDays() {
-    var out = document.getElementById("day-count"); if (!out) return;
-    var c = load(CKEY, {}), d = dayCount(c.soberDate);
-    if (dateIn) dateIn.value = c.soberDate || "";
-    out.textContent = d == null ? "Set a sober date when you want a day count." : d === 0 ? "Your sober date is in the future. Day 1 starts on that date." : "Day " + d;
-    var clear = document.getElementById("sober-clear"); if (clear) clear.hidden = !c.soberDate;
-  }
-  if (dateIn) {
-    var t = new Date(); dateIn.max = t.getFullYear() + "-" + String(t.getMonth() + 1).padStart(2, "0") + "-" + String(t.getDate()).padStart(2, "0");
-    document.getElementById("sober-form").addEventListener("submit", function (e) {
-      e.preventDefault();
-      var c = load(CKEY, {}); c.soberDate = dateIn.value || null; save(CKEY, c); showDays();
-    });
-    document.getElementById("sober-clear").addEventListener("click", function () {
-      if (!confirm("Remove your sober date from this browser?")) return;
-      var c = load(CKEY, {}); delete c.soberDate; save(CKEY, c); showDays();
-    });
-    showDays();
-  }
-  var jForm = document.getElementById("journal-form"), jList = document.getElementById("journal-list");
-  function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
-  function showJournal() {
-    if (!jList) return;
-    var items = load(JKEY, []); jList.textContent = "";
-    document.getElementById("journal-empty").hidden = items.length > 0;
-    items.slice().sort(function (a, b) { return b.at - a.at; }).forEach(function (n) {
-      var li = el("li", "card");
-      li.appendChild(el("p", "small", new Date(n.at).toLocaleString("en-AU", { dateStyle: "medium", timeStyle: "short" }) + (n.prompt ? " · " + n.prompt : "")));
-      li.appendChild(el("h3", null, n.title || "Note"));
-      li.appendChild(el("p", "jbody", n.body));
-      if (n.mood) li.appendChild(el("span", "pill", n.mood));
-      var del = el("button", "btn ghost small-btn", "Delete"); del.type = "button";
-      del.setAttribute("aria-label", "Delete note " + (n.title || "from " + new Date(n.at).toLocaleDateString("en-AU")));
-      del.addEventListener("click", function () {
-        if (!confirm("Delete this note from this browser? It cannot be undone.")) return;
-        save(JKEY, load(JKEY, []).filter(function (x) { return x.id !== n.id; })); showJournal();
-      });
-      li.appendChild(del);
-      jList.appendChild(li);
-    });
-  }
-  if (jForm) {
-    jForm.addEventListener("submit", function (e) {
-      e.preventDefault();
-      var body = jForm.elements.body.value.trim(); if (!body) { jForm.elements.body.focus(); return; }
-      var items = load(JKEY, []);
-      items.push({ id: Date.now().toString(36) + Math.random().toString(36).slice(2, 6), at: Date.now(), prompt: jForm.elements.prompt.value,
-        title: jForm.elements.title.value.trim(), body: body, mood: jForm.elements.mood.value });
-      if (!save(JKEY, items)) { alert("This browser isn't letting the site save notes, so this note wasn't kept."); return; }
-      jForm.reset(); showJournal();
-      var st = document.getElementById("journal-status"); if (st) st.textContent = "Saved in this browser.";
-    });
-    jForm.elements.prompt.addEventListener("change", function () { jForm.elements.body.placeholder = jForm.elements.prompt.value; });
-    showJournal();
-  }
-  var wipe = document.getElementById("delete-all");
-  if (wipe) wipe.addEventListener("click", function () {
-    if (!confirm("This deletes your sober date, journal, health answers, Kai chat and settings from this browser. It can't be undone.")) return;
-    try { Object.keys(localStorage).forEach(function (k) { if (k.indexOf("hc") === 0 || /kai/i.test(k)) localStorage.removeItem(k); }); } catch (e) {}
-    try { Object.keys(sessionStorage).forEach(function (k) { if (k.indexOf("hc") === 0 || /kai/i.test(k)) sessionStorage.removeItem(k); }); } catch (e) {}   /* Kai's breathing follow-up flag */
-    location.reload();
-  });
-  document.querySelectorAll("[data-storage-check]").forEach(function (n) {
-    var ok = true; try { localStorage.setItem("hc.test", "1"); localStorage.removeItem("hc.test"); } catch (e) { ok = false; }
-    n.hidden = ok;
-  });
 })();
