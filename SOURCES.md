@@ -18,3 +18,21 @@
 ## Overdose page and gambling helpline (checked 5 Nov 2026)
 - overdose.html: American Red Cross opioid overdose first aid; CDC Lifesaving Naloxone (OTC in all 50 states; Good Samaritan laws in most states); FDA OTC Narcan approval (29 Mar 2023); NIAAA alcohol overdose; DEA meth and GHB fact sheets; DEA Get Smart About Drugs (Good Samaritan scope); poison.org (1-800-222-1222); SAMHSA National Helpline.
 - National Problem Gambling Helpline: ncpgambling.org lists 1-800-MY-RESET (1-800-697-3738) since 29 Jan 2026; 1-800-522-4700 still active. Shown on the site as "Call or text 1-800-MY-RESET (1-800-697-3738)", tel:+18006973738 (Hale, 5 Nov 2026). No older national gambling numbers are listed.
+
+## Meeting finders on meetings.html (checked 10 Nov 2026, AEST)
+
+| Group | What's linked | URL | Check |
+|---|---|---|---|
+| Al-Anon Family Groups | Official Al-Anon meeting search (in-person, hybrid or electronic) | https://al-anon.org/al-anon-meetings/find-an-al-anon-meeting/ | HTTP 200 |
+| Alateen | Official Alateen meeting search | https://al-anon.org/al-anon-meetings/find-an-alateen-meeting/ | HTTP 200 |
+| Alcoholics Anonymous | Find A.A. Near You (local offices and lists; aa.org says this page is not itself a meeting finder) | https://www.aa.org/find-aa | HTTP 200 |
+| Alcoholics Anonymous | Meeting Guide app (lists in-person and online meetings) | https://www.aa.org/meeting-guide-app | HTTP 200 |
+| Alcoholics Anonymous | What to Expect at an A.A. Meeting (kinds of meetings; linked, not quoted) | https://www.aa.org/information-about-meetings | HTTP 200 |
+| Alcoholics Anonymous | Can I attend a meeting online or by phone? | https://www.aa.org/faq/can-i-attend-meeting-online-or-phone | HTTP 200 |
+| Online Intergroup of AA | Directory of video, telephone, email or chat meetings | https://aa-intergroup.org/oiaa/ | Loads in a browser fetch; curl from this network gets a SiteGround captcha (HTTP 202) |
+| Gamblers Anonymous | Official Find a Meeting (US in-person, virtual and telephone) | https://gamblersanonymous.org/find-a-meeting/ | HTTP 200 |
+| Narcotics Anonymous | Official Find NA (in-person via local sites; virtual meeting search) | https://na.org/meetingsearch/ | HTTP 200 |
+| Porn Addicts Anonymous | Official meetings calendar (mentions Discord meetings) | https://parec.org/meetings | HTTP 200 |
+| SMART Recovery | Official SMARTfinder (in-person and online) | https://meetings.smartrecovery.org/ | HTTP 200 (redirects to /meetings/) |
+
+Not used: https://al-anon.org/newcomers/find-a-meeting/ (HTTP 404). Sex Addicts Anonymous has an official finder at https://saa-recovery.org/meetings/ but was not a listed candidate; PAA already has an official calendar and is named on the site.

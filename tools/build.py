@@ -28,7 +28,7 @@ def web(t):
     return t[5:] if t.startswith("Kai: ") else t
 
 PAGES = [("index.html", "Home"), ("library.html", "Library"), ("twelve-steps.html", "12 Steps"),
-         ("meditations.html", "Breathing & practices"), ("help.html", "Help"), ("support.html", "Support")]
+         ("meditations.html", "Breathing & practices"), ("meetings.html", "Meetings"), ("help.html", "Help"), ("support.html", "Support")]
 PRIVACY = L["privacyURL"]
 TERMS = L["termsURL"]
 import hashlib as _h
@@ -106,6 +106,7 @@ US_SITE_PATHS = {
     'library/urge-surfing-meditation.html',
     'library/urge-surfing.html',
     'meditations.html',
+    'meetings.html',
     'overdose.html',
     'privacy.html',
     'support.html',
@@ -292,7 +293,7 @@ def build_home():
 <div class="notice"><strong>Need help right now?</strong> {E(L["notMedicalDevice"])} In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</div>
 <h2>What you can do here</h2>
 <div class="grid g4">{tiles}</div>
-<div class="card mt"><h2 class="mt0">Coming soon</h2><p>A US meeting finder, events and pages for families and partners are on the way. For now, find meetings through <a href="https://www.aa.org/find-aa" rel="noopener">aa.org</a> and <a href="https://na.org/meetingsearch/" rel="noopener">na.org</a>.</p></div>
+<div class="card mt"><h2 class="mt0">Coming soon</h2><p>Events and pages for families and partners are on the way. To find a meeting, use the <a href="meetings.html">Find a meeting</a> page, which links to each group&#x27;s own official finder.</p></div>
 <div class="card sage mt"><h3>Support, not medical care</h3><p>{E(L["gpLine"])}</p><p>{E(L["notAffiliated"])}</p><p>HomeCircle never reproduces the Big Book or NA literature. We link to the free official pages instead.</p></div>"""
     page("index.html", "index.html", "HomeCircle – Support for your recovery journey",
          "HomeCircle is a free US recovery support website: breathing and meditation guides, the 12 Steps, helplines and links to AA, NA and GA's own sites. No accounts.", body)
@@ -431,7 +432,7 @@ def build_steps():
 <div class="twelve">{cards}</div>
 <div class="card mt"><h2 class="mt0">Where this comes from</h2><p>The 12 Steps were first written down by Alcoholics Anonymous in the 1930s. Narcotics Anonymous and other fellowships adapted them. The notes on this page are HomeCircle's own plain-language summaries, not the official wording of AA or NA.</p>{src_list([{"title": "The Twelve Steps (opens aa.org)", "url": T["officialURL"]}])}</div>
 <p class="small">{E(T["independence"])}</p>
-</div><aside><figure class="figure">{art_img("dayPlan", r, eager=True)}</figure><div class="card sage"><h3>Find a meeting</h3><p>Many people work the Steps with a sponsor they meet at meetings.</p><p>Find local meetings through <a href="https://www.aa.org/find-aa" rel="noopener">aa.org</a> or <a href="https://na.org/meetingsearch/" rel="noopener">na.org</a>. A HomeCircle US meeting finder is coming soon.</p></div></aside></div>"""
+</div><aside><figure class="figure">{art_img("dayPlan", r, eager=True)}</figure><div class="card sage"><h3>Find a meeting</h3><p>Many people work the Steps with a sponsor they meet at meetings.</p><p><a href="meetings.html">Find a meeting</a> through each group&#x27;s own official finder, including AA and NA.</p></div></aside></div>"""
     page("twelve-steps.html", "twelve-steps.html", "The 12 Steps – HomeCircle", T["summary"], body)
 
 def build_meditations():
@@ -619,6 +620,94 @@ def build_support():
 <h2>Privacy and terms</h2><p>Read the <a href="{PRIVACY}">Privacy Policy</a>, <a href="{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a> and <a href="{TERMS}">Terms of Use</a>. {E(BROWSER_ONLY)}</p>"""
     page("support.html", "support.html", "Support – HomeCircle", "Get help with the HomeCircle website: contact, FAQs and crisis support.", body)
 
+
+# ---------- meetings (links to official finders; no HomeCircle US meeting data yet) ----------
+def build_meetings():
+    """A links-only Find a meeting page. Finder cards are listed A to Z."""
+    finders = [
+        (
+            "Al-Anon and Alateen",
+            "Official Al-Anon meeting search for families and friends affected by someone else's drinking. The groups listed may meet in person, as a hybrid, or electronically. A separate official search lists Alateen meetings.",
+            [
+                ("Open Al-Anon meeting search", "https://al-anon.org/al-anon-meetings/find-an-al-anon-meeting/"),
+                ("Open Alateen meeting search", "https://al-anon.org/al-anon-meetings/find-an-alateen-meeting/"),
+            ],
+        ),
+        (
+            "Alcoholics Anonymous",
+            "aa.org's Find A.A. page points you to local AA offices and their meeting lists, and to the Meeting Guide app, which lists in-person and online meetings.",
+            [
+                ("Open Find A.A.", "https://www.aa.org/find-aa"),
+                ("Open Meeting Guide app", "https://www.aa.org/meeting-guide-app"),
+            ],
+        ),
+        (
+            "Gamblers Anonymous",
+            "Official Gamblers Anonymous Find a Meeting page, with US in-person, virtual and telephone meetings.",
+            [("Open GA meeting finder", "https://gamblersanonymous.org/find-a-meeting/")],
+        ),
+        (
+            "Narcotics Anonymous",
+            "Official Find NA page. NA meetings can be in-person or virtual. It points you to local NA websites and phonelines, and has a virtual meeting search.",
+            [("Open Find NA", "https://na.org/meetingsearch/")],
+        ),
+        (
+            "Online Intergroup of Alcoholics Anonymous",
+            "Official Online Intergroup of Alcoholics Anonymous directory of online meetings worldwide, in video, telephone, email or chat formats.",
+            [("Open Online Intergroup directory", "https://aa-intergroup.org/oiaa/")],
+        ),
+        (
+            "Porn Addicts Anonymous",
+            "Official Porn Addicts Anonymous meetings calendar, including Discord meetings.",
+            [("Open PAA meetings calendar", "https://parec.org/meetings")],
+        ),
+        (
+            "SMART Recovery USA",
+            "Official SMART Recovery meeting finder for in-person and online meetings in the United States.",
+            [("Open SMART Recovery meeting finder", "https://meetings.smartrecovery.org/")],
+        ),
+    ]
+    cards = []
+    for title, blurb, links in finders:
+        btns = "".join(
+            f'<a class="btn ghost" href="{E(url)}" rel="noopener">{E(label)}</a>'
+            for label, url in links
+        )
+        cards.append(
+            f'<div class="card"><h3 class="mt0">{E(title)}</h3><p>{E(blurb)}</p>'
+            f'<div class="btn-row">{btns}</div></div>'
+        )
+    kinds = [
+        ("In person", "A meeting you go to in a room, or sometimes outdoors."),
+        ("Online (video)", "A meeting you join on a video call."),
+        ("Phone or audio only", "A meeting you join by telephone, or online with the camera off."),
+        ("Open", "Anyone can sit in and listen, including family and friends."),
+        ("Closed", "For people who want to stop drinking or using."),
+    ]
+    kind_cards = "".join(
+        f'<div class="card"><h3 class="mt0">{E(title)}</h3><p>{E(blurb)}</p></div>'
+        for title, blurb in kinds
+    )
+    body = f"""<h1>Find a meeting</h1>
+<p class="lede">Official meeting finders from the groups themselves. HomeCircle doesn't keep its own US meeting list yet.</p>
+<p>Meeting times change, so check with the group before you go. For any health concern, talk to your doctor. HomeCircle is support, not medical care.</p>
+<h2 id="kinds">Kinds of meetings</h2>
+<p>Meetings may be in person, online (including video), or by phone. Some are open and some are closed. Other groups may use these words with their own rules. Check each meeting's listing to see if it's open or closed, and how you can attend.</p>
+<div class="grid g2">{kind_cards}</div>
+<p class="small">You can also read more about kinds of meetings on AA's own site: <a href="https://www.aa.org/information-about-meetings" rel="noopener">What to Expect at an A.A. Meeting</a>, and <a href="https://www.aa.org/faq/can-i-attend-meeting-online-or-phone" rel="noopener">attending a meeting online or by phone</a>.</p>
+<h2 id="finders">Official meeting finders</h2>
+<p>These are listed A to Z. A link here is not a recommendation or a ranking.</p>
+<p>HomeCircle is independent and isn't affiliated with or endorsed by any group listed here.</p>
+<div class="grid g3">{"".join(cards)}</div>"""
+    page(
+        "meetings.html",
+        "meetings.html",
+        "Find a meeting – HomeCircle",
+        "Official US meeting finders for AA, NA, GA, SMART Recovery, Al-Anon, Alateen and Porn Addicts Anonymous. HomeCircle is independent and isn't affiliated with these groups.",
+        body,
+    )
+
+
 def build_legal():
     # Hale's US legal review (5 Nov 2026), items 1 and 4, and Hale's US static wording file (10 Nov 2026).
     updated = "10 November 2026"
@@ -658,7 +747,7 @@ def build_sitemap():
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + "</urlset>\n")
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
 
-build_home(); build_library(); build_steps(); build_meditations(); build_help(); build_overdose(); build_support(); build_legal()
+build_home(); build_library(); build_steps(); build_meditations(); build_meetings(); build_help(); build_overdose(); build_support(); build_legal()
 for i in C["items"]:
     build_item(i)
 build_books()
