@@ -298,10 +298,37 @@ details.more p{margin:4px 0 0;font-size:16px}
 .cb-btn:hover,.cb-btn:focus-visible{background:var(--ink);color:#fff}
 .cb-btn.cb-911{background:var(--danger);border-color:var(--danger);color:#fff}
 .cb-btn.cb-911:hover,.cb-btn.cb-911:focus-visible{background:var(--danger-d);border-color:var(--danger-d)}
-@media (max-width:480px){.crisis-bar{font-size:13.5px}.crisis-bar .wrap{padding:6px 10px 8px;gap:6px}.cb-btn{padding:4px 9px}.crisis-bar .cb-lead{flex-basis:100%;min-height:50px;display:flex;align-items:center;padding-right:124px;margin:0}}
+/* Wide screens: show SAMHSA and gambling in the bar; hide the disclosure. */
+.cb-wide{display:contents}
+.cb-more{display:none}
+@media (max-width:480px){
+  .crisis-bar{font-size:13.5px}
+  .crisis-bar .wrap{padding:6px 10px;gap:6px 8px;padding-right:10px}
+  .cb-btn{padding:4px 9px}
+  /* Lead is kept in the DOM for existing tests; the compact row is the three primary buttons. */
+  .crisis-bar .cb-lead{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;flex-basis:auto;min-height:0;padding:0;margin:-1px;border:0}
+  .cb-wide{display:none}
+  .cb-more{display:inline-block;flex:0 1 auto;max-width:100%}
+  .cb-more>summary{display:inline-flex;align-items:center;min-height:44px;padding:4px 10px;border:2px solid var(--ink);border-radius:999px;font-weight:700;cursor:pointer;list-style:none;line-height:1.2}
+  .cb-more>summary::-webkit-details-marker{display:none}
+  .cb-more:not([open]) .cb-btn{display:none}
+  .cb-more[open]{flex-basis:100%}
+  .cb-more[open] .cb-btn{display:inline-flex;margin:6px 6px 0 0}
+  /* The Help pill only opens Call 911 and Call 988, already in this compact bar.
+     Hide it at 480px and under so it no longer sits on the bar. Unchanged from 481px up. */
+  .help-pill{display:none}
+  .site-head .wrap{padding-right:16px}
+}
 
 /* HomeCircle US label, copied from the AU badge on homecircle.au */
 .us-badge{display:inline-block;vertical-align:middle;margin-left:6px;padding:2px 7px;border-radius:999px;background:var(--sage);border:1px solid var(--sage-d);color:var(--ink);font:700 12px/1.3 var(--sans);letter-spacing:.6px;position:relative;top:-3px}
 @media (max-width:420px){.us-badge{display:table;margin:2px 0 0;top:0;padding:1px 6px;font-size:11px}}
 /* Plain same-tab switch to the Australian site. Lives in the header, below the crisis bar. */
-.region-switch{font-size:13px;font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:2px;line-height:1.3;max-width:100%;overflow-wrap:anywhere;flex:0 1 auto}
+.region-switch{display:inline-flex;align-items:center;min-height:44px;box-sizing:border-box;font-size:13px;font-weight:700;color:var(--ink);text-decoration:underline;text-underline-offset:2px;line-height:1.3;max-width:100%;overflow-wrap:anywhere;flex:0 1 auto}
+.region-switch-item{display:none}
+@media (max-width:480px){
+  .region-switch-header{display:none}
+  .region-switch-item{display:list-item}
+  .region-switch-menu{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px}
+  .site-head .wrap{flex-wrap:nowrap}
+}
