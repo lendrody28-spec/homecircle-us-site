@@ -213,7 +213,7 @@ def footer(r):
     <h2>HomeCircle</h2>
     <p>Support for your recovery journey. Free, with no accounts, no sign-in, no cookies, no ads, no trackers and no analytics.</p>
     <p>{E(L["gpLine"])} {E(L["notMedicalDevice"])} In an emergency call <a href="tel:911">911</a>. Call or text <a href="tel:988">988</a> for the Suicide &amp; Crisis Lifeline.</p>
-    <p>HomeCircle is independent and isn&#x27;t affiliated with or endorsed by any group listed on this site.</p>
+    <p>HomeCircle is independent and isn&#x27;t affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous or any other group listed on this site.</p>
   </div>
   <div><h2>Explore</h2><ul>{"".join(f'<li><a href="{r}{h}">{E(t)}</a></li>' for h, t in PAGES)}</ul></div>
   <div><h2>About</h2><ul>
