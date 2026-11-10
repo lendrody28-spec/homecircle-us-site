@@ -621,7 +621,17 @@ def build_support():
     page("support.html", "support.html", "Support – HomeCircle", "Get help with the HomeCircle website: contact, FAQs and crisis support.", body)
 
 
-# ---------- meetings (links to official finders; no HomeCircle US meeting data yet) ----------
+# ---------- meetings (links to official finders) ----------
+def meetings_list_slot():
+    """Same place as the AU page's #finder / #results block.
+
+    Return any future US meeting-list markup from here so both sites keep the
+    same section order: title, list (when there is one), kinds, official finders.
+    Emit nothing visible until there is a US list. No heading, placeholder or
+    coming-soon box.
+    """
+    return ""
+
 def build_meetings():
     """A links-only Find a meeting page. Finder cards are listed A to Z."""
     finders = [
@@ -688,9 +698,12 @@ def build_meetings():
         f'<div class="card"><h3 class="mt0">{E(title)}</h3><p>{E(blurb)}</p></div>'
         for title, blurb in kinds
     )
+    # Section order matches the AU meetings page, so a future list can slot in
+    # on both sites: title and lede, list slot, kinds / about, official finders.
     body = f"""<h1>Find a meeting</h1>
-<p class="lede">Official meeting finders from the groups themselves. HomeCircle doesn't keep its own US meeting list yet.</p>
+<p class="lede">Official meeting finders from the groups themselves.</p>
 <p>Meeting times change, so check with the group before you go. For any health concern, talk to your doctor. HomeCircle is support, not medical care.</p>
+{meetings_list_slot()}
 <h2 id="kinds">Kinds of meetings</h2>
 <p>Meetings may be in person, online (including video), or by phone. Some are open and some are closed. Other groups may use these words with their own rules. Check each meeting's listing to see if it's open or closed, and how you can attend.</p>
 <div class="grid g2">{kind_cards}</div>
