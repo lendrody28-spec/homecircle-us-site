@@ -164,7 +164,7 @@ def head(title, desc, r, path):
 <html lang="en-US" class="no-js">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'self'; object-src 'none'">
 <meta name="referrer" content="no-referrer">
 <title>{E(title)}</title>
@@ -406,7 +406,7 @@ def build_item(i):
     if i.get("phoneDial"):
         main.append(f'<p><a class="btn ghost" href="tel:{i["phoneDial"]}">Call {E(i["phoneDisplay"])}</a></p>')
     if i["id"] == "fell-ga":
-        main.append('<div class="card mt"><h2 class="mt0">National Problem Gambling Helpline</h2><p>Professional help, not a fellowship: free, confidential and 24/7 by call, text or chat, for you or someone you\'re worried about. Run by the National Council on Problem Gambling.</p><div class="btn-row"><a class="btn ghost" href="tel:+18006973738">Call or text 1-800-MY-RESET (1-800-697-3738)</a><a class="btn ghost" href="https://www.ncpgambling.org/help-treatment/" rel="noopener">ncpgambling.org</a></div><p class="small">The Gamblers Anonymous number above is a fellowship line. Checked 5 November 2026.</p></div>')
+        main.append('<div class="card mt"><h2 class="mt0">National Problem Gambling Helpline</h2><p>Professional help, not a fellowship: free, confidential and 24/7 by call, text or chat, for you or someone you\'re worried about. Run by the National Council on Problem Gambling.</p><div class="btn-row"><a class="btn ghost" href="tel:+18006973738">Call or text 1-800-MY-RESET (1-800-697-3738)</a><a class="btn ghost" href="sms:+18006973738">Text 1-800-697-3738</a><a class="btn ghost" href="https://www.ncpgambling.org/help-treatment/" rel="noopener">ncpgambling.org</a></div><p class="small">The Gamblers Anonymous number above is a fellowship line. Checked 5 November 2026.</p></div>')
     main.append(f'<p class="small">{E(L["gpLine"])}</p>')
     body = "".join(parts) + f'<div class="layout"><div>{"".join(main)}</div>{aside(r)}</div>'
     page(path, "library.html", f'{i["title"]} – HomeCircle Library', web(i["summary"]), body)
