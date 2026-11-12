@@ -1,0 +1,50 @@
+{
+  "figures": [
+    {
+      "id": "nhtsa-2024-deaths",
+      "title": "Drunk-driving deaths, 2024",
+      "wording": [
+        "In 2024, 11,904 people died in drunk-driving crashes (BAC .08+), about 30% of US traffic deaths; about 32 a day, one every 44 minutes."
+      ],
+      "url": "https://www.nhtsa.gov/risky-driving/drunk-driving",
+      "source": "NHTSA, Drunk Driving.",
+      "period": "2024.",
+      "checkedOn": "12 November 2026"
+    },
+    {
+      "id": "nhtsa-2024-001-007",
+      "title": "Alcohol-related deaths at a BAC of .01 to .07, 2024",
+      "wording": [
+        "In 2024, 2,028 people were killed in alcohol-related crashes where a driver had a BAC of .01 to .07.",
+        "Even a small amount of alcohol can affect driving."
+      ],
+      "url": "https://www.nhtsa.gov/risky-driving/drunk-driving",
+      "source": "NHTSA, Drunk Driving.",
+      "period": "2024.",
+      "checkedOn": "12 November 2026"
+    },
+    {
+      "id": "nhtsa-trauma-centers-2020",
+      "title": "Drugs detected at studied trauma centers, October–December 2020",
+      "wording": [
+        "56% of drivers in serious-injury and fatal crashes at studied trauma centers tested positive for at least one drug (Oct–Dec 2020)."
+      ],
+      "url": "https://www.nhtsa.gov/risky-driving/drug-impaired-driving",
+      "source": "NHTSA, Drug-Impaired Driving.",
+      "period": "October–December 2020, at studied trauma centers.",
+      "checkedOn": "12 November 2026",
+      "note": "This figure is for studied trauma centers in October–December 2020. It is not a national drug-impaired death count."
+    },
+    {
+      "id": "cdc-2023-self-report",
+      "title": "Self-reported driving under the influence, 2023",
+      "wording": [
+        "In 2023, among people 16 and older, 15.5 million (5.9%) drove under the influence of alcohol, 12.1 million (4.6%) drove under the influence of cannabis, and 2.2 million (0.8%) drove under the influence of other illicit drugs in the past year."
+      ],
+      "url": "https://www.cdc.gov/impaired-driving/facts/",
+      "source": "CDC, Impaired Driving Facts, citing the 2023 National Survey on Drug Use and Health (NSDUH). Page updated 28 January 2026.",
+      "period": "2023, past year, people 16 and older.",
+      "checkedOn": "12 November 2026"
+    }
+  ]
+}
