@@ -38,6 +38,7 @@ SITE_URL = "https://homecirclerecovery.com"
 
 # Published HTML paths on each site. hreflang tags are generated from the intersection.
 AU_SITE_PATHS = {
+    'before-you-drive.html',
     'events.html',
     'families/child.html',
     'families/family.html',
@@ -82,6 +83,7 @@ AU_SITE_PATHS = {
     'your-circle.html',
 }
 US_SITE_PATHS = {
+    'before-you-drive.html',
     'health-privacy.html',
     'help.html',
     'index.html',
@@ -215,7 +217,7 @@ def footer(r):
     <p>{E(L["gpLine"])} {E(L["notMedicalDevice"])} In an emergency call <a href="tel:911">911</a>. Call or text <a href="tel:988">988</a> for the Suicide &amp; Crisis Lifeline.</p>
     <p>{E(L["notAffiliated"])}</p>
   </div>
-  <div><h2>Explore</h2><ul>{"".join(f'<li><a href="{r}{h}">{E(t)}</a></li>' for h, t in PAGES)}</ul></div>
+  <div><h2>Explore</h2><ul>{"".join(f'<li><a href="{r}{h}">{E(t)}</a></li>' for h, t in PAGES)}<li><a href="{r}before-you-drive.html">Before you drive</a></li></ul></div>
   <div><h2>About</h2><ul>
     <li><a href="{r}{PRIVACY}">Privacy Policy</a></li>
     <li><a href="{r}{TERMS}">Terms of Use</a></li>
@@ -293,6 +295,7 @@ def build_home():
 <div class="notice"><strong>Need help right now?</strong> {E(L["notMedicalDevice"])} In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</div>
 <h2>What you can do here</h2>
 <div class="grid g4">{tiles}</div>
+<div class="card sage mt" id="before-you-drive"><h2 class="mt0">Before you drive</h2><p>Other ways home if you&#x27;re not sure you&#x27;re okay to drive, what alcohol and drugs can do, and official US figures.</p><a class="btn" href="before-you-drive.html">Before you drive</a></div>
 <div class="card mt"><h2 class="mt0">Coming soon</h2><p>Events and pages for families and partners are on the way. To find a meeting, use the <a href="meetings.html">Find a meeting</a> page, which links to each group&#x27;s own official finder.</p></div>
 <div class="card sage mt"><h3>Support, not medical care</h3><p>{E(L["gpLine"])}</p><p>{E(L["notAffiliated"])}</p><p>HomeCircle never reproduces the Big Book or NA literature. We link to the free official pages instead.</p></div>"""
     page("index.html", "index.html", "HomeCircle – Support for your recovery journey",
@@ -536,6 +539,7 @@ def build_help():
 </div>
 <div class="emergency-card mt"><h2 class="mt0">Call 911 immediately</h2><p>If a life is in danger, call 911 or go to your nearest emergency room.</p><a class="btn" href="tel:911">Call 911</a></div>
 <div class="card mt" id="overdose"><h2 class="mt0">What to do in an overdose</h2><p>Call 911 first. Then see the signs of overdose, the first aid steps, and where to get naloxone (Narcan).</p><a class="btn" href="overdose.html">What to do in an overdose</a></div>
+<div class="card sage mt" id="before-you-drive"><h2 class="mt0">Before you drive</h2><p>Other ways home if you&#x27;re not sure you&#x27;re okay to drive, what alcohol and drugs can do, and official US figures.</p><a class="btn" href="before-you-drive.html">Before you drive</a></div>
 <p class="small">Hours and numbers can change, so check the service's own website. Checked 4 November 2026.</p>
 <p class="small">{E(L["gpLine"])}</p>"""
     page("help.html", "help.html", "Get help – HomeCircle", "US helplines: 911, 988 Suicide & Crisis Lifeline, Crisis Text Line, SAMHSA's National Helpline, National Domestic Violence Hotline, and family support.", body)
@@ -760,7 +764,73 @@ def build_sitemap():
     (ROOT / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + urls + "</urlset>\n")
     (ROOT / "robots.txt").write_text(f"User-agent: *\nAllow: /\nSitemap: {SITE_URL}/sitemap.xml\n")
 
-build_home(); build_library(); build_steps(); build_meditations(); build_meetings(); build_help(); build_overdose(); build_support(); build_legal()
+
+# ---------- before you drive ----------
+DRIVE = json.loads((ROOT / "before-you-drive.json").read_text())
+DRIVE_AFFIL = "These are independent official pages. HomeCircle is not affiliated with them."
+
+def drive_figures():
+    cards = []
+    for fig in DRIVE["figures"]:
+        words = "".join(f"<p>{E(w)}</p>" for w in fig["wording"])
+        note = f'<p class="small">{E(fig["note"])}</p>' if fig.get("note") else ""
+        period = f'<p class="small">{E("Period: " + fig["period"])}</p>' if fig.get("period") else ""
+        cards.append(
+            f'<div class="card" id="{E(fig["id"])}"><h3 class="mt0">{E(fig["title"])}</h3>{words}{note}{period}'
+            f'<p class="small">{E("Source: " + fig["source"])} <a href="{E(fig["url"])}" rel="noopener">Open the official page</a>. '
+            f'{E("Checked " + fig["checkedOn"] + ".")}</p></div>'
+        )
+    return '<div class="grid g2">' + "".join(cards) + "</div>"
+
+def build_drive():
+    body = f"""<div id="now" class="btn-row"><a class="btn danger" href="tel:911">Call 911</a><a class="btn" href="tel:988">Call 988</a><a class="btn ghost" href="sms:988">Text 988</a></div>
+<p>Call 911 in an emergency. Call or text 988 for crisis or emotional distress, including a substance use crisis. 988 is not for road emergencies.</p>
+<h1>Before you drive</h1>
+<p class="lede">If you're not sure you're okay to drive, pause and use another way home. Feeling fine is not the same as being safe to drive.</p>
+<div class="card sage" id="alternatives"><h2 class="mt0">Other ways home</h2>
+<p>If you're not sure, you don't have to drive.</p>
+<ul>
+<li>Call someone you trust to drive you.</li>
+<li>Book a taxi or rideshare.</li>
+<li>Take public transit.</li>
+<li>Wait until you're sure, or don't drive today.</li>
+</ul></div>
+<h2>What alcohol and drugs can do</h2>
+<ul>
+<li>Slow your reactions.</li>
+<li>Affect your vision.</li>
+<li>Make it harder to judge distance and speed.</li>
+<li>Make you feel more sure of yourself than you should.</li>
+</ul>
+<p>Some prescription and over-the-counter medicines can affect driving. Ask your doctor or pharmacist if you're unsure.</p>
+<p class="small">Source: NHTSA, <a href="https://www.nhtsa.gov/risky-driving/drug-impaired-driving" rel="noopener">Drug-Impaired Driving</a>. Checked 12 November 2026. {DRIVE_AFFIL}</p>
+<h2>The figures</h2>
+<p>These figures come from the official sources linked below. They were checked 12 November 2026.</p>
+{drive_figures()}
+<p>People often think they're fine after several drinks, but failing to recognize impairment is often a symptom of impairment.</p>
+<p>It is illegal everywhere in the United States to drive impaired by alcohol, marijuana, opioids, meth, or any potentially impairing drug, prescribed or over-the-counter.</p>
+<p>A national count of drug-impaired driving deaths is not known, because of data limitations.</p>
+<p class="small">Source: NHTSA, <a href="https://www.nhtsa.gov/risky-driving/drunk-driving" rel="noopener">Drunk Driving</a> and <a href="https://www.nhtsa.gov/risky-driving/drug-impaired-driving" rel="noopener">Drug-Impaired Driving</a>; CDC, <a href="https://www.cdc.gov/impaired-driving/facts/" rel="noopener">Impaired Driving Facts</a>. Checked 12 November 2026. {DRIVE_AFFIL}</p>
+<h2>Legal limits</h2>
+<p>The legal limit for blood alcohol concentration (BAC) is .08 in every state except Utah, where it's .05. A legal limit isn't a safe level, and you can be impaired below it. Check the <a href="https://www.nhtsa.gov/risky-driving/drunk-driving" rel="noopener">official NHTSA Drunk Driving page</a>.</p>
+<h2>Questions to ask yourself</h2>
+<p>If you're deciding whether to drive, you might ask yourself:</p>
+<ul>
+<li>Do I feel fine, or am I actually fine to drive?</li>
+<li>Is there another way home tonight?</li>
+<li>If something happened on the drive, would it be worth having on my conscience?</li>
+<li>Would I be happy for someone I care about to be in the car with me right now?</li>
+</ul>
+<div class="card sage" id="support-not-medical"><h2 class="mt0">Support, not medical care</h2>
+<p>{E(L["gpLine"])} {E(L["notMedicalDevice"])}</p>
+<p>Call <a href="tel:911">911</a> in an emergency. Call or text <a href="tel:988">988</a> for crisis or emotional distress, including a substance use crisis. 988 is not for road emergencies.</p>
+<p class="small">{DRIVE_AFFIL}</p></div>"""
+    page("before-you-drive.html", "", "Before you drive – HomeCircle",
+         "If you're not sure you're okay to drive, here are other ways home, what alcohol and drugs can do, and official US figures.",
+         body)
+
+
+build_home(); build_library(); build_steps(); build_meditations(); build_meetings(); build_help(); build_overdose(); build_drive(); build_support(); build_legal()
 for i in C["items"]:
     build_item(i)
 build_books()
