@@ -787,7 +787,7 @@ def build_drive():
 <p>Call 911 in an emergency. Call or text 988 for crisis or emotional distress, including a substance use crisis. 988 is not for road emergencies.</p>
 <h1>Before you drive</h1>
 <p class="lede">If you're not sure you're okay to drive, pause and use another way home. Feeling fine is not the same as being safe to drive.</p>
-<div class="card sage" id="alternatives"><h2 class="mt0">Easy alternatives</h2>
+<div class="card sage" id="alternatives"><h2 class="mt0">Other ways home</h2>
 <p>If you're not sure, you don't have to drive.</p>
 <ul>
 <li>Call someone you trust to drive you.</li>
@@ -805,14 +805,14 @@ def build_drive():
 <p>Some prescription and over-the-counter medicines can affect driving. Ask your doctor or pharmacist if you're unsure.</p>
 <p class="small">Source: NHTSA, <a href="https://www.nhtsa.gov/risky-driving/drug-impaired-driving" rel="noopener">Drug-Impaired Driving</a>. Checked 12 November 2026. {DRIVE_AFFIL}</p>
 <h2>The figures</h2>
-<p>These figures are worded as their official sources word them. They were checked 12 November 2026.</p>
+<p>These figures come from the official sources linked below. They were checked 12 November 2026.</p>
 {drive_figures()}
 <p>People often think they're fine after several drinks, but failing to recognize impairment is often a symptom of impairment.</p>
 <p>It is illegal everywhere in the United States to drive impaired by alcohol, marijuana, opioids, meth, or any potentially impairing drug, prescribed or over-the-counter.</p>
 <p>A national count of drug-impaired driving deaths is not known, because of data limitations.</p>
 <p class="small">Source: NHTSA, <a href="https://www.nhtsa.gov/risky-driving/drunk-driving" rel="noopener">Drunk Driving</a> and <a href="https://www.nhtsa.gov/risky-driving/drug-impaired-driving" rel="noopener">Drug-Impaired Driving</a>; CDC, <a href="https://www.cdc.gov/impaired-driving/facts/" rel="noopener">Impaired Driving Facts</a>. Checked 12 November 2026. {DRIVE_AFFIL}</p>
 <h2>Legal limits</h2>
-<p>As a legal fact, the blood alcohol concentration (BAC) limit is .08 in most states, and .05 in Utah. HomeCircle doesn't restate these as advice. Check the official <a href="https://www.nhtsa.gov/risky-driving/drunk-driving" rel="noopener">NHTSA Drunk Driving</a> page.</p>
+<p>The legal limit for blood alcohol concentration (BAC) is .08 in every state except Utah, where it's .05. A legal limit isn't a safe level, and you can be impaired below it. Check the <a href="https://www.nhtsa.gov/risky-driving/drunk-driving" rel="noopener">official NHTSA Drunk Driving page</a>.</p>
 <h2>Questions to ask yourself</h2>
 <p>If you're deciding whether to drive, you might ask yourself:</p>
 <ul>

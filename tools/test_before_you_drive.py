@@ -47,7 +47,7 @@ for fig in figures:
     ok(url in src, f"{ident}: link is on the page")
     ok(checked in src, f"{ident}: checked-on date is on the page")
     for w in fig.get("wording") or []:
-        ok(w in src, f"{ident}: wording present: {w[:80]}")
+        ok(w in text, f"{ident}: wording present: {w[:80]}")
 
 # Crisis: 911 and 988 (call and text) are available; 988 is for crisis, not road emergencies
 ok('href="tel:911"' in src, "tel:911 is present")
