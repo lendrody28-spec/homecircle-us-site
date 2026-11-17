@@ -11,7 +11,7 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:90px}
 body{margin:0;background:var(--cream);color:var(--text);font-family:var(--sans);font-size:18px;line-height:1.6}
-body.menu-open{overflow:hidden}
+body.menu-open{position:fixed;top:var(--menu-scroll-y);left:0;right:0;width:100%;overflow:hidden}
 body.menu-open .site-head{background:var(--cream)}
 img{max-width:100%;height:auto}
 a{color:var(--ink);text-underline-offset:3px}

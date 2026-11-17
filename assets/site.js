@@ -36,12 +36,21 @@
       var room = window.innerHeight - nav.getBoundingClientRect().top;
       nav.style.maxHeight = room > 0 ? room + "px" : "";
     }
+    var savedY = 0;
     function setMenuOpen(open) {
       nav.classList.toggle("open", open);
       mb.setAttribute("aria-expanded", open ? "true" : "false");
-      document.body.classList.toggle("menu-open", open);
-      if (open) sizeNav();
-      else nav.style.maxHeight = "";
+      if (open) {
+        savedY = window.scrollY;
+        document.body.style.setProperty("--menu-scroll-y", "-" + savedY + "px");
+        document.body.classList.add("menu-open");
+        sizeNav();
+      } else {
+        document.body.classList.remove("menu-open");
+        document.body.style.removeProperty("--menu-scroll-y");
+        nav.style.maxHeight = "";
+        window.scrollTo(0, savedY);
+      }
     }
     function closeMenu() { if (nav.classList.contains("open")) setMenuOpen(false); }
     mb.addEventListener("click", function () { setMenuOpen(!nav.classList.contains("open")); });
