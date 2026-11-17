@@ -11,6 +11,8 @@
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;scroll-padding-top:90px}
 body{margin:0;background:var(--cream);color:var(--text);font-family:var(--sans);font-size:18px;line-height:1.6}
+body.menu-open{position:fixed;top:var(--menu-scroll-y);left:0;right:0;width:100%;overflow:hidden}
+body.menu-open .site-head{background:var(--cream)}
 img{max-width:100%;height:auto}
 a{color:var(--ink);text-underline-offset:3px}
 a:hover{color:var(--teal)}
@@ -170,7 +172,7 @@ dialog.help::backdrop{background:rgba(20,30,28,.55)}
   .layout aside{position:static}
   .hero-art img{width:160px;height:160px}
   .menu-btn{display:inline-flex;margin-left:auto;min-height:44px;padding:6px 16px;font-size:16px}
-  .nav{display:none;position:absolute;top:74px;left:0;right:0;background:var(--cream);border-bottom:1px solid var(--line);padding:8px 18px 16px}
+  .nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--cream);border-bottom:1px solid var(--line);padding:8px 18px 16px}
   .nav.open{display:block}
   .nav ul{flex-direction:column}
   .nav a{font-size:18px;padding:12px}
@@ -193,11 +195,16 @@ dialog.help::backdrop{background:rgba(20,30,28,.55)}
 @media (max-width:900px){.nav a{padding:6px 6px;font-size:14px}}
 @media (max-width:760px){.site-head .menu-btn{display:inline-flex}.nav ul{flex-wrap:wrap}}
 
-/* 8 nav items plus the Help pill: a wider header, and the menu button below 1360px */
+/* 8 nav items plus the Help pill: a wider header, and the menu button below 1360px.
+   The open panel scrolls when it is taller than the remaining viewport (short laptop windows).
+   Above 1360px, leave room so the last inline item is not under the fixed Help pill. */
 .site-head .wrap{max-width:1420px}
+@media (min-width:1361px){
+  .site-head .wrap{padding-right:128px}
+}
 @media (max-width:1360px){
   .site-head .menu-btn{display:inline-flex;margin-left:auto;min-height:44px;padding:6px 16px;font-size:16px}
-  .nav{display:none;position:absolute;top:74px;left:0;right:0;background:var(--cream);border-bottom:1px solid var(--line);padding:8px 18px 16px;margin:0}
+  .nav{display:none;position:absolute;top:100%;left:0;right:0;background:var(--cream);border-bottom:1px solid var(--line);padding:8px 18px 16px;margin:0;max-height:calc(100vh - 74px);max-height:calc(100dvh - 74px);overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
   .nav.open{display:block}
   .nav ul{flex-direction:column;flex-wrap:wrap}
   .nav a{font-size:18px;padding:12px}
@@ -292,7 +299,7 @@ details.more p{margin:4px 0 0;font-size:16px}
 .site-foot .wrap{padding-left:max(32px, env(safe-area-inset-left, 0px));padding-right:max(32px, env(safe-area-inset-right, 0px))}
 .site-foot .fine-print{font-size:.75rem;line-height:1.5;color:#56615E;margin:28px 0 0;padding-top:12px;border-top:1px solid var(--line)}
 /* Crisis bar: top of every page, plain tel:/sms: links, no JavaScript needed */
-.crisis-bar{background:#fff;border-bottom:3px solid var(--danger);font-size:15px}
+.crisis-bar{position:relative;z-index:30;background:#fff;border-bottom:3px solid var(--danger);font-size:15px}
 .crisis-bar .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;padding-top:8px;padding-bottom:8px;padding-left:max(32px, env(safe-area-inset-left, 0px));padding-right:max(140px, env(safe-area-inset-right, 0px))}
 .crisis-bar .cb-lead{color:var(--danger);margin-right:4px}
 .cb-btn{display:inline-flex;align-items:center;min-height:44px;padding:4px 12px;border:2px solid var(--ink);border-radius:999px;color:var(--ink);font-weight:700;text-decoration:none;white-space:normal;max-width:100%;overflow-wrap:anywhere;text-align:center;line-height:1.2}
@@ -318,6 +325,7 @@ details.more p{margin:4px 0 0;font-size:16px}
   /* Keep the Help pill on small screens, but move it to the bottom-right so it
      no longer sits on the compact crisis bar or the header. 16px is the
      fallback if env(safe-area-inset-bottom) is not supported. */
+  .nav.open{padding-bottom:calc(68px + env(safe-area-inset-bottom, 0px))}
   .help-pill{
     top:auto;
     right:12px;

@@ -25,14 +25,45 @@
     dlg.addEventListener("close", function () { pill.focus(); });
   }
 
-  /* Small-screen menu */
+  /* Menu button (below the desktop breakpoint). The open panel is height-capped
+     to the remaining viewport so short laptop windows and phones can scroll to
+     the last item. Body scroll is locked only while the menu is open. */
   var mb = document.getElementById("menu-btn"), nav = document.getElementById("site-nav");
   if (mb && nav) {
     mb.hidden = false;
-    mb.addEventListener("click", function () {
-      var open = nav.classList.toggle("open");
+    function menuButtonShown() { return window.getComputedStyle(mb).display !== "none"; }
+    function sizeNav() {
+      var room = window.innerHeight - nav.getBoundingClientRect().top;
+      nav.style.maxHeight = room > 0 ? room + "px" : "";
+    }
+    var savedY = 0;
+    function setMenuOpen(open) {
+      nav.classList.toggle("open", open);
       mb.setAttribute("aria-expanded", open ? "true" : "false");
+      if (open) {
+        savedY = window.scrollY;
+        document.body.style.setProperty("--menu-scroll-y", "-" + savedY + "px");
+        document.body.classList.add("menu-open");
+        sizeNav();
+      } else {
+        document.body.classList.remove("menu-open");
+        document.body.style.removeProperty("--menu-scroll-y");
+        nav.style.maxHeight = "";
+        window.scrollTo(0, savedY);
+      }
+    }
+    function closeMenu() { if (nav.classList.contains("open")) setMenuOpen(false); }
+    mb.addEventListener("click", function () { setMenuOpen(!nav.classList.contains("open")); });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") closeMenu(); });
+    nav.addEventListener("click", function (e) {
+      if (e.target.closest && e.target.closest("a")) closeMenu();
     });
+    window.addEventListener("resize", function () {
+      if (!nav.classList.contains("open")) return;
+      if (!menuButtonShown()) closeMenu();
+      else sizeNav();
+    });
+    window.addEventListener("scroll", function () { if (nav.classList.contains("open")) sizeNav(); }, { passive: true });
   }
 
   /* Library filter chips */
