@@ -352,3 +352,8 @@ details.more p{margin:4px 0 0;font-size:16px}
   .region-switch-menu{display:inline-flex;align-items:center;min-height:44px;padding:8px 12px}
   .site-head .wrap{flex-wrap:nowrap}
 }
+
+/* Visible focus on every control: a dark ring with a white edge, so it shows on cream, white, sage and red. */
+/* Ink (#0D6968) is only 2.67:1 on the focused Help pill (#EE8C74). --text (#24302E) is 5.62:1 on that pill and 12.65:1 on cream. */
+:focus-visible{outline:3px solid var(--text);outline-offset:3px;box-shadow:0 0 0 3px #fff;border-radius:6px}
+.emergency-card :focus-visible,.btn.danger:focus-visible,.cb-btn.cb-911:focus-visible{outline-color:#fff;box-shadow:0 0 0 3px var(--text)}
