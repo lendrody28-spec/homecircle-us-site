@@ -207,15 +207,17 @@ def header(active, r):
 <a class="help-pill" id="help-pill" href="{r}help.html#now" aria-label="{E(C["crisis"]["accessibilityLabel"])}" aria-describedby="help-pill-hint" aria-controls="help-dialog">{HEART}<span aria-hidden="true">Help</span></a>
 <span class="sr-only" id="help-pill-hint">{E(C["crisis"]["accessibilityHint"])}</span>"""
 
-def footer(r):
+def footer(r, path=""):
     s_ = C["crisis"]
+    # Omit the fellowship affiliation sentence on give.html only, as AU PR #20 does.
+    affiliation = "" if path == "give.html" else f'<p>{E(L["notAffiliated"])}</p>'
     return f"""
 <footer class="site-foot"><div class="wrap cols">
   <div>
     <h2>HomeCircle</h2>
     <p>Support for your recovery journey. Free, with no accounts, no sign-in, no cookies, no ads, no trackers and no analytics.</p>
     <p>{E(L["gpLine"])} {E(L["notMedicalDevice"])} In an emergency call <a href="tel:911">911</a>. Call or text <a href="tel:988">988</a> for the Suicide &amp; Crisis Lifeline.</p>
-    <p>{E(L["notAffiliated"])}</p>
+    {affiliation}
   </div>
   <div><h2>Explore</h2><ul>{"".join(f'<li><a href="{r}{h}">{E(t)}</a></li>' for h, t in PAGES)}<li><a href="{r}before-you-drive.html">Before you drive</a></li></ul></div>
   <div><h2>About</h2><ul>
@@ -223,6 +225,7 @@ def footer(r):
     <li><a href="{r}{TERMS}">Terms of Use</a></li>
     <li><a href="{r}{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a></li>
     <li><a href="{r}support.html#website">About this website</a></li>
+    <li><a href="{r}give.html">Give to others</a></li>
     <li><a href="mailto:support@homecircle.au">Contact</a></li>
     <li><a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line)</li>
   </ul><p class="small">{E(BROWSER_ONLY)} <a href="{r}{PRIVACY}">Privacy Policy</a> · <a href="{r}{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a> · <a href="{r}{TERMS}">Terms of Use</a></p></div>
@@ -247,7 +250,7 @@ def footer(r):
 def page(path, active, title, desc, body):
     r = "../" * path.count("/")
     BUILT.append(path)
-    out = head(title, desc, r, path) + header(active, r) + f'\n<main id="main"><div class="wrap">\n{body}\n</div></main>' + footer(r)
+    out = head(title, desc, r, path) + header(active, r) + f'\n<main id="main"><div class="wrap">\n{body}\n</div></main>' + footer(r, path)
     (ROOT / path).parent.mkdir(parents=True, exist_ok=True)
     (ROOT / path).write_text(out)
 
@@ -830,7 +833,69 @@ def build_drive():
          body)
 
 
-build_home(); build_library(); build_steps(); build_meditations(); build_meetings(); build_help(); build_overdose(); build_drive(); build_support(); build_legal()
+
+def build_give():
+    # Official donate URLs only. No logos, tracking params, tax claims, or fellowship names.
+    # Each "what donations fund" line is taken from the organisation's own donate or about page.
+    orgs = [
+        (
+            "Shatterproof",
+            "https://www.shatterproof.org/give",
+            "Every dollar you give helps support families living with addiction and advocate for change.",
+        ),
+        (
+            "Partnership to End Addiction",
+            "https://drugfree.org/ways-to-give/",
+            "Donations help provide parents and caregivers with the tools they need to take effective action for their child's substance use or addiction.",
+        ),
+        (
+            "Faces & Voices of Recovery",
+            "https://facesandvoicesofrecovery.org/engage/donate/",
+            "Donations fund advocacy for access to substance use disorder care, training and accreditation for peer recovery support services, and work with recovery community organizations.",
+        ),
+        (
+            "National Council on Problem Gambling",
+            "https://www.ncpgambling.org/membership/support-us/",
+            "Donations help support the National Problem Gambling Helpline, public awareness, research, and training.",
+        ),
+        (
+            "National Association for Children of Addiction (NACoA)",
+            "https://nacoa.org/donate/",
+            "Donations support education, awareness, advocacy, research, programs, and direct connections to resources for people living with the effects of family addiction.",
+        ),
+        (
+            "The Phoenix",
+            "https://www.thephoenix.org/donate",
+            "Every gift keeps Phoenix programming free for the next person who walks through the door.",
+        ),
+        (
+            "Young People in Recovery",
+            "https://youngpeopleinrecovery.org/donate/",
+            "Donations help provide peer support, life-skills programs, and recovery resources for young people across the nation.",
+        ),
+    ]
+    items = "".join(
+        f'<div class="card mt"><h3 class="mt0">{E(name)}</h3>'
+        f"<p>{E(blurb)}</p>"
+        f'<p><a href="{E(url)}" rel="noopener">{E(name)} donate page</a></p></div>'
+        for name, url, blurb in orgs
+    )
+    body = f"""<h1>Support others doing the work</h1>
+<p class="lede">Lots of US organisations help people and families affected by alcohol, drugs and gambling. If you'd like to give back, this page lists ways to support them directly.</p>
+<h2 id="organisations">Organisations</h2>
+{items}
+<div class="card mt"><p>HomeCircle US isn't affiliated with these organisations and receives nothing. We link to their official pages so you can support them directly.</p>
+<p>Before you give, you can check an organisation on the <a href="https://www.irs.gov/charities-non-profits/tax-exempt-organization-search" rel="noopener">IRS Tax Exempt Organization Search</a> and read the <a href="https://consumer.ftc.gov/articles/giving-charity" rel="noopener">FTC's advice on giving to a charity</a>.</p></div>"""
+    page(
+        "give.html",
+        "",
+        "Support US recovery services | HomeCircle US",
+        "Ways to support US organisations that help people and families affected by alcohol, drugs and gambling. HomeCircle isn't affiliated with these organisations and receives nothing.",
+        body,
+    )
+
+
+build_home(); build_library(); build_steps(); build_meditations(); build_meetings(); build_help(); build_overdose(); build_drive(); build_support(); build_legal(); build_give()
 for i in C["items"]:
     build_item(i)
 build_books()
