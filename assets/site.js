@@ -212,7 +212,9 @@
   (function () {
     var raw = load(HKEY, null);
     if (raw && typeof raw === "object" && Object.keys(raw).some(function (k) { return k !== "hideHolds"; })) {
-      if (raw.hideHolds) save(HKEY, { hideHolds: true }); else { try { localStorage.removeItem(HKEY); } catch (e) {} }
+      /* Any old "true" (hideHolds or a former condition tick) keeps holds hidden, without storing which one. */
+      var keepHidden = Object.keys(raw).some(function (k) { return raw[k] === true; });
+      if (keepHidden) save(HKEY, { hideHolds: true }); else { try { localStorage.removeItem(HKEY); } catch (e) {} }
     }
   })();
   function health() { var h = load(HKEY, {}); return { hideHolds: !!(h && h.hideHolds) }; }
