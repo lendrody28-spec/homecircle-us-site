@@ -205,11 +205,18 @@
     optin.querySelector("button").addEventListener("click", function () { target.hidden = false; optin.hidden = true; target.querySelector("h2, h3").focus(); });
   }
 
-  /* Health safety: the same rule as the app. Breath holds are hidden for heart, blood pressure or
-     lung conditions, pregnancy or panic attacks, or when you switch them off here. Browser only. */
+  /* Breath-hold setting. The US site keeps only one on/off choice ("hideHolds") and never stores any
+     health condition. Any other key found under hc.health.v1 is dropped on load (data minimisation,
+     WA My Health My Data Act review, Nov 2026). Browser only; never sent anywhere. */
   var HKEY = "hc.health.v1";
-  function health() { return load(HKEY, {}); }
-  function hidesHolds(h) { return !!(h.hideHolds || h.heartOrBloodPressure || h.asthmaOrLung || h.pregnancy || h.panicAttacks); }
+  (function () {
+    var raw = load(HKEY, null);
+    if (raw && typeof raw === "object" && Object.keys(raw).some(function (k) { return k !== "hideHolds"; })) {
+      if (raw.hideHolds) save(HKEY, { hideHolds: true }); else { try { localStorage.removeItem(HKEY); } catch (e) {} }
+    }
+  })();
+  function health() { var h = load(HKEY, {}); return { hideHolds: !!(h && h.hideHolds) }; }
+  function hidesHolds(h) { return !!h.hideHolds; }
   function applyHealth() {
     var hide = hidesHolds(health()), shown = document.body.hasAttribute("data-show-holds");
     document.querySelectorAll("[data-breath-hold]").forEach(function (n) { n.hidden = hide && !shown; });
@@ -225,7 +232,8 @@
   }
   document.querySelectorAll("[data-health]").forEach(function (cb) {
     cb.addEventListener("change", function () {
-      var h = health(); h[cb.getAttribute("data-health")] = cb.checked;
+      if (cb.getAttribute("data-health") !== "hideHolds") return;
+      var h = health(); h.hideHolds = cb.checked;
       if (!save(HKEY, h)) alert("This browser isn't letting the site save settings, so this choice will reset when you leave the page.");
       applyHealth();
     });

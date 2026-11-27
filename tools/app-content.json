@@ -8,11 +8,8 @@
   "beforeYouStart": "If you have a health condition, are pregnant, or take medication, check with your doctor before trying this. Stop if you feel dizzy, short of breath, unwell, or distressed, and breathe normally.",
   "breathHold": "Skip breath holds if you have heart, lung or blood pressure conditions, or are pregnant.",
   "trauma": "If focusing inward brings up distressing memories, open your eyes, ground yourself, and talk to your doctor or counselor.",
-  "dataStays": "Your journal, sober date, reminders and Kai chats stay on this phone. They are not included in iCloud or Finder backup. Export my data keeps a copy wherever you choose to save it.",
   "deleteTitle": "Delete data on this phone",
-  "deleteConfirm": "Delete data on this phone? This removes the journal, Kai chats, reminders, sober date, health answers and other HomeCircle data stored on this iPhone. It cannot be undone.",
   "locationUse": "HomeCircle uses your location on this iPhone to show nearby meetings. It isn’t sent anywhere.",
-  "kaiOnDevice": "Replies are written on this iPhone from saved rules. No network and no AI service.",
   "mailMissing": "Mail isn't set up on this iPhone. Copy the address and send it yourself when you can.",
   "privateDetails": "Don't share your full name, address, phone, bank details or passwords with anyone in HomeCircle or at meetings. Real friends and sponsors won't ask for money or private details. If someone does, tell your sponsor or a trusted person.",
   "noServer": "Notes stay on this phone. HomeCircle has no community server, so other people's posts are never downloaded or shown.",
@@ -388,7 +385,7 @@
   {
    "id": "med-urge",
    "title": "Urge surfing",
-   "summary": "Kai leads a short sit with the wave of an urge.",
+   "summary": "A short guided sit with the wave of an urge.",
    "category": "meditation",
    "tag": "Meditation",
    "minutes": 5,
@@ -405,35 +402,35 @@
     {
      "id": "mu1",
      "title": "Arrive",
-     "cue": "Kai: feet on the floor. You can keep your eyes open.",
+     "cue": "feet on the floor. You can keep your eyes open.",
      "seconds": 40,
      "drawing": "ground"
     },
     {
      "id": "mu2",
      "title": "Name the urge",
-     "cue": "Kai: give it one plain name. You don't have to act.",
+     "cue": "give it one plain name. You don't have to act.",
      "seconds": 45,
      "drawing": "wave"
     },
     {
      "id": "mu3",
      "title": "Watch the crest",
-     "cue": "Kai: notice if it rises. Breathe out a little longer, if that feels okay.",
+     "cue": "notice if it rises. Breathe out a little longer, if that feels okay.",
      "seconds": 70,
      "drawing": "slow-out"
     },
     {
      "id": "mu4",
      "title": "Let it move",
-     "cue": "Kai: waves change. Stay with the room.",
+     "cue": "waves change. Stay with the room.",
      "seconds": 50,
      "drawing": "leaf"
     },
     {
      "id": "mu5",
      "title": "Close",
-     "cue": "Kai: one thing you'll do in the next ten minutes.",
+     "cue": "one thing you'll do in the next ten minutes.",
      "seconds": 40,
      "drawing": "leaf"
     }
@@ -462,35 +459,35 @@
     {
      "id": "bs1",
      "title": "Feet",
-     "cue": "Kai: notice both feet. You can wiggle them.",
+     "cue": "notice both feet. You can wiggle them.",
      "seconds": 45,
      "drawing": "scan-feet"
     },
     {
      "id": "bs2",
      "title": "Legs",
-     "cue": "Kai: the weight of your legs on the chair.",
+     "cue": "the weight of your legs on the chair.",
      "seconds": 45,
      "drawing": "scan-legs"
     },
     {
      "id": "bs3",
      "title": "Belly",
-     "cue": "Kai: no need to change the breath. Just notice.",
+     "cue": "no need to change the breath. Just notice.",
      "seconds": 45,
      "drawing": "scan-belly"
     },
     {
      "id": "bs4",
      "title": "Hands",
-     "cue": "Kai: warmth or coolness in the hands.",
+     "cue": "warmth or coolness in the hands.",
      "seconds": 45,
      "drawing": "scan-hands"
     },
     {
      "id": "bs5",
      "title": "Shoulders",
-     "cue": "Kai: let the shoulders drop if they want to. Then open your eyes wide.",
+     "cue": "let the shoulders drop if they want to. Then open your eyes wide.",
      "seconds": 45,
      "drawing": "scan-shoulders"
     }
@@ -519,21 +516,21 @@
     {
      "id": "ba1",
      "title": "Look around",
-     "cue": "Kai: name one ordinary object you can see.",
+     "cue": "name one ordinary object you can see.",
      "seconds": 30,
      "drawing": "ground-see"
     },
     {
      "id": "ba2",
      "title": "Out-breath",
-     "cue": "Kai: five easy out-breaths. In is whatever length feels natural.",
+     "cue": "five easy out-breaths. In is whatever length feels natural.",
      "seconds": 70,
      "drawing": "slow-out"
     },
     {
      "id": "ba3",
      "title": "Feet",
-     "cue": "Kai: press your feet down. The practice can end here.",
+     "cue": "press your feet down. The practice can end here.",
      "seconds": 40,
      "drawing": "ground"
     }
@@ -562,35 +559,35 @@
     {
      "id": "mw1",
      "title": "Stand",
-     "cue": "Kai: stand still for a moment. Feel your weight in both feet.",
+     "cue": "stand still for a moment. Feel your weight in both feet.",
      "seconds": 30,
      "drawing": "ground"
     },
     {
      "id": "mw2",
      "title": "Slow steps",
-     "cue": "Kai: walk a little slower than usual. Notice each foot touch the ground.",
+     "cue": "walk a little slower than usual. Notice each foot touch the ground.",
      "seconds": 60,
      "drawing": "scan-feet"
     },
     {
      "id": "mw3",
      "title": "Breath and steps",
-     "cue": "Kai: let your steps and breathing find a rhythm. No counting needed.",
+     "cue": "let your steps and breathing find a rhythm. No counting needed.",
      "seconds": 60,
      "drawing": "slow-out"
     },
     {
      "id": "mw4",
      "title": "Look around",
-     "cue": "Kai: lift your eyes. Name a few things you can see.",
+     "cue": "lift your eyes. Name a few things you can see.",
      "seconds": 45,
      "drawing": "ground-see"
     },
     {
      "id": "mw5",
      "title": "Listen",
-     "cue": "Kai: notice the sounds, near and far. Then stop and stand for a breath.",
+     "cue": "notice the sounds, near and far. Then stop and stand for a breath.",
      "seconds": 45,
      "drawing": "ground-hear"
     }
@@ -619,28 +616,28 @@
     {
      "id": "me1",
      "title": "Look",
-     "cue": "Kai: look at the food for a moment. Color, shape, texture.",
+     "cue": "look at the food for a moment. Color, shape, texture.",
      "seconds": 30,
      "drawing": "ground-see"
     },
     {
      "id": "me2",
      "title": "Smell",
-     "cue": "Kai: bring it close and notice the smell.",
+     "cue": "bring it close and notice the smell.",
      "seconds": 30,
      "drawing": "ground-smell"
     },
     {
      "id": "me3",
      "title": "Small bite",
-     "cue": "Kai: take a small bite and chew slowly. Notice the taste change.",
+     "cue": "take a small bite and chew slowly. Notice the taste change.",
      "seconds": 60,
      "drawing": "ground-taste"
     },
     {
      "id": "me4",
      "title": "Check in",
-     "cue": "Kai: pause between bites. How does your belly feel?",
+     "cue": "pause between bites. How does your belly feel?",
      "seconds": 45,
      "drawing": "scan-belly"
     }

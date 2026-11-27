@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Checks Hale's US static wording file (10 Nov 2026) word for word on the built pages. Run after tools/build.py."""
+"""Checks Hale's US static wording file (10 Nov 2026) and the 28 Nov 2026 health-data redraft (DRAFT FOR HALE)
+word for word on the built pages. Run after tools/build.py."""
 import html
 import re
 import sys
@@ -7,7 +8,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 PAGES = sorted(ROOT.glob("*.html")) + sorted((ROOT / "library").glob("*.html"))
-DATE = "10 November 2026"
+DATE = "28 November 2026"        # Privacy, Consumer Health Data Privacy Policy, request page
+TERMS_DATE = "10 November 2026"  # Terms unchanged
 FOOT = "Anything you save stays in this browser's local storage. Our web host logs visits. Privacy Policy · Consumer Health Data Privacy Policy · Terms of Use"
 OPERATOR = "Luke Endrody (sole trader), Queensland, Australia. ABN 53 687 374 897."
 STUDY = "That study tested a longer, guided program, not this page."
@@ -61,10 +63,11 @@ for path in PAGES:
 privacy = main_text((ROOT / "privacy.html").read_text())
 for snippet in [
     f"Last updated {DATE}",
-    "What we collect We don't collect anything through the site itself. There are no accounts, cookies, ads, trackers or analytics, and we don't sell or share personal data or use it for ads. Our web host does keep technical records of visits, as explained under \"Our web host\".",
-    "What your browser saves Some features save your choices in this browser's local storage, on this device only: the \"hide breath holds\" setting. We can't see them. To delete them, change the setting back or clear this site's data in your browser. Private browsing removes them when you close the window.",
-    "Our web host The site is hosted on GitHub Pages, run by GitHub (part of Microsoft). When you visit a page, your browser asks GitHub for it, and GitHub automatically receives standard request data, such as your IP address, browser type and the page requested, to deliver and secure the site. GitHub handles that data under its own privacy statement. We can't see or use those records. Because this is a recovery website, a visit itself may say something about your health; if that worries you, use private browsing or a network you trust.",
-    "If you email us We get your email address and what you write. We use it only to reply, and we delete it when it is no longer needed. Our email is forwarded through ImprovMX to Gmail. Please don't send health details you'd rather keep private.",
+    "What we collect The site itself has no accounts, forms, cookies, ads, trackers or analytics, so it doesn't send us anything about you",
+    "What your browser saves One feature saves a choice in this browser's local storage, on this device only: the \"hide breath holds\" setting. It's a single on/off choice and doesn't record any health condition.",
+    "GitHub stores visitor IP addresses for security.",
+    "We don't routinely see individual visitor logs, we don't keep our own visitor-log database, and we don't sell visitor information. GitHub hasn't published how long it keeps these records for GitHub Pages.",
+    "We delete support emails within 90 days after our last reply",
     "Consumer health data See our Consumer Health Data Privacy Policy.",
     "Adults only HomeCircle is for people 18 and over.",
     "Changes We'll post any changes here with a new date.",
@@ -73,26 +76,58 @@ for snippet in [
         bad(f"privacy.html missing: {snippet[:70]}...")
 raw_priv = (ROOT / "privacy.html").read_text()
 if 'href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement"' not in raw_priv: bad("privacy.html: GitHub privacy statement link")
-if '<a href="health-privacy.html">Consumer Health Data Privacy Policy</a>.</p>' not in raw_priv: bad("privacy.html: pointer link to health-privacy.html")
-if "What we collect: nothing through the site" in privacy: bad("privacy.html: old heading")
+if '<a href="health-privacy.html">Consumer Health Data Privacy Policy</a>' not in raw_priv: bad("privacy.html: pointer link to health-privacy.html")
+if '<a href="health-data-request.html">' not in raw_priv: bad("privacy.html: link to health-data-request.html")
+for old in ("What we collect: nothing through the site", "We can't see or use those records", "We don't collect anything through the site itself"):
+    if old in privacy: bad(f"privacy.html: old wording {old!r}")
 
-hp = main_text((ROOT / "health-privacy.html").read_text())
+# Washington RCW 19.373.020 policy contents and .040 rights (28 Nov 2026 redraft, DRAFT FOR HALE).
+hp_raw = (ROOT / "health-privacy.html").read_text()
+hp = main_text(hp_raw)
 for snippet in [
     f"Consumer Health Data Privacy Policy. Last updated {DATE}. This policy covers consumer health data under Washington's My Health My Data Act and similar laws in Nevada, Connecticut and other states. HomeCircle is run by Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897. Contact: support@homecircle.au (not a crisis line).",
-    "What we collect. We don't collect consumer health data through the site. There are no accounts, forms, cookies, ads, trackers or analytics. Anything you choose to save stays in your browser on your device, and we can't see it.",
-    "Our web host. GitHub, our web host, automatically records technical data when you visit a page, such as your IP address and the page requested. Because this is a recovery website, those records could suggest something about your health. GitHub uses them to deliver and secure the site under its own privacy statement. We don't receive, use, sell or share them.",
-    "If you email us. If you choose to email us health information, we get your email address and what you write, through our email forwarding service (ImprovMX) and our email provider (Google Gmail). We use it only to reply to you and delete it when it is no longer needed. We never sell it, never use it for ads, and never share it with anyone else except those service providers, who handle it only to deliver our email.",
-    "Your rights. You can ask us to confirm whether we hold your consumer health data, to see it and the providers it went through, or to delete it, and you can withdraw any consent. Email support@homecircle.au. We'll reply within 45 days, and may take 45 more days if needed, in which case we'll tell you why.",
-    "Appeals. If we refuse your request, reply to our answer to appeal. We'll respond within 45 days and explain our decision. If you're still unhappy, you can contact your state attorney general (for Washington: https://www.atg.wa.gov/file-complaint).",
-    "Adults only. HomeCircle is for adults 18 and over and isn't directed to children.",
-    "Changes. We'll post any changes here with a new date.",
+    "What may be collected, and why",            # .020(1)(a)(i) categories and purposes
+    "Where it comes from",                       # .020(1)(a)(ii) sources
+    "Who it's shared with",                      # .020(1)(a)(iii)-(iv) shared categories, third parties, affiliates
+    "We don't have any affiliates.",
+    "GitHub, Inc. (part of Microsoft)", "ImprovMX", "Google (Gmail)",
+    "confirm whether we collect, share or sell consumer health data about you",   # .040(1)(a)
+    "with a list of everyone we have shared it with and how to contact them",     # .040(1)(a)
+    "withdraw any consent",                                                       # .040(1)(b)
+    "tell ImprovMX, Google and GitHub about your request",                        # .040(1)(c)(i)(B)
+    "Requests are free, up to twice in any 12 months. You don't need an account.",  # .040(1)(d),(f)
+    "We'll reply within 45 days. If we need more time, we may take 45 more days once, and we'll tell you why within the first 45 days.",  # .040(1)(g)
+    "We'll respond in writing within 45 days and explain what we did and why. If we deny your appeal, you can contact your state attorney general.",  # .040(1)(h)
+    "ask for your consent before we do",                                          # .020(1)(c)-(d)
+    "Adults only HomeCircle is for adults 18 and over and isn't directed to children.",
+    "Changes We'll post any changes here with a new date.",
 ]:
     if snippet not in hp:
         bad(f"health-privacy.html missing: {snippet[:70]}...")
+for old in ("We don't collect consumer health data through the site", "We don't receive, use, sell or share them"):
+    if old in hp: bad(f"health-privacy.html: blanket claim Hale flagged {old!r}")
+for href in ("https://support.github.com/contact/privacy", "https://improvmx.com/contact/", "https://support.google.com/policies/contact/general_privacy_form", "https://www.atg.wa.gov/file-complaint", "health-data-request.html"):
+    if f'href="{href}"' not in hp_raw: bad(f"health-privacy.html: link {href}")
+
+req_raw = (ROOT / "health-data-request.html").read_text()
+req = main_text(req_raw)
+for snippet in ["Health data requests and appeals", f"Last updated {DATE}", "You don't need an account", "Appeal a decision", "This email is not a crisis line."]:
+    if snippet not in req: bad(f"health-data-request.html missing: {snippet}")
+for subj in ("Health%20data%20request%3A%20confirm%20and%20copy", "Health%20data%20request%3A%20delete", "Health%20data%20request%3A%20withdraw%20consent", "Appeal%3A%20health%20data%20request"):
+    if f'href="mailto:support@homecircle.au?subject={subj}"' not in req_raw: bad(f"health-data-request.html: mailto {subj}")
+if "<form" in req_raw or "<input" in req_raw.split("<main", 1)[1]: bad("health-data-request.html: must stay email-only (no forms)")
+if 'Read our <a href="health-privacy.html">Consumer Health Data Privacy Policy</a>' not in (ROOT / "index.html").read_text():
+    bad("index.html: conspicuous homepage link to the health policy (RCW 19.373.020(1)(b))")
+
+# Data minimisation: the only saved value is the hideHolds on/off choice; no health conditions stored.
+site_js = (ROOT / "assets" / "site.js").read_text()
+for cond in ("heartOrBloodPressure", "asthmaOrLung", "pregnancy", "panicAttacks", "hc.kai", "hc.journal", "hc.circle", "fetch(", "XMLHttpRequest", "sendBeacon"):
+    if cond in site_js: bad(f"assets/site.js still has {cond!r}")
+if (ROOT / "assets" / "readaloud.js").exists(): bad("assets/readaloud.js is back in the repo")
 
 terms = main_text((ROOT / "terms.html").read_text())
 for snippet in [
-    f"Last updated {DATE}",
+    f"Last updated {TERMS_DATE}",
     "Support, not medical care HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. In an emergency call 911. For crisis support call or text 988.",
     "There is no arbitration and no class-action waiver.",
     "These terms are governed by the laws of Queensland, Australia.",
@@ -102,7 +137,7 @@ for snippet in [
 
 support = main_text((ROOT / "support.html").read_text())
 for snippet in [
-    "Does the website collect my data? No. There are no cookies, ads, trackers, analytics or third-party scripts or fonts, and nothing you save is sent to HomeCircle. Like any website, our web host, GitHub, logs visits. See the Privacy Policy and Consumer Health Data Privacy Policy.",
+    "Does the website collect my data? Not through the site itself. There are no forms, cookies, ads, trackers, analytics or third-party scripts or fonts, and nothing you save is sent to HomeCircle. Like any website, our web host, GitHub, automatically receives request information when you open a page, including your IP address and the page you asked for.",
     "What does the website save, and where? Only what you choose to save: the \"hide breath holds\" setting.",
 ]:
     if snippet not in support:

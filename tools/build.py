@@ -20,12 +20,10 @@ WEB_EDITS = {
     "This practice is off until you turn it on in Profile. If focusing inward brings up distress, stop.": "This practice stays hidden until you choose to show it. If focusing inward brings up distress, stop.",
     "The out-breath is the long part. The hold is optional in spirit: skip this practice if holds are off in Health safety.": "The out-breath is the long part. Skip this practice if breath holds aren't right for you (see the safety note above).",
     "Use it when the other counts are hidden by your health notes, or whenever you prefer it.": "Use it if breath holds aren't right for you, or whenever you prefer it.",
-    "Kai leads a short sit with the wave of an urge.": "A short guided sit with the wave of an urge.",
     "Use the official site, or find a meeting in the app.": "Use the official site to find a meeting.",
 }
 def web(t):
-    t = WEB_EDITS.get(t, t)
-    return t[5:] if t.startswith("Kai: ") else t
+    return WEB_EDITS.get(t, t)
 
 PAGES = [("index.html", "Home"), ("library.html", "Library"), ("twelve-steps.html", "12 Steps"),
          ("meditations.html", "Breathing & practices"), ("meetings.html", "Meetings"), ("help.html", "Help"), ("support.html", "Support")]
@@ -84,6 +82,7 @@ AU_SITE_PATHS = {
 }
 US_SITE_PATHS = {
     'before-you-drive.html',
+    'health-data-request.html',
     'health-privacy.html',
     'help.html',
     'index.html',
@@ -134,6 +133,8 @@ def hreflang_tags(path):
         f'<link rel="alternate" hreflang="x-default" href="{au}">\n'
     )
 HEALTH_PRIVACY = "health-privacy.html"
+# Email-based request and appeal route for the health data policy (WA RCW 19.373.040). DRAFT FOR HALE, 28 Nov 2026.
+DATA_REQUEST = "health-data-request.html"
 # Hale's wording file (10 Nov 2026), section 4: footer line on every page.
 BROWSER_ONLY = "Anything you save stays in this browser's local storage. Our web host logs visits."
 # The only feature that saves anything on the US site (hc.health.v1, key hideHolds). Hale's file, sections 1 and 3.
@@ -222,6 +223,7 @@ def footer(r):
     <li><a href="{r}{PRIVACY}">Privacy Policy</a></li>
     <li><a href="{r}{TERMS}">Terms of Use</a></li>
     <li><a href="{r}{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a></li>
+    <li><a href="{r}{DATA_REQUEST}">Health data requests and appeals</a></li>
     <li><a href="{r}support.html#website">About this website</a></li>
     <li><a href="mailto:support@homecircle.au">Contact</a></li>
     <li><a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a> (not a crisis line)</li>
@@ -288,7 +290,7 @@ def build_home():
     <h1><span class="grad-text">Support for your recovery journey</span></h1>
     <p class="lede">HomeCircle is a free recovery support website for people in the United States. Breathe along with a guide, read plain-language guides and the 12 Steps, and find links to AA, NA and GA's own sites.</p>
     <div class="btn-row"><a class="btn" href="meditations.html">Breathe now</a><a class="btn ghost" href="library.html">Open the Library</a><a class="btn ghost" href="help.html">Get help</a></div>
-    <p class="small">Everything here is free. No accounts, no cookies, no ads, no trackers and no analytics. Anything you save stays in this browser.</p>
+    <p class="small">Everything here is free. No accounts, no cookies, no ads, no trackers and no analytics. Anything you save stays in this browser. Read our <a href="{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a>.</p>
   </div>
   <div class="hero-art"><img src="assets/logo-192.png" alt="HomeCircle logo: three people with arms raised inside a circle" width="260" height="260"><p>You're not alone.</p></div>
 </section>
@@ -619,8 +621,8 @@ def build_support():
 <div class="card"><p>Email: <a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a></p><p>Please include your device and a short description of the issue. This email is not a crisis line.</p></div>
 <h2 id="website">About this website</h2>
 <h3>Do I need an account?</h3><p>No. The website has no accounts and no sign-in, and everything on it is free.</p>
-<h3>Does the website collect my data?</h3><p>No. There are no cookies, ads, trackers, analytics or third-party scripts or fonts, and nothing you save is sent to HomeCircle. Like any website, our web host, GitHub, logs visits. See the <a href="{PRIVACY}">Privacy Policy</a> and <a href="{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a>.</p>
-<h3>What does the website save, and where?</h3><p>Only what you choose to save: {SAVED_FEATURES}. It stays in this browser's local storage, on this device. Private browsing or clearing your browser data removes it.</p>
+<h3>Does the website collect my data?</h3><p>Not through the site itself. There are no forms, cookies, ads, trackers, analytics or third-party scripts or fonts, and nothing you save is sent to HomeCircle. Like any website, our web host, GitHub, automatically receives request information when you open a page, including your IP address and the page you asked for. See the <a href="{PRIVACY}">Privacy Policy</a> and <a href="{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a>, and our <a href="{DATA_REQUEST}">health data request page</a> if you'd like to ask what we hold or have it deleted.</p>
+<h3>What does the website save, and where?</h3><p>Only what you choose to save: {SAVED_FEATURES}. It stays in this browser's local storage, on this device, and doesn't record any health condition. Changing the setting back or clearing this site's data in your browser removes it.</p>
 <h2>Privacy and terms</h2><p>Read the <a href="{PRIVACY}">Privacy Policy</a>, <a href="{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a> and <a href="{TERMS}">Terms of Use</a>. {E(BROWSER_ONLY)}</p>"""
     page("support.html", "support.html", "Support – HomeCircle", "Get help with the HomeCircle website: contact, FAQs and crisis support.", body)
 
@@ -726,20 +728,25 @@ def build_meetings():
 
 
 def build_legal():
-    # Hale's US legal review (5 Nov 2026), items 1 and 4, and Hale's US static wording file (10 Nov 2026).
-    updated = "10 November 2026"
+    # Hale's US legal review (5 Nov 2026), Hale's hosting/privacy review (7 Nov 2026), Hale's PR #1 exact-head
+    # review, and Hale's US static wording file (10 Nov 2026). The 28 Nov 2026 redraft of Privacy, the Consumer
+    # Health Data Privacy Policy and the request page is DRAFT FOR HALE (us-legal-fixes branch); see
+    # homecircle-plans/us-legal/hale-recheck-request.md. Terms are unchanged.
+    updated = "28 November 2026"
+    terms_updated = "10 November 2026"
     mail = f'<a href="mailto:{L["supportEmail"]}">{L["supportEmail"]}</a>'
+    gh_statement = '<a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">GitHub\'s privacy statement</a>'
     page("privacy.html", "", "Privacy Policy – HomeCircle", "HomeCircle US privacy policy: what our web host logs, what your browser saves, email, and consumer health data.", f"""<h1>Privacy Policy</h1>
 <p><strong>Privacy Policy.</strong> Last updated {updated}. HomeCircle is run by Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897. Contact: {mail}.</p>
-<h2>What we collect</h2><p>We don't collect anything through the site itself. There are no accounts, cookies, ads, trackers or analytics, and we don't sell or share personal data or use it for ads. Our web host does keep technical records of visits, as explained under "Our web host".</p>
-<h2>What your browser saves</h2><p>Some features save your choices in this browser's local storage, on this device only: {E(SAVED_FEATURES)}. We can't see them. To delete them, change the setting back or clear this site's data in your browser. Private browsing removes them when you close the window.</p>
-<h2 id="host">Our web host</h2><p>The site is hosted on GitHub Pages, run by GitHub (part of Microsoft). When you visit a page, your browser asks GitHub for it, and GitHub automatically receives standard request data, such as your IP address, browser type and the page requested, to deliver and secure the site. GitHub handles that data under <a href="https://docs.github.com/en/site-policy/privacy-policies/github-general-privacy-statement" rel="noopener">its own privacy statement</a>. We can't see or use those records. Because this is a recovery website, a visit itself may say something about your health; if that worries you, use private browsing or a network you trust.</p>
-<h2>If you email us</h2><p>We get your email address and what you write. We use it only to reply, and we delete it when it is no longer needed. Our email is forwarded through ImprovMX to Gmail. Please don't send health details you'd rather keep private.</p>
-<h2 id="health">Consumer health data</h2><p>See our <a href="{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a>.</p>
+<h2>What we collect</h2><p>The site itself has no accounts, forms, cookies, ads, trackers or analytics, so it doesn't send us anything about you, and we don't sell or share personal data or use it for ads. Two things can still involve information about you: the technical records our web host receives when you visit, and any email you send us. Both are explained below.</p>
+<h2>What your browser saves</h2><p>One feature saves a choice in this browser's local storage, on this device only: {E(SAVED_FEATURES)}. It's a single on/off choice and doesn't record any health condition. We can't see it. To delete it, change the setting back or clear this site's data in your browser. In most browsers, closing a private browsing window also removes it.</p>
+<h2 id="host">Our web host</h2><p>The site is hosted on GitHub Pages, run by GitHub (part of Microsoft). When you open a page, your browser automatically sends GitHub request information, including your IP address, device and browser information, and the page and time requested. GitHub stores visitor IP addresses for security. GitHub also describes other uses of website-usage information, which it decides under {gh_statement}. We don't routinely see individual visitor logs, we don't keep our own visitor-log database, and we don't sell visitor information. GitHub hasn't published how long it keeps these records for GitHub Pages. Because this is a recovery website, a visit itself may say something about your health. Private browsing stops your browser keeping a history of the visit, but it doesn't stop GitHub receiving request information.</p>
+<h2>If you email us</h2><p>We get your email address, what you write and standard email details such as the date. Our email is forwarded through ImprovMX to Gmail (Google). We use it only to reply to you and to handle any privacy request. We delete support emails within 90 days after our last reply, unless you ask us to keep the conversation open or the law requires us to keep it. Please don't send health details you'd rather keep private.</p>
+<h2 id="health">Consumer health data</h2><p>See our <a href="{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a>. To ask what we hold, to delete it, or to appeal a decision, see <a href="{DATA_REQUEST}">How to make a health data request</a>.</p>
 <h2>Adults only</h2><p>HomeCircle is for people 18 and over. We don't knowingly collect information from children under 13 (or anyone under 18).</p>
 <h2>Changes</h2><p>We'll post any changes here with a new date.</p>""")
     page("terms.html", "", "Terms of Use – HomeCircle", "HomeCircle US terms of use.", f"""<h1>Terms of Use</h1>
-<p><strong>Terms of Use.</strong> Last updated {updated}. These terms are between you and Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897, who runs HomeCircle. Contact: {mail} (not a crisis line).</p>
+<p><strong>Terms of Use.</strong> Last updated {terms_updated}. These terms are between you and Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897, who runs HomeCircle. Contact: {mail} (not a crisis line).</p>
 <h2>18+ only</h2><p>You must be 18 or older to use HomeCircle.</p>
 <h2>Support, not medical care</h2><p>HomeCircle is general wellness and peer-support information. It is not a medical device, not medical advice, diagnosis or treatment, and not an emergency or crisis service. In an emergency call <a href="tel:911">911</a>. For crisis support call or text <a href="tel:988">988</a>.</p>
 <h2>Not affiliated</h2><p>HomeCircle is independent and isn't affiliated with or endorsed by Alcoholics Anonymous, Narcotics Anonymous, Gamblers Anonymous, Al-Anon, Nar-Anon or Porn Addicts Anonymous. Their names belong to them. Links go to their own sites, which we don't control.</p>
@@ -747,16 +754,78 @@ def build_legal():
 <h2>Our liability</h2><p>To the extent the law allows, we are not liable for indirect or consequential loss from using the site. Nothing in these terms limits liability that can't legally be limited, such as for gross negligence, willful misconduct, or death or personal injury caused by negligence. Nothing in these terms takes away rights you have under the consumer laws where you live.</p>
 <h2>Law and disputes</h2><p>These terms are governed by the laws of Queensland, Australia. You may also be able to bring a claim in the courts where you live. There is no arbitration and no class-action waiver. Please email us first so we can try to sort it out.</p>
 <h2>Changes</h2><p>We may update these terms and will post the new date here.</p>""")
-    # Hale's US static wording file (10 Nov 2026), section 2.
-    page(HEALTH_PRIVACY, "", "Consumer Health Data Privacy Policy – HomeCircle", "HomeCircle's Consumer Health Data Privacy Policy for the US: what we collect, our web host, email, your rights, appeals and adults only.", f"""<h1>Consumer Health Data Privacy Policy</h1>
+    # Washington RCW 19.373.020 (policy contents) and .040 (rights, requests, appeals). DRAFT FOR HALE, 28 Nov 2026.
+    page(HEALTH_PRIVACY, "", "Consumer Health Data Privacy Policy – HomeCircle", "HomeCircle's Consumer Health Data Privacy Policy for the US: what may be collected and why, sources, who it's shared with, your rights and how to use them, and appeals.", f"""<h1>Consumer Health Data Privacy Policy</h1>
 <p><strong>Consumer Health Data Privacy Policy.</strong> Last updated {updated}. This policy covers consumer health data under Washington's My Health My Data Act and similar laws in Nevada, Connecticut and other states. HomeCircle is run by Luke Endrody (sole trader), Queensland, Australia, ABN 53 687 374 897. Contact: {mail} (not a crisis line).</p>
-<p><strong>What we collect.</strong> We don't collect consumer health data through the site. There are no accounts, forms, cookies, ads, trackers or analytics. Anything you choose to save stays in your browser on your device, and we can't see it.</p>
-<p><strong>Our web host.</strong> GitHub, our web host, automatically records technical data when you visit a page, such as your IP address and the page requested. Because this is a recovery website, those records could suggest something about your health. GitHub uses them to deliver and secure the site under its own privacy statement. We don't receive, use, sell or share them.</p>
-<p><strong>If you email us.</strong> If you choose to email us health information, we get your email address and what you write, through our email forwarding service (ImprovMX) and our email provider (Google Gmail). We use it only to reply to you and delete it when it is no longer needed. We never sell it, never use it for ads, and never share it with anyone else except those service providers, who handle it only to deliver our email.</p>
-<p id="rights"><strong>Your rights.</strong> You can ask us to confirm whether we hold your consumer health data, to see it and the providers it went through, or to delete it, and you can withdraw any consent. Email {mail}. We'll reply within 45 days, and may take 45 more days if needed, in which case we'll tell you why.</p>
-<p id="appeals"><strong>Appeals.</strong> If we refuse your request, reply to our answer to appeal. We'll respond within 45 days and explain our decision. If you're still unhappy, you can contact your state attorney general (for Washington: <a href="https://www.atg.wa.gov/file-complaint" rel="noopener">https://www.atg.wa.gov/file-complaint</a>).</p>
-<p><strong>Adults only.</strong> HomeCircle is for adults 18 and over and isn't directed to children.</p>
-<p><strong>Changes.</strong> We'll post any changes here with a new date.</p>""")
+<h2 id="summary">In short</h2>
+<p>The site has no accounts, forms, cookies, ads, trackers or analytics, and nothing you save on the site is sent to us. Two things can still involve information that may say something about your health: the technical records our web host receives when you open a page, and any email you choose to send us. We don't sell consumer health data and we don't use it for ads.</p>
+<h2 id="categories">What may be collected, and why</h2>
+<ul>
+<li><strong>Visit records (collected by our web host).</strong> Your IP address, device and browser information, the page or file you asked for, the date and time, and the page that linked you here if your browser sends it. Because this is a recovery website, the page you visit (for example, a page about alcohol, drugs, gambling or overdose) could suggest something about your health. Purpose: to deliver the page to you and to keep the site secure. We don't use these records for anything else. GitHub also describes other uses of website-usage information under {gh_statement}, which GitHub, not HomeCircle, controls. We don't routinely see individual visitor logs and we don't keep our own visitor-log database. GitHub hasn't published how long it keeps these records for GitHub Pages.</li>
+<li><strong>Emails you send us.</strong> Your email address, your name if you include it, what you write (including any health information you choose to share) and standard email details such as the date. Purpose: to reply to you and to handle any request you make under this policy. We delete support emails within 90 days after our last reply, unless you ask us to keep the conversation open or the law requires us to keep it. For each request under this policy we keep a short record (the date, the type of request and what we did, without your health details) for 24 months, so we can show we handled it.</li>
+</ul>
+<p>The "hide breath holds" setting stays in your browser on your device. It doesn't record any health condition, and we never receive it.</p>
+<p>We don't collect any other consumer health data. If we ever want to collect a new category of consumer health data, or use it for a new purpose, we'll update this policy first and ask for your consent before we do.</p>
+<h2 id="sources">Where it comes from</h2>
+<ul>
+<li>Visit records: automatically from your browser when it requests a page from our web host.</li>
+<li>Emails: from you, when you choose to write to us.</li>
+</ul>
+<p>We don't buy or receive consumer health data from anyone else.</p>
+<h2 id="sharing">Who it's shared with</h2>
+<p>We don't have any affiliates. The categories of consumer health data that are shared, and the third parties that receive them, are:</p>
+<ul>
+<li><strong>Web hosting and security provider:</strong> GitHub, Inc. (part of Microsoft) receives visit records, because your browser requests every page from GitHub. Contact: <a href="https://support.github.com/contact/privacy" rel="noopener">GitHub privacy contact form</a>.</li>
+<li><strong>Email forwarding provider:</strong> ImprovMX receives emails you send to our address and forwards them to our inbox. Contact: <a href="https://improvmx.com/contact/" rel="noopener">ImprovMX contact page</a>.</li>
+<li><strong>Email provider:</strong> Google (Gmail) stores the emails you send us and our replies. Contact: <a href="https://support.google.com/policies/contact/general_privacy_form" rel="noopener">Google privacy contact form</a>.</li>
+</ul>
+<p>We would disclose consumer health data to anyone else only if the law requires it. We never sell it and never use it for ads.</p>
+<h2 id="rights">Your rights</h2>
+<p>You can ask us to:</p>
+<ul>
+<li>confirm whether we collect, share or sell consumer health data about you;</li>
+<li>give you a copy of it, with a list of everyone we have shared it with and how to contact them;</li>
+<li>delete it. We'll delete it from our records, including our email account and its deleted items, and tell ImprovMX, Google and GitHub about your request. We can't see or delete GitHub's visit records ourselves, so we'll pass your request to GitHub and tell you what we sent;</li>
+<li>withdraw any consent you've given us.</li>
+</ul>
+<p>Requests are free, up to twice in any 12 months. You don't need an account.</p>
+<h2 id="how">How to use your rights</h2>
+<p>Email {mail} from the email address your request is about, and say what you'd like us to do. Our <a href="{DATA_REQUEST}">health data request page</a> has ready-made links and explains what to include. If we can't confirm the request is from you, we'll tell you why and may ask for a little more information. We won't ask for more than we need, and we'll use it only to check your request.</p>
+<p>We'll reply within 45 days. If we need more time, we may take 45 more days once, and we'll tell you why within the first 45 days.</p>
+<h2 id="appeals">Appeals</h2>
+<p>If we refuse your request, you can appeal by replying to our answer with the word "Appeal", or by emailing {mail} with "Appeal" in the subject. We'll respond in writing within 45 days and explain what we did and why. If we deny your appeal, you can contact your state attorney general. For Washington: <a href="https://www.atg.wa.gov/file-complaint" rel="noopener">https://www.atg.wa.gov/file-complaint</a>.</p>
+<h2>Adults only</h2>
+<p>HomeCircle is for adults 18 and over and isn't directed to children.</p>
+<h2>Changes</h2>
+<p>We'll post any changes here with a new date.</p>""")
+    # How to make a request (RCW 19.373.040(1)(d)-(h)). Email only: the US site has no forms or server. DRAFT FOR HALE.
+    def req(subject, label):
+        from urllib.parse import quote
+        return f'<a class="btn ghost" href="mailto:{L["supportEmail"]}?subject={quote(subject)}">{E(label)}</a>'
+    page(DATA_REQUEST, "", "Health data requests and appeals – HomeCircle", "How to ask HomeCircle what consumer health data it holds about you, ask for it to be deleted, withdraw consent, or appeal a decision.", f"""<h1>Health data requests and appeals</h1>
+<p class="lede">How to ask what consumer health data we hold about you, have it deleted, withdraw consent, or appeal our decision. Last updated {updated}.</p>
+<p>The site has no forms, so requests are made by email to {mail}. You don't need an account, and requests are free, up to twice in any 12 months. Read what we may hold in our <a href="{HEALTH_PRIVACY}">Consumer Health Data Privacy Policy</a>.</p>
+<h2 id="send">1. Send your request</h2>
+<p>Each button opens a new email to us with the subject filled in.</p>
+<div class="btn-row">{req("Health data request: confirm and copy", "Ask what you hold and for a copy")}{req("Health data request: delete", "Ask you to delete it")}{req("Health data request: withdraw consent", "Withdraw my consent")}</div>
+<p>If the buttons don't open your email app, email {mail} yourself and put "Health data request" in the subject.</p>
+<h2 id="include">2. What to include</h2>
+<ul>
+<li>What you'd like us to do (confirm, copy, delete or withdraw consent).</li>
+<li>Send it from the email address you used to write to us, if your request is about an email.</li>
+<li>If your request is about GitHub's visit records, the approximate dates you visited. You can include your IP address if you know it, but you don't have to. We can't see those records ourselves, so we'll pass your request to GitHub and tell you what we sent.</li>
+</ul>
+<p>Please don't send ID documents, health details or anything else we don't need.</p>
+<h2 id="next">3. What happens next</h2>
+<ul>
+<li>We'll check the request comes from you, usually by replying to the email address it came from. If we can't confirm it, we'll tell you why and may ask for a little more information.</li>
+<li>We'll reply within 45 days. If we need more time, we may take 45 more days once, and we'll tell you why within the first 45 days.</li>
+<li>If you ask us to delete, we'll delete what we hold and tell ImprovMX, Google and GitHub about your request.</li>
+</ul>
+<h2 id="appeal">4. Appeal a decision</h2>
+<p>If we refuse your request, reply to our answer with the word "Appeal", or use the button below. We'll respond in writing within 45 days and explain what we did and why. If we deny your appeal, you can contact your state attorney general. For Washington: <a href="https://www.atg.wa.gov/file-complaint" rel="noopener">https://www.atg.wa.gov/file-complaint</a>.</p>
+<div class="btn-row">{req("Appeal: health data request", "Appeal a decision")}</div>
+<p class="small">This email is not a crisis line.</p>""")
 
 # ---------- sitemap and robots ----------
 def build_sitemap():

@@ -10,8 +10,8 @@ ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(sys.argv[1]).resolve() if len(sys.argv) > 1 else ROOT / "_site"
 SITE = "https://homecirclerecovery.com"
 
-# Never published (Sage's hosting prep, 10 Nov 2026). assets/readaloud.js is the AU/US shared read-aloud
-# script: no US page loads it in this release and it holds AU number handling, so it stays in the repo only.
+# Never published (Sage's hosting prep, 10 Nov 2026). assets/readaloud.js (AU/US shared read-aloud) was removed
+# from this repo on 28 Nov 2026 (no Kai, data minimisation); the exclusion stays as a guard if it ever comes back.
 EXCLUDE_TOP = {".git", ".github", "deploy", "tools", "shots", "README.md", "SOURCES.md", ".gitignore", "_site", "__pycache__"}
 EXCLUDE_FILES = {"assets/readaloud.js"}
 def excluded(rel):
